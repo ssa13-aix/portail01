@@ -977,34 +977,108 @@ async function savePDF() {
 </script>
 
 <script>
-/* ── INJECTION DPS SSA13 ── */
+/* ── INJECTION DPS SSA13 — AUTOSAVE COMPLET ── */
 (function(){
-  const params  = new URLSearchParams(location.search);
-  const dps_id  = params.get('dps_id');
+  const params = new URLSearchParams(location.search);
+  const dps_id = params.get('dps_id');
   if(!dps_id) return;
+
   let list;
   try{ list = JSON.parse(localStorage.getItem('ssa13_dps')||'[]'); } catch{ return; }
   const dps = list.find(d=>d.id===dps_id);
   if(!dps) return;
 
-  // Bandeau DPS en haut de page
+  const STORE_KEY = 'ssa13_recap_form_' + dps_id;
+
+  /* ── Bandeau (sous le header existant, pas par-dessus) ── */
   const banner = document.createElement('div');
-  banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#c0392b;color:white;font-family:sans-serif;font-size:13px;font-weight:600;text-align:center;padding:6px 12px;letter-spacing:.05em;';
-  banner.textContent = '📁 DPS : '+dps.nom+' · '+dps.id+' — Données pré-remplies depuis le portail';
-  document.body.prepend(banner);
-  document.body.style.paddingTop='32px';
+  banner.style.cssText = 'background:#c0392b;color:white;font-family:sans-serif;font-size:12px;font-weight:600;text-align:center;padding:5px 12px;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;gap:20px;position:relative;z-index:5;';
+  banner.innerHTML = '<span>📁 DPS : '+dps.nom+' · '+dps.id+'</span><span id="recap-save-status" style="font-weight:400;opacity:.85;">💾 Sauvegarde auto active</span><a href="dossier.html?id='+dps_id+'" style="color:white;text-decoration:underline;font-size:11px;">← Retour au dossier</a>';
 
-  // Pré-remplissage au chargement
-  function fill(id, val){ const el=document.getElementById(id); if(el&&val) el.value=val; }
-  fill('nom_evenement', dps.nom);
-  fill('adresse_manif', dps.lieu);
-  fill('horaire_place', dps.heure);
+  /* Insérer après le header fixe */
+  window.addEventListener('DOMContentLoaded', ()=>{
+    const header = document.querySelector('.header, header, .top-bar, nav');
+    if(header) header.after(banner);
+    else document.body.prepend(banner);
+    initDPS();
+  });
 
-  // Extraire la ville du lieu (dernier mot après virgule si présent)
-  if(dps.lieu){
-    const parts = dps.lieu.split(',');
-    if(parts.length>1) fill('ville', parts[parts.length-1].trim());
-    else fill('lieu_rdv', dps.lieu);
+  function fill(id, val){ const el=document.getElementById(id); if(el && val) el.value = val; }
+
+  function collectForm(){
+    const data = {};
+    document.querySelectorAll('input, select, textarea').forEach(el=>{
+      if(!el.id) return;
+      data[el.id] = el.type==='checkbox' ? el.checked : el.value;
+    });
+    // Boutons OuiNon (classes sel-oui / sel-non)
+    document.querySelectorAll('[id$="_oui"],[id$="_non"]').forEach(btn=>{
+      data['_btn_'+btn.id] = btn.classList.contains('sel-oui')||btn.classList.contains('sel-non')||btn.classList.contains('selected') ? btn.id : null;
+    });
+    // Compteurs
+    document.querySelectorAll('.counter-val').forEach(el=>{
+      if(el.id) data['_ctr_'+el.id] = el.textContent;
+    });
+    return data;
+  }
+
+  function restoreForm(data){
+    Object.entries(data).forEach(([k,v])=>{
+      if(k.startsWith('_')) return;
+      const el = document.getElementById(k);
+      if(!el) return;
+      el.type==='checkbox' ? (el.checked=v) : (el.value=v||'');
+    });
+    // Restaurer compteurs
+    Object.entries(data).forEach(([k,v])=>{
+      if(!k.startsWith('_ctr_')) return;
+      const el = document.getElementById(k.replace('_ctr_',''));
+      if(el && v) el.textContent = v;
+    });
+    // Restaurer boutons OuiNon
+    Object.entries(data).forEach(([k,v])=>{
+      if(!k.startsWith('_btn_') || !v) return;
+      const el = document.getElementById(v);
+      if(el) el.click();
+    });
+  }
+
+  let saveTimer;
+  function schedSave(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(()=>{
+      try{
+        localStorage.setItem(STORE_KEY, JSON.stringify(collectForm()));
+        const s = document.getElementById('recap-save-status');
+        if(s) s.textContent = '✅ Sauvegardé à '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+      }catch(e){}
+    }, 800);
+  }
+
+  function initDPS(){
+    const saved = localStorage.getItem(STORE_KEY);
+    if(saved){
+      try{ restoreForm(JSON.parse(saved)); } catch(e){}
+      const s = document.getElementById('recap-save-status');
+      if(s) s.textContent = '🔄 Données restaurées';
+    } else {
+      /* Première ouverture : pré-remplir depuis le DPS */
+      fill('nom_evenement', dps.nom);
+      fill('adresse_manif', dps.lieu);
+      fill('horaire_place', dps.heure);
+      if(dps.lieu){
+        const parts = dps.lieu.split(',');
+        fill('ville', parts.length>1 ? parts[parts.length-1].trim() : dps.lieu);
+        fill('lieu_rdv', dps.lieu);
+      }
+    }
+    document.addEventListener('input',  schedSave);
+    document.addEventListener('change', schedSave);
+    document.addEventListener('click',  e=>{
+      if(e.target.classList.contains('ouinon-btn') ||
+         e.target.classList.contains('counter-btn') ||
+         e.target.classList.contains('btn-now')) schedSave();
+    });
   }
 })();
 </script>
