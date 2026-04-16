@@ -328,7 +328,7 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
 <script>
 const CORRECT_PIN = '1313';
 let pinBuffer = '';
-if (sessionStorage.getItem('ssa13_auth')==='true') showDashboard();
+if (localStorage.getItem('ssa13_auth')==='true') showDashboard();
 
 function pinPress(n){
   if(pinBuffer.length>=CORRECT_PIN.length)return;
@@ -338,7 +338,7 @@ function pinPress(n){
 function pinDel(){pinBuffer=pinBuffer.slice(0,-1);updateDots();document.getElementById('login-error').textContent='';}
 function updateDots(){for(let i=0;i<CORRECT_PIN.length;i++)document.getElementById('d'+i).className='pin-dot'+(i<pinBuffer.length?' filled':'');}
 function checkPin(){
-  if(pinBuffer===CORRECT_PIN){sessionStorage.setItem('ssa13_auth','true');showDashboard();}
+  if(pinBuffer===CORRECT_PIN){localStorage.setItem('ssa13_auth','true');showDashboard();}
   else{
     document.getElementById('login-error').textContent='Code incorrect. Réessayez.';
     for(let i=0;i<CORRECT_PIN.length;i++)document.getElementById('d'+i).className='pin-dot error';
@@ -351,7 +351,7 @@ function showDashboard(){
   setTimeout(()=>document.getElementById('login-screen').style.display='none',700);
   startClock();renderDPS();
 }
-function logout(){sessionStorage.removeItem('ssa13_auth');location.reload();}
+function logout(){localStorage.removeItem('ssa13_auth');location.reload();}
 document.addEventListener('keydown',e=>{
   if(document.getElementById('login-screen').classList.contains('hidden'))return;
   if(e.key>='0'&&e.key<='9')pinPress(parseInt(e.key));
@@ -408,7 +408,7 @@ const typeIcon={Sportif:'🏃',Culturel:'🎭',Festif:'🎉',Scolaire:'🏫',Aut
 
 /* ── RECHARGEMENT quand on revient sur l'onglet ── */
 document.addEventListener('visibilitychange', ()=>{
-  if(document.visibilityState==='visible' && sessionStorage.getItem('ssa13_auth')==='true') renderDPS();
+  if(document.visibilityState==='visible' && localStorage.getItem('ssa13_auth')==='true') renderDPS();
 });
 
 function renderDPS(){
