@@ -410,43 +410,61 @@ const typeIcon={Sportif:'🏃',Culturel:'🎭',Festif:'🎉',Scolaire:'🏫',Aut
 document.addEventListener('visibilitychange', ()=>{
   if(document.visibilityState==='visible' && sessionStorage.getItem('ssa13_auth')==='true') renderDPS();
 });
-window.addEventListener('focus', ()=>{
-  if(sessionStorage.getItem('ssa13_auth')==='true') renderDPS();
-});
-window.addEventListener('pageshow', ()=>{
-  if(sessionStorage.getItem('ssa13_auth')==='true') renderDPS();
-});
 
 function renderDPS(){
-  const list=getDPS();
-  document.getElementById('stat-total').textContent=list.length;
-  document.getElementById('stat-encours').textContent=list.filter(d=>d.statut==='en_cours').length;
-  document.getElementById('stat-planifie').textContent=list.filter(d=>d.statut==='planifie').length;
-  document.getElementById('stat-termine').textContent=list.filter(d=>d.statut==='termine').length;
-  const el=document.getElementById('dps-list');
+  // Sécurité : dashboard doit être affiché
+  const dash = document.getElementById('dashboard');
+  if(!dash || dash.style.display==='none') return;
+
+  const list = getDPS();
+
+  // Stats
+  const setEl = (id, val) => { const e=document.getElementById(id); if(e) e.textContent=val; };
+  setEl('stat-total',   list.length);
+  setEl('stat-encours', list.filter(d=>d.statut==='en_cours').length);
+  setEl('stat-planifie',list.filter(d=>d.statut==='planifie').length);
+  setEl('stat-termine', list.filter(d=>d.statut==='termine').length);
+
+  const el = document.getElementById('dps-list');
+  if(!el) return;
+
   if(!list.length){
-    el.innerHTML=`<div class="empty-state"><div class="empty-icon">📁</div><div class="empty-title">Aucun DPS créé</div><div class="empty-desc">Cliquez sur "Nouveau DPS" pour créer votre premier dispositif.</div></div>`;
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📁</div>'
+      +'<div class="empty-title">Aucun DPS créé</div>'
+      +'<div class="empty-desc">Cliquez sur "Nouveau DPS" pour créer votre premier dispositif.</div></div>';
     return;
   }
-  el.innerHTML=list.map(dps=>{
-    const dt=dps.date?new Date(dps.date+'T12:00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}):'—';
-    return `<a class="dps-card" href="dossier.html?id=${dps.id}" target="_blank" style="--status-color:${statusColor[dps.statut]||'#8a9ab0'}">
-      <div class="dps-card-icon">${typeIcon[dps.type]||'📌'}</div>
-      <div class="dps-card-body">
-        <div class="dps-card-name">${dps.nom}</div>
-        <div class="dps-card-meta">
-          <span>📅 ${dt}</span>
-          ${dps.heure?`<span>🕐 ${dps.heure}</span>`:''}
-          ${dps.lieu?`<span>📍 ${dps.lieu}</span>`:''}
-          <span>🏷️ ${dps.type}</span>
-        </div>
-      </div>
-      <div class="dps-card-right">
-        <span class="dps-status status-${dps.statut}">${statusLabel[dps.statut]}</span>
-        <div class="dps-arrow">→</div>
-      </div>
-    </a>`;
-  }).join('');
+
+  // Génération des cartes sans template literals imbriqués
+  let html = '';
+  list.forEach(function(dps){
+    var dt = '—';
+    try{
+      if(dps.date) dt = new Date(dps.date+'T12:00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+    }catch(e){}
+    var icon   = typeIcon[dps.type]   || '📌';
+    var color  = statusColor[dps.statut] || '#8a9ab0';
+    var label  = statusLabel[dps.statut] || dps.statut || '—';
+    var nom    = (dps.nom||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    var meta   = '<span>📅 '+dt+'</span>';
+    if(dps.heure) meta += '<span>🕐 '+dps.heure+'</span>';
+    if(dps.lieu)  meta += '<span>📍 '+(dps.lieu||'')+'</span>';
+    meta += '<span>🏷️ '+(dps.type||'')+'</span>';
+
+    html += '<a class="dps-card" href="dossier.html?id='+dps.id+'" target="_blank">'
+      +'<div class="dps-card-status-bar" style="width:4px;background:'+color+';position:absolute;left:0;top:0;bottom:0;border-radius:4px 0 0 4px;"></div>'
+      +'<div class="dps-card-icon">'+icon+'</div>'
+      +'<div class="dps-card-body">'
+      +'<div class="dps-card-name">'+nom+'</div>'
+      +'<div class="dps-card-meta">'+meta+'</div>'
+      +'</div>'
+      +'<div class="dps-card-right">'
+      +'<span class="dps-status status-'+dps.statut+'">'+label+'</span>'
+      +'<div class="dps-arrow">→</div>'
+      +'</div>'
+      +'</a>';
+  });
+  el.innerHTML = html;
 }
 </script>
 </body>
