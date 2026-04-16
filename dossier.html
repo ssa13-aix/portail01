@@ -382,14 +382,16 @@ function render(){
       <button class="btn-new-bilan" onclick="openModalBilan()">🩺 Nouvelle fiche bilan</button>
     </div>
 
-    <div class="bilans-list" id="bilans-list">
-      ${renderBilans(bilans)}
-    </div>
+    <div class="bilans-list" id="bilans-list"></div>
 
     <footer class="footer">
       <strong>SSA13</strong> · ${dps.nom} · ${dps.id} — Usage interne exclusif
     </footer>
   `;
+
+  // Remplir la liste des bilans (renderBilans agit sur le DOM directement)
+  renderBilans(getBilans(DPS_ID));
+  refreshStats();
 }
 
 function issueColor(issue){
@@ -507,7 +509,7 @@ function createBilan(){
   list.push(bilan);
   saveBilans(DPS_ID,list);
   closeModalBilan();
-  renderBilans(getBilans(DPS_ID));
+  renderBilans(getBilans(DPS_ID)); refreshStats();
   refreshStats();
   window.open('fiche_bilan_interactive%20(3).html?dps_id='+DPS_ID+'&bilan_id='+bilan.id,'_blank');
 }
