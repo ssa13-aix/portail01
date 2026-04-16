@@ -975,5 +975,38 @@ async function savePDF() {
   }
 }
 </script>
+
+<script>
+/* ── INJECTION DPS SSA13 ── */
+(function(){
+  const params  = new URLSearchParams(location.search);
+  const dps_id  = params.get('dps_id');
+  if(!dps_id) return;
+  let list;
+  try{ list = JSON.parse(localStorage.getItem('ssa13_dps')||'[]'); } catch{ return; }
+  const dps = list.find(d=>d.id===dps_id);
+  if(!dps) return;
+
+  // Bandeau DPS en haut de page
+  const banner = document.createElement('div');
+  banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#c0392b;color:white;font-family:sans-serif;font-size:13px;font-weight:600;text-align:center;padding:6px 12px;letter-spacing:.05em;';
+  banner.textContent = '📁 DPS : '+dps.nom+' · '+dps.id+' — Données pré-remplies depuis le portail';
+  document.body.prepend(banner);
+  document.body.style.paddingTop='32px';
+
+  // Pré-remplissage au chargement
+  function fill(id, val){ const el=document.getElementById(id); if(el&&val) el.value=val; }
+  fill('nom_evenement', dps.nom);
+  fill('adresse_manif', dps.lieu);
+  fill('horaire_place', dps.heure);
+
+  // Extraire la ville du lieu (dernier mot après virgule si présent)
+  if(dps.lieu){
+    const parts = dps.lieu.split(',');
+    if(parts.length>1) fill('ville', parts[parts.length-1].trim());
+    else fill('lieu_rdv', dps.lieu);
+  }
+})();
+</script>
 </body>
 </html>
