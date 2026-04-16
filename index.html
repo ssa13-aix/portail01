@@ -3,175 +3,112 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portail Opérationnel — Secouristes du Pays d'Aix</title>
+<title>Portail Operationnel SSA13</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --navy:#0b1a2e;--navy2:#112240;--navy3:#1a3358;
-  --red:#c0392b;--red2:#e74c3c;--gold:#f0a500;
-  --green:#27ae60;--blue:#2980b9;--white:#f0f4f8;--grey:#8a9ab0;
-  --border:rgba(240,165,0,0.15);--glow:rgba(192,57,43,0.35);--card:rgba(17,34,64,0.85);
-}
+:root{--navy:#0b1a2e;--navy2:#112240;--navy3:#1a3358;--red:#c0392b;--red2:#e74c3c;--gold:#f0a500;--green:#27ae60;--white:#f0f4f8;--grey:#8a9ab0;--border:rgba(240,165,0,0.15);--glow:rgba(192,57,43,0.35);--card:rgba(17,34,64,0.85);}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Barlow',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;overflow-x:hidden;}
-body::before{content:'';position:fixed;inset:0;z-index:0;
-  background:radial-gradient(ellipse 80% 60% at 70% 20%,rgba(192,57,43,.1) 0%,transparent 60%),
-  linear-gradient(160deg,#0b1a2e 0%,#0e1e35 50%,#111e33 100%);pointer-events:none;}
-body::after{content:'';position:fixed;inset:0;z-index:0;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50V16L28 0l28 16v34z' fill='none' stroke='rgba(240,165,0,0.04)' stroke-width='1'/%3E%3Cpath d='M28 100L0 84V50l28-16 28 16v34z' fill='none' stroke='rgba(240,165,0,0.04)' stroke-width='1'/%3E%3C/svg%3E");
-  pointer-events:none;}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 70% 20%,rgba(192,57,43,.1) 0%,transparent 60%),linear-gradient(160deg,#0b1a2e 0%,#0e1e35 50%,#111e33 100%);pointer-events:none;}
 
 /* LOGIN */
-#login-screen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(160deg,#07111f 0%,#0d1d30 100%);transition:opacity .6s,transform .6s;}
+#login-screen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#07111f 0%,#0d1d30 100%);transition:opacity .6s,transform .6s;}
 #login-screen.hidden{opacity:0;transform:scale(1.05);pointer-events:none;}
-.login-box{width:min(420px,90vw);text-align:center;padding:48px 40px;background:rgba(17,34,64,.7);
-  border:1px solid var(--border);border-radius:16px;backdrop-filter:blur(20px);
-  box-shadow:0 0 60px rgba(0,0,0,.5);animation:fadeUp .7s ease both;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-.login-logo{width:72px;height:72px;margin:0 auto 20px;background:linear-gradient(135deg,var(--red),var(--red2));
-  border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 0 30px var(--glow);}
+.login-box{width:min(420px,90vw);text-align:center;padding:48px 40px;background:rgba(17,34,64,.7);border:1px solid var(--border);border-radius:16px;backdrop-filter:blur(20px);box-shadow:0 0 60px rgba(0,0,0,.5);}
+.login-logo{width:72px;height:72px;margin:0 auto 20px;background:linear-gradient(135deg,var(--red),var(--red2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 0 30px var(--glow);}
 .login-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;}
 .login-sub{font-size:13px;color:var(--grey);margin-bottom:36px;}
 .pin-label{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
 .pin-dots{display:flex;justify-content:center;gap:12px;margin-bottom:28px;}
 .pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--navy3);background:transparent;transition:all .2s;}
 .pin-dot.filled{background:var(--gold);border-color:var(--gold);box-shadow:0 0 10px rgba(240,165,0,.5);}
-.pin-dot.error{background:var(--red2);border-color:var(--red2);animation:shake .4s ease;}
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}60%{transform:translateX(6px)}}
+.pin-dot.error{background:var(--red2);border-color:var(--red2);}
 .pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:240px;margin:0 auto 24px;}
-.pin-btn{background:rgba(26,51,88,.6);border:1px solid rgba(240,165,0,.12);color:var(--white);
-  font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:600;height:56px;
-  border-radius:10px;cursor:pointer;transition:all .15s;user-select:none;}
-.pin-btn:hover{background:rgba(26,51,88,.9);border-color:rgba(240,165,0,.4);transform:translateY(-2px);}
+.pin-btn{background:rgba(26,51,88,.6);border:1px solid rgba(240,165,0,.12);color:var(--white);font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:600;height:56px;border-radius:10px;cursor:pointer;transition:all .15s;user-select:none;}
+.pin-btn:hover{background:rgba(26,51,88,.9);border-color:rgba(240,165,0,.4);}
 .pin-btn:active{transform:scale(.94);}
-.pin-btn.zero{grid-column:2;}.pin-btn.del{font-size:18px;color:var(--grey);}
+.pin-btn.zero{grid-column:2;}
+.pin-btn.del{font-size:18px;color:var(--grey);}
 .login-error{font-size:12px;color:var(--red2);min-height:18px;margin-top:-8px;}
 
-/* HEADER */
+/* DASHBOARD */
 #dashboard{position:relative;z-index:1;min-height:100vh;padding-bottom:60px;}
-.header{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;
-  border-bottom:1px solid var(--border);background:rgba(11,26,46,.85);backdrop-filter:blur(10px);
-  position:sticky;top:0;z-index:10;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid var(--border);background:rgba(11,26,46,.85);backdrop-filter:blur(10px);position:sticky;top:0;z-index:10;}
 .header-brand{display:flex;align-items:center;gap:14px;}
-.header-badge{width:44px;height:44px;background:linear-gradient(135deg,var(--red),var(--red2));
-  border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;
-  box-shadow:0 0 20px var(--glow);flex-shrink:0;}
+.header-badge{width:44px;height:44px;background:linear-gradient(135deg,var(--red),var(--red2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 20px var(--glow);flex-shrink:0;}
 .header-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
 .header-sub{font-size:12px;color:var(--grey);}
 .header-right{display:flex;align-items:center;gap:16px;}
 .clock{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--gold);letter-spacing:.06em;}
 .clock-date{font-size:11px;color:var(--grey);text-align:right;}
-.btn-logout{background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);color:var(--grey);
-  font-size:12px;padding:8px 14px;border-radius:8px;cursor:pointer;transition:all .2s;letter-spacing:.05em;}
+.btn-logout{background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);color:var(--grey);font-size:12px;padding:8px 14px;border-radius:8px;cursor:pointer;transition:all .2s;}
 .btn-logout:hover{background:rgba(192,57,43,.3);color:var(--white);}
-
-/* HERO */
 .hero{padding:40px 40px 24px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:20px;}
-.hero-tag{display:inline-block;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--gold);border:1px solid rgba(240,165,0,.3);padding:5px 14px;border-radius:20px;margin-bottom:12px;background:rgba(240,165,0,.06);}
-.hero h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:800;
-  text-transform:uppercase;letter-spacing:.04em;line-height:1.05;margin-bottom:8px;}
+.hero-tag{display:inline-block;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(240,165,0,.3);padding:5px 14px;border-radius:20px;margin-bottom:12px;background:rgba(240,165,0,.06);}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:800;text-transform:uppercase;letter-spacing:.04em;line-height:1.05;margin-bottom:8px;}
 .hero h1 span{color:var(--red2);}
 .hero-desc{font-size:14px;color:var(--grey);}
-.btn-new-dps{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--red),var(--red2));
-  border:none;color:white;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;
-  letter-spacing:.06em;text-transform:uppercase;padding:14px 28px;border-radius:12px;cursor:pointer;
-  transition:all .2s;box-shadow:0 4px 20px var(--glow);white-space:nowrap;}
+.btn-new-dps{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--red),var(--red2));border:none;color:white;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:14px 28px;border-radius:12px;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px var(--glow);white-space:nowrap;}
 .btn-new-dps:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--glow);}
-
-/* STATS */
 .stats-bar{display:flex;gap:1px;margin:0 40px 32px;border-radius:12px;overflow:hidden;border:1px solid var(--border);}
 .stat-item{flex:1;padding:16px 20px;background:var(--card);text-align:center;}
 .stat-num{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;}
-.stat-num.gold{color:var(--gold);}
-.stat-num.green{color:var(--green);}
 .stat-label{font-size:11px;color:var(--grey);text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
-
-/* SECTION */
 .section-header{padding:0 40px 16px;display:flex;align-items:center;gap:12px;}
 .section-line{flex:1;height:1px;background:linear-gradient(to right,var(--border),transparent);}
-.section-label{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--grey);}
-
-/* DPS LIST */
-.dps-grid{display:flex;flex-direction:column;gap:12px;padding:0 40px;}
-.dps-card{background:var(--card);border:1px solid var(--border);border-radius:12px;
-  padding:20px 24px;cursor:pointer;transition:all .2s;display:flex;align-items:center;
-  gap:20px;text-decoration:none;color:inherit;position:relative;overflow:hidden;}
-.dps-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
-  background:var(--status-color,var(--grey));border-radius:4px 0 0 4px;}
-.dps-card:hover{transform:translateX(4px);border-color:rgba(240,165,0,.3);box-shadow:0 4px 20px rgba(0,0,0,.3);}
-.dps-card-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;
-  justify-content:center;font-size:22px;background:rgba(255,255,255,.06);flex-shrink:0;}
+.section-label{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);}
+/* DPS CARDS */
+#dps-list{display:block;padding:0 40px;margin-bottom:20px;}
+.dps-card{display:block;background:#112240;border:1px solid rgba(240,165,0,0.2);border-left:4px solid #8a9ab0;border-radius:12px;padding:18px 20px;color:#f0f4f8;cursor:pointer;margin-bottom:12px;}
+.dps-card:hover{border-color:rgba(240,165,0,.5);background:#1a3358;}
+.dps-card-inner{display:flex;align-items:center;gap:16px;}
+.dps-card-icon{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(255,255,255,.06);flex-shrink:0;}
 .dps-card-body{flex:1;min-width:0;}
-.dps-card-name{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;
-  text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.dps-card-meta{font-size:12px;color:var(--grey);margin-top:3px;display:flex;gap:16px;flex-wrap:wrap;}
+.dps-card-name{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;}
+.dps-card-meta{font-size:12px;color:var(--grey);margin-top:3px;display:flex;gap:14px;flex-wrap:wrap;}
 .dps-card-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .dps-status{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:20px;}
-.status-en_cours{background:rgba(39,174,96,.15);color:#2ecc71;border:1px solid rgba(39,174,96,.3);}
-.status-termine{background:rgba(138,154,176,.1);color:var(--grey);border:1px solid rgba(138,154,176,.2);}
-.status-planifie{background:rgba(240,165,0,.12);color:var(--gold);border:1px solid rgba(240,165,0,.25);}
-.dps-arrow{width:32px;height:32px;border-radius:8px;border:1px solid rgba(255,255,255,.1);
-  display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--grey);transition:all .2s;}
+.s-planifie{background:rgba(240,165,0,.12);color:var(--gold);border:1px solid rgba(240,165,0,.25);}
+.s-en_cours{background:rgba(39,174,96,.15);color:#2ecc71;border:1px solid rgba(39,174,96,.3);}
+.s-termine{background:rgba(138,154,176,.1);color:var(--grey);border:1px solid rgba(138,154,176,.2);}
+.dps-arrow{width:30px;height:30px;border-radius:8px;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--grey);transition:all .2s;}
 .dps-card:hover .dps-arrow{background:var(--red);border-color:var(--red);color:white;}
 .empty-state{text-align:center;padding:60px 20px;color:var(--grey);}
 .empty-icon{font-size:56px;margin-bottom:16px;opacity:.4;}
-.empty-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;
-  text-transform:uppercase;margin-bottom:8px;color:var(--white);opacity:.5;}
+.empty-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;text-transform:uppercase;margin-bottom:8px;opacity:.5;}
 .empty-desc{font-size:14px;opacity:.6;}
-
 /* QUICK */
 .quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;padding:0 40px;}
-.quick-card{background:rgba(17,34,64,.5);border:1px solid var(--border);border-radius:10px;
-  padding:16px 18px;transition:all .2s;text-decoration:none;color:inherit;display:flex;align-items:center;gap:12px;}
+.quick-card{background:rgba(17,34,64,.5);border:1px solid var(--border);border-radius:10px;padding:16px 18px;transition:all .2s;text-decoration:none;color:inherit;display:flex;align-items:center;gap:12px;}
 .quick-card:hover{border-color:rgba(240,165,0,.3);background:rgba(17,34,64,.8);transform:translateY(-2px);}
 .quick-icon{font-size:24px;flex-shrink:0;}
 .quick-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;}
 .quick-desc{font-size:11px;color:var(--grey);margin-top:2px;}
-
 /* MODAL */
-.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(7,17,31,.85);backdrop-filter:blur(8px);
-  display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(7,17,31,.85);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
 .modal-overlay.open{opacity:1;pointer-events:all;}
-.modal{width:min(560px,92vw);background:linear-gradient(160deg,#0f2040,#0c1a30);
-  border:1px solid var(--border);border-radius:16px;padding:36px;
-  transform:translateY(20px);transition:transform .3s;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.modal{width:min(560px,92vw);background:linear-gradient(160deg,#0f2040,#0c1a30);border:1px solid var(--border);border-radius:16px;padding:36px;transform:translateY(20px);transition:transform .3s;box-shadow:0 20px 60px rgba(0,0,0,.5);}
 .modal-overlay.open .modal{transform:translateY(0);}
-.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;
-  text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;}
 .modal-sub{font-size:13px;color:var(--grey);margin-bottom:28px;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
 .form-row.full{grid-template-columns:1fr;}
 .form-group{display:flex;flex-direction:column;gap:6px;}
 .form-label{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);}
-.form-input,.form-select{background:rgba(26,51,88,.5);border:1px solid rgba(240,165,0,.15);color:var(--white);
-  font-family:'Barlow',sans-serif;font-size:14px;padding:10px 14px;border-radius:8px;outline:none;
-  transition:border-color .2s;width:100%;}
+.form-input,.form-select{background:rgba(26,51,88,.5);border:1px solid rgba(240,165,0,.15);color:var(--white);font-family:'Barlow',sans-serif;font-size:14px;padding:10px 14px;border-radius:8px;outline:none;transition:border-color .2s;width:100%;}
 .form-input:focus,.form-select:focus{border-color:rgba(240,165,0,.5);}
 .form-select option{background:#112240;color:var(--white);}
-.form-input.error{border-color:var(--red2);}
 .modal-actions{display:flex;gap:12px;margin-top:24px;justify-content:flex-end;}
-.btn-cancel{background:transparent;border:1px solid rgba(255,255,255,.1);color:var(--grey);
-  font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;
-  padding:10px 20px;border-radius:8px;cursor:pointer;transition:all .2s;letter-spacing:.05em;}
-.btn-cancel:hover{border-color:rgba(255,255,255,.2);color:var(--white);}
-.btn-create{background:linear-gradient(135deg,var(--red),var(--red2));border:none;color:white;
-  font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;
-  padding:10px 24px;border-radius:8px;cursor:pointer;transition:all .2s;letter-spacing:.06em;
-  text-transform:uppercase;box-shadow:0 4px 15px var(--glow);}
-.btn-create:hover{transform:translateY(-1px);}
-
+.btn-cancel{background:transparent;border:1px solid rgba(255,255,255,.1);color:var(--grey);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;padding:10px 20px;border-radius:8px;cursor:pointer;}
+.btn-create{background:linear-gradient(135deg,var(--red),var(--red2));border:none;color:white;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;padding:10px 24px;border-radius:8px;cursor:pointer;text-transform:uppercase;letter-spacing:.06em;box-shadow:0 4px 15px var(--glow);}
 .footer{text-align:center;padding:40px;font-size:12px;color:var(--grey);border-top:1px solid var(--border);margin-top:40px;}
 .footer strong{color:var(--red2);}
-
 @media(max-width:640px){
   .header{padding:14px 16px;}.btn-logout{display:none;}
   .hero{padding:24px 16px 16px;flex-direction:column;align-items:flex-start;}
-  .stats-bar{margin:0 16px 20px;}.stat-item{padding:12px 8px;}
-  .section-header,.dps-grid,.quick-grid{padding-left:16px;padding-right:16px;}
+  .stats-bar{margin:0 16px 20px;}
+  .section-header,#dps-list,.quick-grid{padding-left:16px;padding-right:16px;}
   .form-row{grid-template-columns:1fr;}.modal{padding:24px 20px;}
 }
 </style>
@@ -181,9 +118,9 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
-    <div class="login-logo">🛡️</div>
+    <div class="login-logo">&#128737;</div>
     <div class="login-title">Secouristes du Pays d'Aix</div>
-    <div class="login-sub">Portail opérationnel SSA13 — Accès sécurisé</div>
+    <div class="login-sub">Portail operationnel SSA13 - Acces securise</div>
     <div class="pin-label">Entrez votre code PIN</div>
     <div class="pin-dots">
       <div class="pin-dot" id="d0"></div>
@@ -202,7 +139,7 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
       <button class="pin-btn" onclick="pinPress(8)">8</button>
       <button class="pin-btn" onclick="pinPress(9)">9</button>
       <button class="pin-btn zero" onclick="pinPress(0)">0</button>
-      <button class="pin-btn del" onclick="pinDel()">⌫</button>
+      <button class="pin-btn del" onclick="pinDel()">&#9003;</button>
     </div>
     <div class="login-error" id="login-error"></div>
   </div>
@@ -212,259 +149,280 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
 <div id="dashboard" style="display:none">
   <header class="header">
     <div class="header-brand">
-      <div class="header-badge">🛡️</div>
+      <div class="header-badge">&#128737;</div>
       <div>
-        <div class="header-name">SSA13 · Portail Opérationnel</div>
-        <div class="header-sub">Secouristes du Pays d'Aix — FFSS</div>
+        <div class="header-name">SSA13 &middot; Portail Operationnel</div>
+        <div class="header-sub">Secouristes du Pays d'Aix &mdash; FFSS</div>
       </div>
     </div>
     <div class="header-right">
       <div>
         <div class="clock" id="clock">00:00:00</div>
-        <div class="clock-date" id="date">—</div>
+        <div class="clock-date" id="date-display">-</div>
       </div>
-      <button class="btn-logout" onclick="logout()">⬡ Déconnexion</button>
+      <button class="btn-logout" onclick="logout()">Deconnexion</button>
     </div>
   </header>
 
   <section class="hero">
     <div>
-      <div class="hero-tag">🔴 Dispositifs Prévisionnels de Secours</div>
+      <div class="hero-tag">&#128308; Dispositifs Preventionnels de Secours</div>
       <h1>Gestion des <span>DPS</span></h1>
-      <p class="hero-desc">Créez et accédez à vos dossiers DPS — fiche bilan, main courante et récapitulatif centralisés.</p>
+      <p class="hero-desc">Creez et accedez a vos dossiers DPS centralises.</p>
     </div>
-    <button class="btn-new-dps" onclick="openModal()">
-      <span>➕</span> Nouveau DPS
-    </button>
+    <button class="btn-new-dps" onclick="openModal()">+ Nouveau DPS</button>
   </section>
 
   <div class="stats-bar">
-    <div class="stat-item"><div class="stat-num gold" id="stat-total">0</div><div class="stat-label">DPS Total</div></div>
-    <div class="stat-item"><div class="stat-num green" id="stat-encours">0</div><div class="stat-label">En cours</div></div>
-    <div class="stat-item"><div class="stat-num" id="stat-planifie" style="color:var(--gold)">0</div><div class="stat-label">Planifiés</div></div>
-    <div class="stat-item"><div class="stat-num" id="stat-termine">0</div><div class="stat-label">Terminés</div></div>
+    <div class="stat-item"><div class="stat-num" id="st-total" style="color:var(--gold)">0</div><div class="stat-label">DPS Total</div></div>
+    <div class="stat-item"><div class="stat-num" id="st-encours" style="color:var(--green)">0</div><div class="stat-label">En cours</div></div>
+    <div class="stat-item"><div class="stat-num" id="st-planifie" style="color:var(--gold)">0</div><div class="stat-label">Planifies</div></div>
+    <div class="stat-item"><div class="stat-num" id="st-termine">0</div><div class="stat-label">Termines</div></div>
   </div>
 
-  <div class="section-header">
+  <div class="section-header" style="margin-top:8px;">
     <div class="section-label">Mes DPS</div>
     <div class="section-line"></div>
   </div>
-  <div class="dps-grid" id="dps-list"></div>
 
-  <div class="section-header" style="margin-top:36px">
+  <div id="dps-list"></div>
+
+  <div class="section-header" style="margin-top:28px;">
     <div class="section-label">Outils rapides</div>
     <div class="section-line"></div>
   </div>
   <div class="quick-grid">
     <a class="quick-card" href="checklist_vpsp.html" target="_blank">
-      <span class="quick-icon">✅</span>
-      <div><div class="quick-name">Check-list VPSP</div><div class="quick-desc">Vérification véhicule pré-DPS</div></div>
+      <span class="quick-icon">&#9989;</span>
+      <div><div class="quick-name">Check-list VPSP</div><div class="quick-desc">Verification vehicule pre-DPS</div></div>
     </a>
     <a class="quick-card" href="passeport-benevole-ffss.html" target="_blank">
-      <span class="quick-icon">🎖️</span>
-      <div><div class="quick-name">Passeport Bénévole</div><div class="quick-desc">Suivi individuel bénévole</div></div>
+      <span class="quick-icon">&#127894;</span>
+      <div><div class="quick-name">Passeport Benevole</div><div class="quick-desc">Suivi individuel benevole</div></div>
     </a>
   </div>
 
-  <footer class="footer">
-    <strong>SSA13</strong> · Secouristes du Pays d'Aix · FFSS — Portail opérationnel · Usage interne exclusif
-  </footer>
+  <footer class="footer"><strong>SSA13</strong> &middot; Secouristes du Pays d'Aix &middot; FFSS &mdash; Usage interne</footer>
 </div>
 
 <!-- MODAL -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
   <div class="modal">
-    <div class="modal-title">➕ Nouveau DPS</div>
+    <div class="modal-title">+ Nouveau DPS</div>
     <div class="modal-sub">Renseignez les informations du dispositif</div>
-    <div class="form-row full">
-      <div class="form-group">
-        <label class="form-label">Nom de l'événement *</label>
-        <input class="form-input" id="f-nom" type="text" placeholder="ex : Trail Château Gombert">
-      </div>
-    </div>
+    <div class="form-row full"><div class="form-group">
+      <label class="form-label">Nom de l'evenement *</label>
+      <input class="form-input" id="f-nom" type="text" placeholder="ex : Trail Chateau Gombert">
+    </div></div>
     <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Date *</label>
-        <input class="form-input" id="f-date" type="date">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Heure début</label>
-        <input class="form-input" id="f-heure" type="time" value="08:00">
-      </div>
+      <div class="form-group"><label class="form-label">Date *</label><input class="form-input" id="f-date" type="date"></div>
+      <div class="form-group"><label class="form-label">Heure debut</label><input class="form-input" id="f-heure" type="time" value="08:00"></div>
     </div>
-    <div class="form-row full">
-      <div class="form-group">
-        <label class="form-label">Lieu</label>
-        <input class="form-input" id="f-lieu" type="text" placeholder="ex : Marseille 13ème">
-      </div>
-    </div>
+    <div class="form-row full"><div class="form-group">
+      <label class="form-label">Lieu</label>
+      <input class="form-input" id="f-lieu" type="text" placeholder="ex : Marseille 13eme">
+    </div></div>
     <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Type d'événement</label>
+      <div class="form-group"><label class="form-label">Type</label>
         <select class="form-select" id="f-type">
-          <option value="Sportif">🏃 Sportif</option>
-          <option value="Culturel">🎭 Culturel</option>
-          <option value="Festif">🎉 Festif</option>
-          <option value="Scolaire">🏫 Scolaire</option>
-          <option value="Autre">📌 Autre</option>
+          <option value="Sportif">Sportif</option>
+          <option value="Culturel">Culturel</option>
+          <option value="Festif">Festif</option>
+          <option value="Scolaire">Scolaire</option>
+          <option value="Autre">Autre</option>
         </select>
       </div>
-      <div class="form-group">
-        <label class="form-label">Statut</label>
+      <div class="form-group"><label class="form-label">Statut</label>
         <select class="form-select" id="f-statut">
-          <option value="planifie">📅 Planifié</option>
-          <option value="en_cours">🟢 En cours</option>
-          <option value="termine">✅ Terminé</option>
+          <option value="planifie">Planifie</option>
+          <option value="en_cours">En cours</option>
+          <option value="termine">Termine</option>
         </select>
       </div>
     </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Annuler</button>
-      <button class="btn-create" onclick="createDPS()">Créer le DPS →</button>
+      <button class="btn-create" onclick="createDPS()">Creer le DPS</button>
     </div>
   </div>
 </div>
 
 <script>
-const CORRECT_PIN = '1313';
-let pinBuffer = '';
-if (localStorage.getItem('ssa13_auth')==='true') showDashboard();
+// ── CONFIG ──
+var PIN = '1313';
+
+// ── DONNEES ──
+function getDPS(){
+  try{ return JSON.parse(localStorage.getItem('ssa13_dps')||'[]'); }
+  catch(e){ return []; }
+}
+function saveDPS(l){ localStorage.setItem('ssa13_dps', JSON.stringify(l)); }
+
+// ── AUTH ──
+var pinBuf = '';
+if(localStorage.getItem('ssa13_auth')==='true'){ showDashboard(); }
 
 function pinPress(n){
-  if(pinBuffer.length>=CORRECT_PIN.length)return;
-  pinBuffer+=n;updateDots();
-  if(pinBuffer.length===CORRECT_PIN.length)setTimeout(checkPin,150);
+  if(pinBuf.length>=PIN.length) return;
+  pinBuf += String(n);
+  updateDots();
+  if(pinBuf.length===PIN.length) setTimeout(checkPin, 150);
 }
-function pinDel(){pinBuffer=pinBuffer.slice(0,-1);updateDots();document.getElementById('login-error').textContent='';}
-function updateDots(){for(let i=0;i<CORRECT_PIN.length;i++)document.getElementById('d'+i).className='pin-dot'+(i<pinBuffer.length?' filled':'');}
+function pinDel(){
+  pinBuf = pinBuf.slice(0,-1);
+  updateDots();
+  document.getElementById('login-error').textContent='';
+}
+function updateDots(){
+  for(var i=0;i<PIN.length;i++){
+    document.getElementById('d'+i).className='pin-dot'+(i<pinBuf.length?' filled':'');
+  }
+}
 function checkPin(){
-  if(pinBuffer===CORRECT_PIN){localStorage.setItem('ssa13_auth','true');showDashboard();}
-  else{
-    document.getElementById('login-error').textContent='Code incorrect. Réessayez.';
-    for(let i=0;i<CORRECT_PIN.length;i++)document.getElementById('d'+i).className='pin-dot error';
-    setTimeout(()=>{pinBuffer='';updateDots();document.getElementById('login-error').textContent='';},800);
+  if(pinBuf===PIN){
+    localStorage.setItem('ssa13_auth','true');
+    showDashboard();
+  } else {
+    document.getElementById('login-error').textContent='Code incorrect. Reessayez.';
+    for(var i=0;i<PIN.length;i++) document.getElementById('d'+i).className='pin-dot error';
+    setTimeout(function(){ pinBuf=''; updateDots(); document.getElementById('login-error').textContent=''; }, 800);
   }
 }
 function showDashboard(){
-  document.getElementById('dashboard').style.display='block';
-  document.getElementById('login-screen').classList.add('hidden');
-  setTimeout(()=>document.getElementById('login-screen').style.display='none',700);
-  startClock();renderDPS();
+  var db=document.getElementById('dashboard');
+  var ls=document.getElementById('login-screen');
+  db.style.display='block';
+  ls.classList.add('hidden');
+  setTimeout(function(){ ls.style.display='none'; }, 700);
+  startClock();
+  setTimeout(function(){ renderDPS(); }, 50);
 }
-function logout(){localStorage.removeItem('ssa13_auth');location.reload();}
-document.addEventListener('keydown',e=>{
-  if(document.getElementById('login-screen').classList.contains('hidden'))return;
-  if(e.key>='0'&&e.key<='9')pinPress(parseInt(e.key));
-  if(e.key==='Backspace')pinDel();
+function logout(){ localStorage.removeItem('ssa13_auth'); location.reload(); }
+
+document.addEventListener('keydown', function(e){
+  var ls=document.getElementById('login-screen');
+  if(ls.classList.contains('hidden')) return;
+  if(e.key>='0'&&e.key<='9') pinPress(parseInt(e.key));
+  if(e.key==='Backspace') pinDel();
 });
 
+// ── HORLOGE ──
 function startClock(){
-  const J=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
-  const M=['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'];
+  var J=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  var M=['Jan','Fev','Mar','Avr','Mai','Juin','Juil','Aout','Sep','Oct','Nov','Dec'];
   function tick(){
-    const n=new Date();
-    document.getElementById('clock').textContent=[n.getHours(),n.getMinutes(),n.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');
-    document.getElementById('date').textContent=`${J[n.getDay()]} ${n.getDate()} ${M[n.getMonth()]} ${n.getFullYear()}`;
+    var n=new Date();
+    var hh=String(n.getHours()).padStart(2,'0');
+    var mm=String(n.getMinutes()).padStart(2,'0');
+    var ss=String(n.getSeconds()).padStart(2,'0');
+    document.getElementById('clock').textContent=hh+':'+mm+':'+ss;
+    document.getElementById('date-display').textContent=J[n.getDay()]+' '+n.getDate()+' '+M[n.getMonth()]+' '+n.getFullYear();
   }
-  tick();setInterval(tick,1000);
+  tick(); setInterval(tick, 1000);
 }
 
-function getDPS(){try{return JSON.parse(localStorage.getItem('ssa13_dps')||'[]');}catch{return[];}}
-function saveDPS(l){localStorage.setItem('ssa13_dps',JSON.stringify(l));}
-function genID(){
-  const n=new Date();
-  const d=`${n.getFullYear()}${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}`;
-  return `DPS-${d}-${String(getDPS().length+1).padStart(3,'0')}`;
+// ── RENDER DPS ──
+var ICONS = {Sportif:'&#127939;',Culturel:'&#127917;',Festif:'&#127881;',Scolaire:'&#127979;',Autre:'&#128204;'};
+var SLABELS = {en_cours:'En cours',termine:'Termine',planifie:'Planifie'};
+
+function renderDPS(){
+  var list = getDPS();
+  var n = list.length;
+
+  // Stats
+  var ec=0, pl=0, te=0;
+  for(var i=0;i<n;i++){
+    if(list[i].statut==='en_cours') ec++;
+    else if(list[i].statut==='planifie') pl++;
+    else if(list[i].statut==='termine') te++;
+  }
+  document.getElementById('st-total').textContent   = n;
+  document.getElementById('st-encours').textContent = ec;
+  document.getElementById('st-planifie').textContent= pl;
+  document.getElementById('st-termine').textContent = te;
+
+  var el = document.getElementById('dps-list');
+  if(!el) return;
+
+  if(n===0){
+    el.innerHTML='<div class="empty-state">'
+      +'<div class="empty-icon">&#128193;</div>'
+      +'<div class="empty-title">Aucun DPS cree</div>'
+      +'<div class="empty-desc">Cliquez sur "Nouveau DPS" pour commencer.</div>'
+      +'</div>';
+    return;
+  }
+
+  var html = '';
+  for(var i=0;i<n;i++){
+    var d = list[i];
+    var icon = ICONS[d.type]||'&#128204;';
+    var nom  = (d.nom||'').replace(/[<>]/g,'');
+    var dt   = '-';
+    try{ if(d.date) dt=new Date(d.date+'T12:00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}); }catch(e){}
+    var sc   = d.statut==='en_cours'?'#27ae60':d.statut==='termine'?'#8a9ab0':'#f0a500';
+    var sl   = SLABELS[d.statut]||d.statut||'-';
+    var scls = 's-'+(d.statut||'planifie');
+    var meta = '&#128197; '+dt;
+    if(d.heure) meta += ' &nbsp;&#128336; '+d.heure;
+    if(d.lieu)  meta += ' &nbsp;&#128205; '+d.lieu;
+    if(d.type)  meta += ' &nbsp;&#127991; '+d.type;
+
+    html += '<div class="dps-card" style="border-left-color:'+sc+';" onclick="window.open('dossier.html?id='+d.id+'','_blank')">'
+      +'<div class="dps-card-inner">'
+      +'<div class="dps-card-icon">'+icon+'</div>'
+      +'<div class="dps-card-body" style="flex:1;">'
+        +'<div class="dps-card-name">'+nom+'</div>'
+        +'<div class="dps-card-meta">'+meta+'</div>'
+      +'</div>'
+      +'<div class="dps-card-right">'
+        +'<span class="dps-status '+scls+'">'+sl+'</span>'
+        +'<div class="dps-arrow">&rarr;</div>'
+      +'</div>'
+      +'</div>'
+      +'</div>';
+  }
+  el.innerHTML = html;
 }
 
+// Rafraichir quand on revient sur l'onglet
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState==='visible' && localStorage.getItem('ssa13_auth')==='true') renderDPS();
+});
+
+// ── MODAL ──
 function openModal(){
   document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
-  document.getElementById('f-nom').classList.remove('error');
+  document.getElementById('f-nom').value='';
   document.getElementById('modal-overlay').classList.add('open');
 }
-function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
-function closeModalOutside(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalOutside(e){ if(e.target===document.getElementById('modal-overlay')) closeModal(); }
+
+function genID(){
+  var n=new Date();
+  var d=n.getFullYear()+String(n.getMonth()+1).padStart(2,'0')+String(n.getDate()).padStart(2,'0');
+  return 'DPS-'+d+'-'+String(getDPS().length+1).padStart(3,'0');
+}
 
 function createDPS(){
-  const nom=document.getElementById('f-nom').value.trim();
-  const date=document.getElementById('f-date').value;
-  if(!nom||!date){document.getElementById('f-nom').classList.add('error');return;}
-  const dps={
-    id:genID(),nom,date,
+  var nom = document.getElementById('f-nom').value.trim();
+  var dat = document.getElementById('f-date').value;
+  if(!nom||!dat){ document.getElementById('f-nom').style.borderColor='var(--red2)'; return; }
+  var dps={
+    id:genID(), nom:nom, date:dat,
     heure:document.getElementById('f-heure').value,
     lieu:document.getElementById('f-lieu').value.trim(),
     type:document.getElementById('f-type').value,
     statut:document.getElementById('f-statut').value,
     createdAt:Date.now()
   };
-  const list=getDPS();list.unshift(dps);saveDPS(list);
-  closeModal();renderDPS();
-  window.open(`dossier.html?id=${dps.id}`,'_blank');
-}
-
-const statusLabel={en_cours:'En cours',termine:'Terminé',planifie:'Planifié'};
-const statusColor={en_cours:'#27ae60',termine:'#8a9ab0',planifie:'#f0a500'};
-const typeIcon={Sportif:'🏃',Culturel:'🎭',Festif:'🎉',Scolaire:'🏫',Autre:'📌'};
-
-/* ── RECHARGEMENT quand on revient sur l'onglet ── */
-document.addEventListener('visibilitychange', ()=>{
-  if(document.visibilityState==='visible' && localStorage.getItem('ssa13_auth')==='true') renderDPS();
-});
-
-function renderDPS(){
-  // Sécurité : dashboard doit être affiché
-  const dash = document.getElementById('dashboard');
-  if(!dash || dash.style.display==='none') return;
-
-  const list = getDPS();
-
-  // Stats
-  const setEl = (id, val) => { const e=document.getElementById(id); if(e) e.textContent=val; };
-  setEl('stat-total',   list.length);
-  setEl('stat-encours', list.filter(d=>d.statut==='en_cours').length);
-  setEl('stat-planifie',list.filter(d=>d.statut==='planifie').length);
-  setEl('stat-termine', list.filter(d=>d.statut==='termine').length);
-
-  const el = document.getElementById('dps-list');
-  if(!el) return;
-
-  if(!list.length){
-    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📁</div>'
-      +'<div class="empty-title">Aucun DPS créé</div>'
-      +'<div class="empty-desc">Cliquez sur "Nouveau DPS" pour créer votre premier dispositif.</div></div>';
-    return;
-  }
-
-  // Génération des cartes sans template literals imbriqués
-  let html = '';
-  list.forEach(function(dps){
-    var dt = '—';
-    try{
-      if(dps.date) dt = new Date(dps.date+'T12:00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
-    }catch(e){}
-    var icon   = typeIcon[dps.type]   || '📌';
-    var color  = statusColor[dps.statut] || '#8a9ab0';
-    var label  = statusLabel[dps.statut] || dps.statut || '—';
-    var nom    = (dps.nom||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    var meta   = '<span>📅 '+dt+'</span>';
-    if(dps.heure) meta += '<span>🕐 '+dps.heure+'</span>';
-    if(dps.lieu)  meta += '<span>📍 '+(dps.lieu||'')+'</span>';
-    meta += '<span>🏷️ '+(dps.type||'')+'</span>';
-
-    html += '<a class="dps-card" href="dossier.html?id='+dps.id+'" target="_blank">'
-      +'<div class="dps-card-status-bar" style="width:4px;background:'+color+';position:absolute;left:0;top:0;bottom:0;border-radius:4px 0 0 4px;"></div>'
-      +'<div class="dps-card-icon">'+icon+'</div>'
-      +'<div class="dps-card-body">'
-      +'<div class="dps-card-name">'+nom+'</div>'
-      +'<div class="dps-card-meta">'+meta+'</div>'
-      +'</div>'
-      +'<div class="dps-card-right">'
-      +'<span class="dps-status status-'+dps.statut+'">'+label+'</span>'
-      +'<div class="dps-arrow">→</div>'
-      +'</div>'
-      +'</a>';
-  });
-  el.innerHTML = html;
+  var list=getDPS();
+  list.unshift(dps);
+  saveDPS(list);
+  closeModal();
+  renderDPS();
+  window.open('dossier.html?id='+dps.id,'_blank');
 }
 </script>
 </body>
