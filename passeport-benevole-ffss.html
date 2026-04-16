@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passeport Bénévole — FFSS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#00205B; --navy-d:#001040; --navy-l:#1a3a7a;
+  --red:#CC0033; --gold:#C8902E;
+  --g50:#F8F9FA; --g100:#F1F3F5; --g200:#E9ECEF; --g300:#DEE2E6;
+  --g400:#CED4DA; --g500:#ADB5BD; --g600:#6C757D; --g700:#495057;
+  --g800:#343A40; --g900:#212529;
+  --green:#198754; --info:#0ea5e9;
+  --fs:'DM Sans',system-ui,sans-serif;
+  --ff:'Libre Baskerville',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fs);background:var(--g100);color:var(--g900);font-size:14px;line-height:1.6}
+
+/* HEADER */
+.hdr{background:var(--navy);position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.35)}
+.tri{height:5px;background:linear-gradient(to right,#002395 33.33%,white 33.33%,white 66.66%,#ED2939 66.66%)}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;padding:10px 24px;gap:12px}
+.hdr-brand{display:flex;align-items:center;gap:14px}
+.ffss-logo{width:52px;height:52px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;flex-direction:column;text-align:center}
+.ffss-logo span{font-weight:700;font-size:12px;color:var(--navy);line-height:1.1;display:block}
+.ffss-logo small{font-size:7px;color:var(--red);font-weight:600;letter-spacing:.05em;display:block}
+.hdr-h1{font-family:var(--ff);font-size:17px;font-weight:700;color:white;letter-spacing:.01em}
+.hdr-sub{font-size:10px;color:rgba(255,255,255,.65);letter-spacing:.07em;text-transform:uppercase;margin-top:1px}
+.badge-etat{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.9);font-size:10px;font-weight:500;padding:4px 10px;border-radius:20px;white-space:nowrap}
+
+/* TABS */
+.tabs{background:var(--navy-d);display:flex;overflow-x:auto;padding:0 20px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:none;border:none;color:rgba(255,255,255,.55);padding:11px 14px;cursor:pointer;font-family:var(--fs);font-size:11px;font-weight:500;white-space:nowrap;letter-spacing:.05em;text-transform:uppercase;border-bottom:3px solid transparent;transition:all .15s}
+.tab:hover{color:rgba(255,255,255,.85)}
+.tab.on{color:white;border-bottom-color:var(--gold)}
+
+/* PROGRESS */
+.progress-wrap{background:white;border:1px solid var(--g200);border-radius:8px;padding:14px 20px;margin-bottom:18px;display:flex;align-items:center;gap:16px}
+.progress-track{flex:1;background:var(--g200);border-radius:100px;height:7px;overflow:hidden}
+.progress-fill{height:100%;border-radius:100px;background:linear-gradient(to right,var(--navy),var(--red));transition:width .5s}
+.pct-lbl{font-size:13px;font-weight:600;color:var(--navy);min-width:44px;text-align:right}
+.progress-caption{font-size:11px;color:var(--g500);flex-shrink:0}
+
+/* LAYOUT */
+.main{max-width:1100px;margin:0 auto;padding:20px 24px}
+.panel{display:none}.panel.on{display:block}
+.sec-intro{margin-bottom:18px}
+.sec-intro h2{font-family:var(--ff);font-size:21px;color:var(--navy);margin-bottom:3px}
+.sec-intro p{font-size:13px;color:var(--g600)}
+
+/* CARDS */
+.card{background:white;border-radius:8px;padding:22px;margin-bottom:18px;border:1px solid var(--g200)}
+.ch{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid var(--navy)}
+.ci{width:30px;height:30px;background:var(--navy);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.ct{font-family:var(--ff);font-size:15px;font-weight:700;color:var(--navy)}
+.cs{font-size:11px;color:var(--g600);margin-top:1px}
+.card-sub-hdr{display:flex;align-items:center;gap:10px;margin:18px 0 12px;padding-top:18px;border-top:1px solid var(--g200)}
+.card-sub-hdr .ci{background:var(--red)}
+.card-sub-hdr .ct{font-size:14px}
+
+/* FORM */
+.fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+.fgrp{display:flex;flex-direction:column;gap:4px}
+.fgrp.full{grid-column:1/-1}
+.fgrp.half{grid-column:span 2}
+label{font-size:10px;font-weight:500;color:var(--g600);text-transform:uppercase;letter-spacing:.07em}
+input[type=text],input[type=date],input[type=email],input[type=tel],input[type=number],select,textarea{
+  width:100%;padding:7px 11px;border:1.5px solid var(--g300);border-radius:6px;
+  font-family:var(--fs);font-size:13px;color:var(--g900);background:white;
+  transition:border-color .15s;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(0,32,91,.1)}
+textarea{resize:vertical;min-height:75px}
+.helper{font-size:10px;color:var(--g500);margin-top:2px}
+.divider{height:1px;background:var(--g200);margin:18px 0}
+
+/* NOTES */
+.legal-note{background:#eef3ff;border:1px solid #c7d3f5;border-radius:6px;padding:10px 14px;font-size:11px;color:#1a3a7a;margin-bottom:16px;line-height:1.5}
+.alert-info{background:#e8f4f8;border-left:4px solid var(--info);padding:9px 13px;border-radius:0 6px 6px 0;font-size:11px;color:#0c4a6e;margin-bottom:14px}
+
+/* STATS */
+.stats-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:0}
+.stat-c{background:white;border:1px solid var(--g200);border-radius:8px;padding:14px 18px;flex:1;min-width:120px;text-align:center}
+.stat-n{font-size:26px;font-weight:700;color:var(--navy);font-family:var(--ff);line-height:1;margin-bottom:3px}
+.stat-l{font-size:10px;color:var(--g600);text-transform:uppercase;letter-spacing:.06em}
+
+/* PHOTO ZONE */
+.id-top{display:flex;gap:22px;align-items:flex-start}
+.photo-z{width:130px;height:165px;border:2px dashed var(--g400);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:var(--g50);position:relative;overflow:hidden;flex-shrink:0;transition:border-color .2s}
+.photo-z:hover{border-color:var(--navy)}
+.photo-z img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0}
+.photo-txt{text-align:center;font-size:11px;color:var(--g500);z-index:1;pointer-events:none}
+.id-fields{flex:1}
+
+/* CERT CARDS */
+.cert-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+.cert-card{border:1.5px solid var(--g200);border-radius:8px;padding:14px;transition:border-color .2s}
+.cert-card.got{border-color:var(--green);background:#f0fdf4}
+.cert-name{font-weight:600;font-size:13px;color:var(--navy);margin-bottom:8px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
+.cbadge{font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0;margin-top:1px}
+.cbadge.got{background:var(--green);color:white}
+.cbadge.no{background:var(--g300);color:var(--g700)}
+.cert-ff{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:6px}
+.cert-ff .fgrp{gap:2px}
+.cert-ff label{font-size:9px}
+.cert-ff input{font-size:11px;padding:4px 7px}
+
+/* HABILITATIONS */
+.hab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
+.hab-item{display:flex;align-items:flex-start;gap:11px;padding:13px;border:1.5px solid var(--g200);border-radius:8px;transition:all .2s}
+.hab-item.on{border-color:var(--navy);background:#f0f4ff}
+.hab-chk{width:18px;height:18px;flex-shrink:0;cursor:pointer;accent-color:var(--navy);margin-top:2px}
+.hab-inf{flex:1}
+.hab-title{font-weight:600;font-size:13px;margin-bottom:2px}
+.hab-code{font-size:10px;color:var(--g500);text-transform:uppercase;letter-spacing:.07em}
+.hab-dates{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px}
+.hab-dates .fgrp{gap:2px}
+.hab-dates label{font-size:9px}
+.hab-dates input{font-size:11px;padding:4px 6px}
+
+/* DISTINCTIONS */
+.dist-item{display:flex;align-items:flex-start;gap:14px;padding:14px;border:1.5px solid var(--g200);border-radius:8px;margin-bottom:10px}
+.medal{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.m-bronze{background:linear-gradient(135deg,#cd7f32,#b8690a)}
+.m-silver{background:linear-gradient(135deg,#c0c0c0,#9a9a9a)}
+.m-gold{background:linear-gradient(135deg,#ffd700,#c8902e)}
+.m-state{background:linear-gradient(135deg,var(--navy),var(--navy-d))}
+.dist-name{font-weight:600;font-size:13px;margin-bottom:8px}
+
+/* TABLES */
+.tbl-wrap{overflow-x:auto}
+.dyn-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.dyn-tbl th{background:var(--navy);color:white;padding:9px 11px;text-align:left;font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap}
+.dyn-tbl td{padding:7px 9px;border-bottom:1px solid var(--g200);vertical-align:middle}
+.dyn-tbl tr:last-child td{border-bottom:none}
+.dyn-tbl tr:hover td{background:var(--g50)}
+.dyn-tbl td input,.dyn-tbl td select{padding:4px 7px;font-size:11px;border-radius:4px;width:100%;min-width:70px}
+.btn-add{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 14px;background:var(--navy);color:white;border:none;border-radius:6px;cursor:pointer;font-family:var(--fs);font-size:12px;font-weight:500;transition:background .15s}
+.btn-add:hover{background:var(--navy-l)}
+.btn-del{background:none;border:none;color:var(--red);cursor:pointer;font-size:15px;padding:2px 5px;border-radius:4px;line-height:1;transition:background .1s}
+.btn-del:hover{background:#fff0f0}
+
+/* SIGNATURE */
+.sig-z{border:1.5px solid var(--g300);border-radius:6px;height:90px;background:var(--g50);display:flex;align-items:center;justify-content:center;color:var(--g400);font-size:11px;margin-top:8px;font-style:italic}
+
+/* GRID HELPERS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* FOOTER */
+.footer{position:sticky;bottom:0;background:white;border-top:1px solid var(--g200);padding:10px 24px;display:flex;gap:10px;align-items:center;justify-content:space-between;z-index:50}
+.save-ind{font-size:11px;color:var(--g600);display:flex;align-items:center;gap:6px}
+.save-dot{width:7px;height:7px;border-radius:50%;background:var(--green);transition:background .3s}
+.ftr-btns{display:flex;gap:8px}
+.btn-p{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--navy);color:white;border:none;border-radius:6px;cursor:pointer;font-family:var(--fs);font-size:13px;font-weight:500;transition:all .15s}
+.btn-p:hover{background:var(--navy-l)}
+.btn-s{background:white;color:var(--navy);border:1.5px solid var(--navy);padding:7px 14px;border-radius:6px;cursor:pointer;font-family:var(--fs);font-size:13px;font-weight:500}
+.btn-s:hover{background:var(--g50)}
+
+/* PRINT */
+@page{size:A4;margin:15mm 15mm 20mm 15mm}
+@media print{
+  body{background:white;font-size:12px}
+  .hdr{position:static;box-shadow:none}
+  .tabs,.footer,.btn-add,.btn-del,.progress-wrap{display:none!important}
+  .main{padding:0;max-width:100%}
+  .panel{display:block!important}
+  .panel+.panel{page-break-before:always}
+  .card{break-inside:avoid;box-shadow:none;border:1px solid #ccc;margin-bottom:10px;padding:14px}
+  input,select,textarea{border:1px solid #bbb!important;background:white!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:11px}
+  .cert-card.got,.hab-item.on{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .dyn-tbl th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .tri{-webkit-print-color-adjust:exact;print-color-adjust:exact;height:3px}
+  .hdr-top{padding:8px 14px}
+  .ffss-logo{width:40px;height:40px}
+  .hdr-h1{font-size:14px}
+  .stats-row{gap:8px}
+  .stat-n{font-size:20px}
+  .medal{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sec-intro h2{font-size:16px}
+  .progress-wrap{display:none}
+  .badge-etat{border:1px solid #ccc;color:var(--navy);background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .legal-note,.alert-info{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .hab-dates{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .g2,.g3{grid-template-columns:1fr}
+  .id-top{flex-direction:column}
+  .photo-z{width:100%;height:110px}
+  .hab-dates{grid-template-columns:1fr 1fr}
+  .hdr-top{flex-wrap:wrap;gap:8px}
+  .badge-etat{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="tri"></div>
+  <div class="hdr-top">
+    <div class="hdr-brand">
+      <div class="ffss-logo">
+        <span>FFSS</span>
+        <small>SC</small>
+      </div>
+      <div>
+        <div class="hdr-h1">Passeport du Bénévole</div>
+        <div class="hdr-sub">Sécurité Civile · Sauvetage · Secourisme</div>
+      </div>
+    </div>
+    <div class="badge-etat">🇫🇷 Conforme aux préconisations de l'État · Loi ESS 2014-856</div>
+  </div>
+  <div class="tabs" id="tabs">
+    <button class="tab on" onclick="showTab(0)">① Identité</button>
+    <button class="tab" onclick="showTab(1)">② Certifications</button>
+    <button class="tab" onclick="showTab(2)">③ Habilitations FFSS</button>
+    <button class="tab" onclick="showTab(3)">④ Formation continue</button>
+    <button class="tab" onclick="showTab(4)">⑤ Engagements DPS</button>
+    <button class="tab" onclick="showTab(5)">⑥ Distinctions & VAE</button>
+    <button class="tab" onclick="showTab(6)">⑦ Validation</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- PROGRESSION -->
+  <div class="progress-wrap">
+    <div style="font-size:12px;font-weight:500;color:var(--navy);white-space:nowrap">Complétude du passeport</div>
+    <div class="progress-track"><div class="progress-fill" id="pbar" style="width:0%"></div></div>
+    <div class="pct-lbl" id="pct">0 %</div>
+    <div class="progress-caption">Remplissez chaque section pour valoriser pleinement l'engagement.</div>
+  </div>
+
+  <!-- ① IDENTITÉ -->
+  <div class="panel on" id="p0">
+    <div class="sec-intro">
+      <h2>Identification du bénévole</h2>
+      <p>Informations personnelles et administratives — conservées par l'association conformément au RGPD.</p>
+    </div>
+    <div class="legal-note">📋 <strong>Cadre légal :</strong> Ce passeport s'inscrit dans la loi n°2014-856 du 31 juillet 2014 relative à l'Économie Sociale et Solidaire, le décret n°2017-1104 du 27 juin 2017 et les recommandations du HCVA (Haut Conseil à la Vie Associative) pour la reconnaissance et la valorisation du bénévolat.</div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">👤</div><div><div class="ct">État civil &amp; coordonnées</div><div class="cs">Informations personnelles du bénévole</div></div></div>
+      <div class="id-top">
+        <div class="photo-z" onclick="document.getElementById('fi').click()" title="Cliquer pour ajouter une photo">
+          <img id="photo" src="" alt="" style="display:none">
+          <div class="photo-txt" id="phototxt"><div style="font-size:26px;margin-bottom:5px">📷</div><div>Photo d'identité</div><div style="font-size:9px;margin-top:2px">Cliquer pour ajouter</div></div>
+          <input type="file" id="fi" accept="image/*" style="display:none" onchange="loadPhoto(event)">
+        </div>
+        <div class="id-fields">
+          <div class="fg">
+            <div class="fgrp"><label>Nom de famille *</label><input type="text" id="nom" placeholder="DUPONT" oninput="as()"></div>
+            <div class="fgrp"><label>Prénom(s) *</label><input type="text" id="prenom" placeholder="Jean-Pierre" oninput="as()"></div>
+            <div class="fgrp"><label>Date de naissance</label><input type="date" id="ddn" oninput="as()"></div>
+            <div class="fgrp"><label>Lieu de naissance</label><input type="text" id="lieu-nais" placeholder="Marseille (13)" oninput="as()"></div>
+            <div class="fgrp"><label>Adresse</label><input type="text" id="adresse" placeholder="12 rue de la Paix" oninput="as()"></div>
+            <div class="fgrp"><label>Code postal &amp; Ville</label><input type="text" id="ville" placeholder="13100 Aix-en-Provence" oninput="as()"></div>
+            <div class="fgrp"><label>Téléphone</label><input type="tel" id="tel" placeholder="06 XX XX XX XX" oninput="as()"></div>
+            <div class="fgrp"><label>Email</label><input type="email" id="email" placeholder="prenom.nom@email.fr" oninput="as()"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">🏛️</div><div><div class="ct">Affiliation FFSS &amp; données associatives</div><div class="cs">Informations fédérales et administratives</div></div></div>
+      <div class="fg">
+        <div class="fgrp"><label>N° de licence FFSS</label><input type="text" id="num-lic" placeholder="N° licence fédérale" oninput="as()"></div>
+        <div class="fgrp"><label>Association locale</label><input type="text" id="asso" placeholder="SSA13 — Secouristes du Pays d'Aix" oninput="as()"></div>
+        <div class="fgrp"><label>Groupement / Délégation FFSS</label><input type="text" id="deleg" placeholder="FFSS Bouches-du-Rhône" oninput="as()"></div>
+        <div class="fgrp"><label>N° d'agrément préfectoral</label><input type="text" id="agrement" placeholder="13-XXX-XXXX" oninput="as()"></div>
+        <div class="fgrp"><label>Date d'adhésion</label><input type="date" id="date-adh" oninput="as()"></div>
+        <div class="fgrp"><label>Renouvellement annuel (dernier)</label><input type="date" id="date-renouv" oninput="as()"></div>
+        <div class="fgrp"><label>Fonction principale actuelle</label>
+          <select id="fonc-asso" onchange="as()">
+            <option value="">— Sélectionner —</option>
+            <option>Membre actif</option>
+            <option>Équipier Secouriste (ES)</option>
+            <option>Chef d'Équipe (CE)</option>
+            <option>Chef de Section (CS)</option>
+            <option>Directeur des Secours Médicaux (DSM)</option>
+            <option>Formateur PSE1/PSE2</option>
+            <option>Moniteur National de Secourisme (MNS)</option>
+            <option>Responsable de Formation (RF)</option>
+            <option>Responsable Emploi-Formation (REF)</option>
+            <option>Membre du bureau</option>
+            <option>Secrétaire</option>
+            <option>Trésorier</option>
+            <option>Président(e)</option>
+          </select>
+        </div>
+        <div class="fgrp"><label>N° carte nationale bénévole</label><input type="text" id="num-cnb" placeholder="Carte FFSS si délivrée" oninput="as()"></div>
+        <div class="fgrp full"><label>Autres fonctions / responsabilités</label><textarea id="autres-fonc" placeholder="Référent logistique, responsable matériel, délégué de section..." oninput="as()"></textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">📊</div><div><div class="ct">Tableau de bord d'engagement</div><div class="cs">Mis à jour automatiquement</div></div></div>
+      <div class="stats-row">
+        <div class="stat-c"><div class="stat-n" id="s-ans">—</div><div class="stat-l">Années d'ancienneté</div></div>
+        <div class="stat-c"><div class="stat-n" id="s-dps">—</div><div class="stat-l">DPS réalisés</div></div>
+        <div class="stat-c"><div class="stat-n" id="s-hrs">—</div><div class="stat-l">Heures bénévoles</div></div>
+        <div class="stat-c"><div class="stat-n" id="s-form">—</div><div class="stat-l">Formations suivies</div></div>
+        <div class="stat-c"><div class="stat-n" id="s-cert">—</div><div class="stat-l">Certifications obtenues</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② CERTIFICATIONS -->
+  <div class="panel" id="p1">
+    <div class="sec-intro"><h2>Formations certifiantes &amp; diplômes</h2><p>Certifications nationales reconnues par l'État — référentiel secourisme et sécurité civile.</p></div>
+    <div class="alert-info">ℹ️ Renseignez la date d'obtention pour chaque certification acquise. Le statut se met à jour automatiquement. Joignez les copies des attestations au dossier papier.</div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">🎓</div><div><div class="ct">Secourisme — Référentiel national</div><div class="cs">Arrêtés du 24 juillet 2007, 8 août 2012 et suivants — Ministère de l'Intérieur</div></div></div>
+      <div class="cert-grid" id="cg1"></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">🔧</div><div><div class="ct">Formations complémentaires &amp; habilitations techniques</div><div class="cs">Permis, formations transverses, habilitations spécialisées</div></div></div>
+      <div class="cert-grid" id="cg2"></div>
+    </div>
+  </div>
+
+  <!-- ③ HABILITATIONS FFSS -->
+  <div class="panel" id="p2">
+    <div class="sec-intro"><h2>Habilitations opérationnelles FFSS</h2><p>Qualifications internes délivrées par la FFSS pour l'exercice des missions de sécurité civile (agrément ministériel).</p></div>
+    <div class="legal-note">📌 <strong>Base réglementaire :</strong> Les habilitations FFSS sont délivrées conformément aux textes fédéraux et à l'agrément de sécurité civile accordé par arrêté ministériel, permettant aux associations de participer aux missions de secours à personnes (article L. 1424-2 du CGCT).</div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">🦺</div><div><div class="ct">Fonctions opérationnelles — Dispositifs Prévisionnels de Secours</div><div class="cs">Niveaux d'engagement sur DPS conformément aux textes FFSS</div></div></div>
+      <div class="hab-grid" id="hg1"></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">📚</div><div><div class="ct">Fonctions pédagogiques &amp; d'encadrement</div><div class="cs">Rôles de formation au sein de la FFSS</div></div></div>
+      <div class="hab-grid" id="hg2"></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">🚐</div><div><div class="ct">Habilitations techniques &amp; spécialités</div><div class="cs">Conduite, équipements spéciaux, référents</div></div></div>
+      <div class="hab-grid" id="hg3"></div>
+    </div>
+  </div>
+
+  <!-- ④ FORMATION CONTINUE -->
+  <div class="panel" id="p3">
+    <div class="sec-intro"><h2>Formation continue &amp; recyclages</h2><p>Historique complet des formations suivies, maintien et développement des compétences.</p></div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">🔄</div><div><div class="ct">Historique des formations</div><div class="cs">Recyclages, perfectionnements, formations internes et externes</div></div></div>
+      <div class="tbl-wrap">
+        <table class="dyn-tbl">
+          <thead><tr>
+            <th style="width:105px">Date</th>
+            <th>Intitulé de la formation</th>
+            <th style="width:140px">Organisme / Formateur</th>
+            <th style="width:70px">Durée (h)</th>
+            <th style="width:130px">Type</th>
+            <th style="width:95px">Résultat</th>
+            <th style="width:36px"></th>
+          </tr></thead>
+          <tbody id="tb-form"></tbody>
+        </table>
+      </div>
+      <button class="btn-add" onclick="addRow('tb-form','form')">+ Ajouter une formation</button>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">📅</div><div><div class="ct">Calendrier des recyclages à venir</div><div class="cs">Échéances de maintien des compétences</div></div></div>
+      <div class="fg">
+        <div class="fgrp"><label>Prochain recyclage PSE1/PSE2</label><input type="date" id="recycl-pse" oninput="as()"></div>
+        <div class="fgrp"><label>Prochain recyclage BNSSA</label><input type="date" id="recycl-bnssa" oninput="as()"></div>
+        <div class="fgrp"><label>Prochaine habilitation CE/CS</label><input type="date" id="recycl-hab" oninput="as()"></div>
+        <div class="fgrp"><label>Renouvellement VPSP/permis</label><input type="date" id="recycl-vpsp" oninput="as()"></div>
+        <div class="fgrp full"><label>Autres échéances importantes</label><textarea id="recycl-autres" placeholder="Notez ici les autres dates de recyclage ou de renouvellement..." oninput="as()"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ ENGAGEMENTS DPS -->
+  <div class="panel" id="p4">
+    <div class="sec-intro"><h2>Engagements opérationnels</h2><p>Participations aux DPS, gardes, exercices et missions de sécurité civile.</p></div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">🚨</div><div><div class="ct">Dispositifs Prévisionnels de Secours (DPS)</div><div class="cs">Arrêté du 7 novembre 2006 — Catégories A à D selon nombre de personnes exposées</div></div></div>
+      <div class="alert-info">ℹ️ Les heures saisies ici alimentent automatiquement le tableau de bord (section ①) et le calcul CEC (section ⑥).</div>
+      <div class="tbl-wrap">
+        <table class="dyn-tbl">
+          <thead><tr>
+            <th style="width:105px">Date</th>
+            <th>Événement</th>
+            <th style="width:130px">Lieu</th>
+            <th style="width:135px">Fonction tenue</th>
+            <th style="width:75px">Cat. DPS</th>
+            <th style="width:65px">Heures</th>
+            <th style="width:36px"></th>
+          </tr></thead>
+          <tbody id="tb-dps"></tbody>
+        </table>
+      </div>
+      <button class="btn-add" onclick="addRow('tb-dps','dps')">+ Ajouter un DPS</button>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">🏋️</div><div><div class="ct">Exercices, manœuvres &amp; gardes</div><div class="cs">Entraînements opérationnels, exercices de simulation, permanences</div></div></div>
+      <div class="tbl-wrap">
+        <table class="dyn-tbl">
+          <thead><tr>
+            <th style="width:105px">Date</th>
+            <th>Intitulé / Scénario</th>
+            <th style="width:135px">Rôle tenu</th>
+            <th style="width:65px">Durée (h)</th>
+            <th>Observations / Acquis</th>
+            <th style="width:36px"></th>
+          </tr></thead>
+          <tbody id="tb-exo"></tbody>
+        </table>
+      </div>
+      <button class="btn-add" onclick="addRow('tb-exo','exo')">+ Ajouter un exercice</button>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">📝</div><div><div class="ct">Missions de sécurité civile hors DPS</div><div class="cs">Plan ORSEC, soutien SAMU/SDIS, interventions exceptionnelles</div></div></div>
+      <div class="tbl-wrap">
+        <table class="dyn-tbl">
+          <thead><tr>
+            <th style="width:105px">Date</th>
+            <th>Intitulé / Contexte</th>
+            <th style="width:130px">Partenaire</th>
+            <th style="width:65px">Durée (h)</th>
+            <th>Description / Rôle</th>
+            <th style="width:36px"></th>
+          </tr></thead>
+          <tbody id="tb-misc"></tbody>
+        </table>
+      </div>
+      <button class="btn-add" onclick="addRow('tb-misc','misc')">+ Ajouter une mission</button>
+    </div>
+  </div>
+
+  <!-- ⑥ DISTINCTIONS & VAE -->
+  <div class="panel" id="p5">
+    <div class="sec-intro"><h2>Distinctions, récompenses &amp; valorisation</h2><p>Reconnaissance de l'engagement bénévole et valorisation des compétences acquises.</p></div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">🥇</div><div><div class="ct">Distinctions fédérales FFSS</div><div class="cs">Médailles, diplômes d'honneur et reconnaissances internes FFSS</div></div></div>
+      <div class="dist-item">
+        <div class="medal m-bronze">🥉</div>
+        <div style="flex:1"><div class="dist-name">Médaille de bronze FFSS</div>
+          <div class="g2"><div class="fgrp"><label>Date d'attribution</label><input type="date" id="med-b-d" oninput="as()"></div><div class="fgrp"><label>N° décision fédérale</label><input type="text" id="med-b-n" placeholder="FFSS/DEC/…" oninput="as()"></div></div></div>
+      </div>
+      <div class="dist-item">
+        <div class="medal m-silver">🥈</div>
+        <div style="flex:1"><div class="dist-name">Médaille d'argent FFSS</div>
+          <div class="g2"><div class="fgrp"><label>Date d'attribution</label><input type="date" id="med-a-d" oninput="as()"></div><div class="fgrp"><label>N° décision fédérale</label><input type="text" id="med-a-n" placeholder="FFSS/DEC/…" oninput="as()"></div></div></div>
+      </div>
+      <div class="dist-item">
+        <div class="medal m-gold">🥇</div>
+        <div style="flex:1"><div class="dist-name">Médaille d'or FFSS</div>
+          <div class="g2"><div class="fgrp"><label>Date d'attribution</label><input type="date" id="med-o-d" oninput="as()"></div><div class="fgrp"><label>N° décision fédérale</label><input type="text" id="med-o-n" placeholder="FFSS/DEC/…" oninput="as()"></div></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ci" style="background:var(--red)">🇫🇷</div><div><div class="ct">Distinctions de l'État</div><div class="cs">Décorations ministérielles — Intérieur, MJCS, Premier Ministre</div></div></div>
+      <div class="dist-item">
+        <div class="medal m-state">🎖️</div>
+        <div style="flex:1"><div class="dist-name">Médaille d'honneur du bénévolat (MHB)</div>
+          <div class="g3">
+            <div class="fgrp"><label>Échelon</label><select id="mhb-e" onchange="as()"><option value="">—</option><option>Bronze (≥5 ans)</option><option>Argent (≥10 ans)</option><option>Or (≥20 ans)</option></select></div>
+            <div class="fgrp"><label>Date</label><input type="date" id="mhb-d" oninput="as()"></div>
+            <div class="fgrp"><label>Réf. JORF / Arrêté</label><input type="text" id="mhb-ref" placeholder="Référence officielle" oninput="as()"></div>
+          </div></div>
+      </div>
+      <div class="dist-item">
+        <div class="medal m-state">🏅</div>
+        <div style="flex:1"><div class="dist-name">Médaille nationale de sécurité intérieure (MNSI)</div>
+          <div class="g3">
+            <div class="fgrp"><label>Échelon</label><select id="mnsi-e" onchange="as()"><option value="">—</option><option>Bronze</option><option>Argent</option><option>Or</option></select></div>
+            <div class="fgrp"><label>Date</label><input type="date" id="mnsi-d" oninput="as()"></div>
+            <div class="fgrp"><label>Réf. JORF / Arrêté</label><input type="text" id="mnsi-ref" placeholder="Référence officielle" oninput="as()"></div>
+          </div></div>
+      </div>
+      <div class="dist-item">
+        <div class="medal m-state">⭐</div>
+        <div style="flex:1"><div class="dist-name">Autre distinction de l'État</div>
+          <div class="g3">
+            <div class="fgrp"><label>Intitulé</label><input type="text" id="aut-dist" placeholder="Ex: Médaille de la défense nationale" oninput="as()"></div>
+            <div class="fgrp"><label>Date</label><input type="date" id="aut-dist-d" oninput="as()"></div>
+            <div class="fgrp"><label>Ministère décernant</label><input type="text" id="aut-dist-min" placeholder="Ministère…" oninput="as()"></div>
+          </div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">💼</div><div><div class="ct">Valorisation des compétences (VAE &amp; CEC)</div><div class="cs">Validation des Acquis de l'Expérience · Compte Engagement Citoyen · CPF</div></div></div>
+      <div class="legal-note">⚡ <strong>Compte Engagement Citoyen (CEC) — Loi n°2016-1088 du 8 août 2016 :</strong> Les heures de bénévolat associatif (≥200h sur 3 ans) peuvent être déclarées via la plateforme Mon Compte Formation, ouvrant droit à 720€ de droits CPF. Les compétences acquises peuvent faire l'objet d'une VAE vers des certifications professionnelles enregistrées au RNCP.</div>
+      <div class="fg">
+        <div class="fgrp"><label>Heures bénévoles CEC déclarées (total)</label><input type="number" id="cec-h" placeholder="0" min="0" oninput="as()"><span class="helper">Seuil : 200h / 3 ans → 720 € CPF</span></div>
+        <div class="fgrp"><label>Droits CPF acquis via CEC (€)</label><input type="number" id="cec-cpf" placeholder="0" min="0" oninput="as()"></div>
+        <div class="fgrp"><label>Démarche VAE</label>
+          <select id="vae-st" onchange="as()"><option value="">— Statut —</option><option>Non commencée</option><option>Dossier en cours</option><option>Jury programmé</option><option>VAE obtenue</option><option>VAE partielle</option></select></div>
+        <div class="fgrp"><label>Certification RNCP visée ou obtenue</label><input type="text" id="vae-cert" placeholder="Ex: CQP Premiers Secours…" oninput="as()"></div>
+        <div class="fgrp full"><label>Équivalences &amp; reconnaissances professionnelles obtenues</label>
+          <textarea id="equiv" placeholder="Ex: PSE2 → équivalent AFGSU niveau 1 (DGS/SDPC) ; Formateur PSE → équivalent certificat de formateur INHESJ…" oninput="as()"></textarea></div>
+        <div class="fgrp full"><label>Compétences transverses développées (pour CV / VAE)</label>
+          <textarea id="comp-tv" placeholder="Management d'équipe en situation de crise, coordination logistique, gestion du stress, communication radio, pédagogie adultes, secourisme avancé, triage victimes, commandement opérationnel…" oninput="as()"></textarea></div>
+      </div>
+      <div class="divider"></div>
+      <div style="font-weight:600;font-size:13px;margin-bottom:10px;color:var(--navy)">Autres distinctions &amp; reconnaissances</div>
+      <div class="tbl-wrap">
+        <table class="dyn-tbl">
+          <thead><tr>
+            <th style="width:105px">Date</th>
+            <th>Intitulé</th>
+            <th style="width:150px">Organisme décernant</th>
+            <th>Motif / Description</th>
+            <th style="width:36px"></th>
+          </tr></thead>
+          <tbody id="tb-rec"></tbody>
+        </table>
+      </div>
+      <button class="btn-add" onclick="addRow('tb-rec','rec')">+ Ajouter une reconnaissance</button>
+    </div>
+  </div>
+
+  <!-- ⑦ VALIDATION -->
+  <div class="panel" id="p6">
+    <div class="sec-intro"><h2>Validation &amp; certification du passeport</h2><p>Certification officielle par les responsables habilités de l'association.</p></div>
+    <div class="legal-note">🔏 <strong>Valeur du document :</strong> Une fois signé par les responsables compétents, ce passeport constitue un document officiel de valorisation du bénévolat, utilisable dans le cadre de démarches VAE (art. L.6411-1 CT), reconnu par la FFSS et les partenaires institutionnels (Préfecture, SDIS, SAMU).</div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">📅</div><div><div class="ct">Informations de certification du document</div></div></div>
+      <div class="fg">
+        <div class="fgrp"><label>N° de passeport / référence</label><input type="text" id="num-pass" placeholder="FFSS-SSA13-2024-001" oninput="as()"></div>
+        <div class="fgrp"><label>Date d'établissement</label><input type="date" id="date-etab" oninput="as()"></div>
+        <div class="fgrp"><label>Lieu d'établissement</label><input type="text" id="lieu-etab" placeholder="Aix-en-Provence (13)" oninput="as()"></div>
+        <div class="fgrp"><label>Date de prochaine révision</label><input type="date" id="date-rev" oninput="as()"></div>
+        <div class="fgrp"><label>Version du passeport</label><input type="text" id="version" placeholder="v1.0" oninput="as()"></div>
+        <div class="fgrp"><label>Statut du document</label>
+          <select id="statut-doc" onchange="as()"><option value="">—</option><option>Brouillon</option><option>En cours de validation</option><option>Validé — en vigueur</option><option>Archivé</option></select></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">✅</div><div><div class="ct">Signatures des responsables</div><div class="cs">Certification par les représentants légaux de l'association</div></div></div>
+      <div class="g2">
+        <div>
+          <div style="font-weight:600;font-size:13px;margin-bottom:10px;color:var(--navy)">Président(e) de l'association</div>
+          <div class="fgrp" style="margin-bottom:8px"><label>Nom &amp; Prénom</label><input type="text" id="pres-n" oninput="as()"></div>
+          <div class="fgrp" style="margin-bottom:8px"><label>Qualité</label><input type="text" id="pres-q" placeholder="Président" oninput="as()"></div>
+          <div class="fgrp" style="margin-bottom:8px"><label>Date de signature</label><input type="date" id="pres-d" oninput="as()"></div>
+          <div class="sig-z">Signature &amp; cachet</div>
+        </div>
+        <div>
+          <div style="font-weight:600;font-size:13px;margin-bottom:10px;color:var(--navy)">Responsable Formation / Référent FFSS</div>
+          <div class="fgrp" style="margin-bottom:8px"><label>Nom &amp; Prénom</label><input type="text" id="ref-n" oninput="as()"></div>
+          <div class="fgrp" style="margin-bottom:8px"><label>Qualité</label><input type="text" id="ref-q" placeholder="Responsable de Formation" oninput="as()"></div>
+          <div class="fgrp" style="margin-bottom:8px"><label>Date de signature</label><input type="date" id="ref-d" oninput="as()"></div>
+          <div class="sig-z">Signature</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:22px">
+        <div style="display:inline-flex;align-items:center;justify-content:center;border:2px dashed var(--g400);border-radius:50%;width:85px;height:85px;color:var(--g500);font-size:10px;text-align:center;line-height:1.3">Cachet<br>officiel<br>association</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ci">📝</div><div><div class="ct">Observations générales &amp; recommandations</div></div></div>
+      <div class="fgrp"><textarea id="obs" rows="5" placeholder="Observations de la direction, recommandations pour la progression du bénévole, mentions particulières, évolutions souhaitées dans la structure..." oninput="as()"></textarea></div>
+    </div>
+
+    <div class="card" style="border-color:var(--navy);background:#f8faff">
+      <div class="ch"><div class="ci" style="background:var(--gold)">⬇️</div><div><div class="ct">Export &amp; archivage</div><div class="cs">Générer le PDF ou sauvegarder les données</div></div></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
+        <button class="btn-p" onclick="window.print()" style="font-size:14px;padding:10px 20px">🖨️ Générer le PDF — Toutes sections</button>
+        <button class="btn-s" onclick="exportJSON()" style="font-size:14px;padding:9px 18px">💾 Exporter les données (.json)</button>
+        <button class="btn-s" onclick="importJSON()" style="font-size:14px;padding:9px 18px">📂 Importer / Restaurer</button>
+      </div>
+      <p style="font-size:11px;color:var(--g600);margin-top:10px">Pour générer le PDF : cliquez sur <strong>Générer le PDF</strong>, puis dans la boîte de dialogue d'impression choisissez <em>"Enregistrer en PDF"</em> comme imprimante. Toutes les sections s'impriment en format A4.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="save-ind"><div class="save-dot" id="sdot"></div><span id="slbl">Sauvegarde automatique active</span></div>
+  <div class="ftr-btns">
+    <button class="btn-s" onclick="exportJSON()">💾 Exporter</button>
+    <button class="btn-s" onclick="importJSON()">📂 Importer</button>
+    <button class="btn-p" onclick="window.print()">🖨️ Exporter PDF</button>
+  </div>
+</div>
+<input type="file" id="import-fi" accept=".json" style="display:none" onchange="loadJSON(event)">
+
+<script>
+// ===== DEFINITIONS =====
+const CERTS1 = [
+  {id:'psc1', n:'PSC1 — Protection et Secours Civiques Niv. 1', d:'Gestes de premiers secours grand public'},
+  {id:'pse1', n:'PSE1 — Premiers Secours en Équipe Niv. 1', d:'Secourisme en équipe binôme — FFSS/Arrêté 2007'},
+  {id:'pse2', n:'PSE2 — Premiers Secours en Équipe Niv. 2', d:'Secourisme avancé — équipes DPS'},
+  {id:'bnssa', n:'BNSSA — Brevet National Sauvetage Aquatique', d:'Sauvetage en milieu aquatique'},
+  {id:'c3sc', n:'C3SC — Certificat Compétences Citoyen SC', d:'Citoyen acteur de la sécurité civile'},
+  {id:'sst', n:'SST — Sauveteur Secouriste du Travail', d:'Prévention et secours en milieu professionnel'},
+];
+const CERTS2 = [
+  {id:'permb', n:'Permis de conduire B', d:'Véhicules légers — utilitaires jusqu\'à 3,5t'},
+  {id:'permbe', n:'Permis BE', d:'Véhicules avec remorque > 750 kg'},
+  {id:'permc', n:'Permis C / CE', d:'Poids lourds — véhicules de secours spéciaux'},
+  {id:'ssiap1', n:'SSIAP 1', d:'Agent de Sécurité Incendie et Assistance aux Personnes'},
+  {id:'ssiap2', n:'SSIAP 2', d:'Chef d\'équipe Sécurité Incendie'},
+  {id:'radio', n:'Opérateur Radio SC', d:'Réseau ANTARES / ACROPOL — télécommunications de crise'},
+];
+const HABS_OPS = [
+  {id:'es', n:'Équipier Secouriste', c:'ES', d:'Membre d\'équipe sur DPS — binôme secours'},
+  {id:'ce', n:'Chef d\'Équipe Secourisme', c:'CE / CES', d:'Responsable d\'une équipe de 2 à 4 secouristes'},
+  {id:'cs', n:'Chef de Section Secourisme', c:'CS / CSS', d:'Coordination de plusieurs équipes — DPS cat. C/D'},
+  {id:'dsm', n:'Directeur des Secours Médicaux', c:'DSM', d:'Direction médicale du DPS — interface SAMU'},
+  {id:'rd', n:'Responsable de Dispositif', c:'RD', d:'Responsable global d\'un DPS — interface autorités'},
+];
+const HABS_PEDA = [
+  {id:'fipsc', n:'Formateur PSC1 / Gestes QSS', c:'FPS', d:'Formation des gestes d\'urgence au grand public'},
+  {id:'fpse12', n:'Formateur PSE1 / PSE2', c:'FPSE', d:'Formation des équipiers et chefs d\'équipe'},
+  {id:'mns', n:'Moniteur National de Secourisme', c:'MNS', d:'Formateur agréé FFSS — toutes certifications'},
+  {id:'rf', n:'Responsable de Formation', c:'RF', d:'Coordination pédagogique interne à l\'association'},
+  {id:'eval', n:'Évaluateur / Examinateur habilité', c:'EVAL', d:'Jury d\'examen certifiant FFSS'},
+];
+const HABS_TECH = [
+  {id:'vpsp', n:'Conducteur VPSP', c:'VPSP', d:'Véhicule de Premier Secours aux Personnes'},
+  {id:'vsav', n:'Équipier VSAV', c:'VSAV', d:'Véhicule de Secours et d\'Assistance aux Victimes'},
+  {id:'log', n:'Référent Logistique DPS', c:'LOG', d:'Gestion du matériel et préparation des lots A/B/C'},
+  {id:'telecom', n:'Opérateur Télécommunications', c:'TELECOM', d:'Gestion des communications radio sur DPS'},
+  {id:'pc', n:'Gestionnaire PC de commandement', c:'PC', d:'Administration du poste de commandement'},
+];
+
+// ===== STATE =====
+let S = {};
+const SK = 'ffss-passeport-v2';
+
+function load() { try { S = JSON.parse(localStorage.getItem(SK)||'{}'); } catch(e){ S={}; } }
+function save() {
+  document.querySelectorAll('input,select,textarea').forEach(el=>{ if(el.id&&el.id!=='fi'&&el.id!=='import-fi') S[el.id] = el.type==='checkbox'?el.checked:el.value; });
+  const ph=document.getElementById('photo'); if(ph.src&&ph.src.startsWith('data:')) S['_ph']=ph.src;
+  ['tb-form','tb-dps','tb-exo','tb-misc','tb-rec'].forEach(id=>{ S['_r_'+id]=getTR(id); });
+  try{ localStorage.setItem(SK,JSON.stringify(S)); ind(true); } catch(e){ ind(false); }
+  stats(); prog();
+}
+function getTR(id){ const r=[]; document.querySelectorAll('#'+id+' tr').forEach(tr=>{ const o={}; tr.querySelectorAll('input,select,textarea').forEach((el,i)=>o['c'+i]=el.value); r.push(o); }); return r; }
+let _at; function as(){ clearTimeout(_at); _at=setTimeout(save,700); }
+
+// ===== TABS =====
+function showTab(i){ document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('on',i===j)); document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('on',i===j)); }
+
+// ===== INDICATOR =====
+function ind(ok){ document.getElementById('sdot').style.background=ok?'var(--green)':'var(--red)'; document.getElementById('slbl').textContent=ok?'Sauvegardé · '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):'Erreur sauvegarde'; }
+
+// ===== STATS =====
+function stats(){
+  const adh=document.getElementById('date-adh')?.value;
+  if(adh){ const y=Math.floor((Date.now()-new Date(adh))/(365.25*24*3600*1000)); document.getElementById('s-ans').textContent=y>=0?y:'—'; }
+  document.getElementById('s-dps').textContent=document.querySelectorAll('#tb-dps tr').length||'—';
+  let h=0; document.querySelectorAll('#tb-dps tr').forEach(tr=>{ const inp=tr.querySelectorAll('input[type=number]'); if(inp.length) h+=parseFloat(inp[inp.length-1].value)||0; });
+  document.getElementById('s-hrs').textContent=h||'—';
+  document.getElementById('s-form').textContent=document.querySelectorAll('#tb-form tr').length||'—';
+  const cg=[...CERTS1,...CERTS2]; let nc=0; cg.forEach(c=>{ if(document.getElementById('cd-'+c.id)?.value) nc++; }); document.getElementById('s-cert').textContent=nc||'—';
+}
+
+// ===== PROGRESS =====
+function prog(){
+  const els=document.querySelectorAll('input[type=text],input[type=date],input[type=email],input[type=tel],input[type=number],select,textarea');
+  let f=0; els.forEach(e=>{ if(e.value&&e.value.trim()) f++; });
+  const p=Math.round(f/Math.max(els.length,1)*100);
+  document.getElementById('pbar').style.width=p+'%';
+  document.getElementById('pct').textContent=p+' %';
+}
+
+// ===== CERT CARDS =====
+function mkCerts(arr,cid){
+  const c=document.getElementById(cid); c.innerHTML='';
+  arr.forEach(x=>{
+    const d=document.createElement('div'); d.className='cert-card'; d.id='cc-'+x.id;
+    d.innerHTML=`<div class="cert-name"><span>${x.n}</span><span class="cbadge no" id="cb-${x.id}">Non obtenu</span></div>`+
+    `<div style="font-size:10px;color:var(--g600);margin-bottom:6px">${x.d}</div>`+
+    `<div class="cert-ff">`+
+    `<div class="fgrp"><label>Date obtention</label><input type="date" id="cd-${x.id}" oninput="updC('${x.id}');as()"></div>`+
+    `<div class="fgrp"><label>N° certificat</label><input type="text" id="cn-${x.id}" placeholder="Référence" oninput="as()"></div>`+
+    `<div class="fgrp"><label>Organisme</label><input type="text" id="co-${x.id}" placeholder="FFSS / INPP…" oninput="as()"></div>`+
+    `<div class="fgrp"><label>Prochain recyclage</label><input type="date" id="cr-${x.id}" oninput="as()"></div>`+
+    `</div>`;
+    c.appendChild(d);
+  });
+}
+function updC(id){ const v=document.getElementById('cd-'+id)?.value; const card=document.getElementById('cc-'+id); const b=document.getElementById('cb-'+id); if(v){card.classList.add('got');b.className='cbadge got';b.textContent='Obtenu';}else{card.classList.remove('got');b.className='cbadge no';b.textContent='Non obtenu';} stats(); }
+
+// ===== HAB ITEMS =====
+function mkHabs(arr,cid){
+  const c=document.getElementById(cid); c.innerHTML='';
+  arr.forEach(x=>{
+    const d=document.createElement('div'); d.className='hab-item'; d.id='hi-'+x.id;
+    d.innerHTML=`<input type="checkbox" class="hab-chk" id="hc-${x.id}" onchange="updH('${x.id}');as()">`+
+    `<div class="hab-inf"><div class="hab-title">${x.n}</div><div class="hab-code">${x.c} — ${x.d}</div>`+
+    `<div class="hab-dates" id="hd-${x.id}" style="display:none">`+
+    `<div class="fgrp"><label>Date habilitation</label><input type="date" id="hda-${x.id}" oninput="as()"></div>`+
+    `<div class="fgrp"><label>Expire le</label><input type="date" id="hdb-${x.id}" oninput="as()"></div>`+
+    `<div class="fgrp"><label>N° décision</label><input type="text" id="hdn-${x.id}" placeholder="Réf." oninput="as()"></div>`+
+    `</div></div>`;
+    c.appendChild(d);
+  });
+}
+function updH(id){ const on=document.getElementById('hc-'+id).checked; document.getElementById('hi-'+id).classList.toggle('on',on); document.getElementById('hd-'+id).style.display=on?'grid':'none'; }
+
+// ===== ROWS =====
+const TMPL = {
+  form:`<tr><td><input type="date" oninput="as()"></td><td><input type="text" placeholder="Intitulé" oninput="as()"></td><td><input type="text" placeholder="Organisme" oninput="as()"></td><td><input type="number" placeholder="0" min="0" style="max-width:55px" oninput="as()"></td><td><select onchange="as()"><option>Recyclage</option><option>Perfectionnement</option><option>Formation initiale</option><option>Exercice pédagogique</option><option>Conférence</option></select></td><td><select onchange="as()"><option>Acquis</option><option>Validé</option><option>En cours</option><option>Échoué</option></select></td><td><button class="btn-del" onclick="delR(this)">×</button></td></tr>`,
+  dps:`<tr><td><input type="date" oninput="as()"></td><td><input type="text" placeholder="Nom de l'événement" oninput="as()"></td><td><input type="text" placeholder="Ville / Lieu" oninput="as()"></td><td><select onchange="as()"><option>Équipier Secouriste</option><option>Chef d'Équipe</option><option>Chef de Section</option><option>Directeur des Secours</option><option>Responsable Dispositif</option><option>Formateur</option><option>Logisticien</option></select></td><td><select onchange="as()"><option>A</option><option>B</option><option>C</option><option>D</option><option>Hors cat.</option></select></td><td><input type="number" placeholder="0" min="0" style="max-width:50px" oninput="stats();as()"></td><td><button class="btn-del" onclick="delR(this)">×</button></td></tr>`,
+  exo:`<tr><td><input type="date" oninput="as()"></td><td><input type="text" placeholder="Intitulé / scénario" oninput="as()"></td><td><input type="text" placeholder="Rôle tenu" oninput="as()"></td><td><input type="number" placeholder="0" min="0" style="max-width:50px" oninput="as()"></td><td><input type="text" placeholder="Observations / acquis" oninput="as()"></td><td><button class="btn-del" onclick="delR(this)">×</button></td></tr>`,
+  misc:`<tr><td><input type="date" oninput="as()"></td><td><input type="text" placeholder="Contexte / intitulé" oninput="as()"></td><td><input type="text" placeholder="Partenaire" oninput="as()"></td><td><input type="number" placeholder="0" min="0" style="max-width:50px" oninput="as()"></td><td><input type="text" placeholder="Description / rôle" oninput="as()"></td><td><button class="btn-del" onclick="delR(this)">×</button></td></tr>`,
+  rec:`<tr><td><input type="date" oninput="as()"></td><td><input type="text" placeholder="Intitulé" oninput="as()"></td><td><input type="text" placeholder="Organisme décernant" oninput="as()"></td><td><input type="text" placeholder="Motif / description" oninput="as()"></td><td><button class="btn-del" onclick="delR(this)">×</button></td></tr>`,
+};
+function addRow(tbid,type){ const tb=document.getElementById(tbid); const tmp=document.createElement('tbody'); tmp.innerHTML=TMPL[type]; tb.appendChild(tmp.firstChild); stats(); as(); }
+function delR(btn){ btn.closest('tr').remove(); stats(); as(); }
+
+// ===== RESTORE =====
+function restore(){
+  Object.entries(S).forEach(([k,v])=>{
+    if(k.startsWith('_')) return;
+    const el=document.getElementById(k); if(!el) return;
+    if(el.type==='checkbox'){ el.checked=v; const m=k.match(/^hc-(.+)$/); if(m) updH(m[1]); }
+    else el.value=v;
+  });
+  if(S['_ph']){ const i=document.getElementById('photo'); i.src=S['_ph']; i.style.display='block'; document.getElementById('phototxt').style.display='none'; }
+  [...CERTS1,...CERTS2].forEach(c=>updC(c.id));
+  restoreRows('tb-form','_r_tb-form',TMPL.form);
+  restoreRows('tb-dps','_r_tb-dps',TMPL.dps);
+  restoreRows('tb-exo','_r_tb-exo',TMPL.exo);
+  restoreRows('tb-misc','_r_tb-misc',TMPL.misc);
+  restoreRows('tb-rec','_r_tb-rec',TMPL.rec);
+  stats(); prog();
+}
+function restoreRows(tbid,sk,tmpl){
+  if(!S[sk]||!S[sk].length) return;
+  const tb=document.getElementById(tbid); tb.innerHTML='';
+  S[sk].forEach(rd=>{ const t=document.createElement('tbody'); t.innerHTML=tmpl; const tr=t.firstChild; tb.appendChild(tr); const inps=tr.querySelectorAll('input,select,textarea'); Object.entries(rd).forEach(([k,v])=>{ const i=parseInt(k.replace('c','')); if(inps[i]) inps[i].value=v; }); });
+}
+
+// ===== PHOTO =====
+function loadPhoto(e){ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=ev=>{ const i=document.getElementById('photo'); i.src=ev.target.result; i.style.display='block'; document.getElementById('phototxt').style.display='none'; S['_ph']=ev.target.result; save(); }; r.readAsDataURL(f); }
+
+// ===== JSON EXPORT / IMPORT =====
+function exportJSON(){ save(); const bl=new Blob([JSON.stringify(S,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(bl); const n=(document.getElementById('nom')?.value||'benevole').toUpperCase(); const p=(document.getElementById('prenom')?.value||''); a.download=`passeport-ffss-${n}-${p}-${new Date().toISOString().slice(0,10)}.json`; a.click(); }
+function importJSON(){ document.getElementById('import-fi').click(); }
+function loadJSON(e){ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=ev=>{ try{ S=JSON.parse(ev.target.result); localStorage.setItem(SK,JSON.stringify(S)); restore(); alert('✅ Données importées avec succès.'); } catch(err){ alert('❌ Fichier invalide.'); } }; r.readAsText(f); }
+
+// ===== INIT =====
+load();
+mkCerts(CERTS1,'cg1');
+mkCerts(CERTS2,'cg2');
+mkHabs(HABS_OPS,'hg1');
+mkHabs(HABS_PEDA,'hg2');
+mkHabs(HABS_TECH,'hg3');
+restore();
+setInterval(save, 30000);
+</script>
+</body>
+</html>

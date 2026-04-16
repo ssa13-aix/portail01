@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Fiche Bilan – Secouristes du Pays d'Aix</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --navy: #0f2340;
+    --blue: #1a3f72;
+    --blue-mid: #2563a8;
+    --red: #c8102e;
+    --red-dark: #9b0a22;
+    --orange: #e85d04;
+    --yellow: #f7b731;
+    --green: #1e7e34;
+    --green-light: #d4edda;
+    --yellow-light: #fff3cd;
+    --red-light: #fce4e8;
+    --border: #b8c7d8;
+    --bg: #f0f4f9;
+    --white: #ffffff;
+    --text: #1a1a2e;
+    --text-muted: #5a6a7e;
+    --section-head: #e8eef5;
+    --radius: 6px;
+    --shadow: 0 2px 8px rgba(15,35,64,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    padding-bottom: 40px;
+  }
+
+  /* ── HEADER ─────────────────────────────────────── */
+  .app-header {
+    background: var(--navy);
+    color: white;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .app-header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .app-header .subtitle {
+    font-size: 11px;
+    opacity: 0.65;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: 2px;
+  }
+  .header-actions { display: flex; gap: 8px; }
+  .btn-header {
+    background: rgba(255,255,255,0.12);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 8px 14px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .btn-header:hover { background: rgba(255,255,255,0.22); }
+  .btn-print { background: var(--blue-mid) !important; border-color: transparent !important; }
+  .btn-reset { background: rgba(200,16,46,0.5) !important; }
+
+  /* ── TABS ────────────────────────────────────────── */
+  .tabs {
+    display: flex;
+    background: var(--navy);
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    color: rgba(255,255,255,0.55);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    color: white;
+    border-bottom-color: var(--yellow);
+  }
+  .tab-btn:hover:not(.active) { color: rgba(255,255,255,0.8); }
+
+  /* ── CONTENT ─────────────────────────────────────── */
+  .tab-content { display: none; padding: 12px 14px; max-width: 900px; margin: 0 auto; }
+  .tab-content.active { display: block; }
+
+  /* ── CARDS / SECTIONS ────────────────────────────── */
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .card-header {
+    background: var(--navy);
+    color: white;
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-header.red { background: var(--red); }
+  .card-header.blue { background: var(--blue-mid); }
+  .card-header.orange { background: var(--orange); }
+  .card-header.green { background: var(--green); }
+  .card-header.dark { background: #1a1a1a; }
+  .card-body { padding: 12px 14px; }
+
+  /* ── FORM ELEMENTS ───────────────────────────────── */
+  .form-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+  .form-row:last-child { margin-bottom: 0; }
+
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field.flex1 { flex: 1 1 120px; }
+  .field.flex2 { flex: 2 1 200px; }
+  .field.flex3 { flex: 3 1 250px; }
+  .field.full { flex: 1 1 100%; }
+
+  label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+  }
+
+  input[type="text"],
+  input[type="time"],
+  input[type="date"],
+  input[type="number"],
+  textarea,
+  select {
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    color: var(--text);
+    background: white;
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--blue-mid);
+    box-shadow: 0 0 0 3px rgba(37,99,168,0.15);
+  }
+  textarea { resize: vertical; min-height: 60px; }
+
+  /* ── RADIO SEXE ──────────────────────────────────── */
+  .radio-group { display: flex; gap: 8px; }
+  .radio-btn {
+    padding: 8px 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .radio-btn.selected { border-color: var(--blue-mid); background: var(--blue-mid); color: white; }
+
+  /* ── CODE PRISE EN CHARGE ────────────────────────── */
+  .triage-group { display: flex; gap: 8px; align-items: center; }
+  .triage-btn {
+    width: 42px; height: 32px;
+    border-radius: 5px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .triage-btn.green-t { background: #28a745; }
+  .triage-btn.yellow-t { background: var(--yellow); }
+  .triage-btn.red-t { background: var(--red); }
+  .triage-btn.black-t { background: #111; }
+  .triage-btn.selected { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(15,35,64,0.35); transform: scale(1.1); }
+
+  /* ── CHECKBOXES ──────────────────────────────────── */
+  .check-grid { display: flex; flex-wrap: wrap; gap: 6px 12px; }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border);
+    background: white;
+    transition: all 0.15s;
+    user-select: none;
+    min-width: fit-content;
+  }
+  .check-item:hover { border-color: var(--blue-mid); background: var(--section-head); }
+  .check-item.checked { border-color: var(--blue-mid); background: #dbeafe; font-weight: 600; }
+  .check-item.checked-red { border-color: var(--red); background: var(--red-light); font-weight: 600; }
+  .check-box {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    font-size: 12px;
+    color: white;
+  }
+  .check-item.checked .check-box { background: var(--blue-mid); border-color: var(--blue-mid); }
+  .check-item.checked-red .check-box { background: var(--red); border-color: var(--red); }
+  .check-box::after { content: '✓'; display: none; }
+  .check-item.checked .check-box::after,
+  .check-item.checked-red .check-box::after { display: block; }
+
+  /* ── PAIN SCALE ──────────────────────────────────── */
+  .pain-scale {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 42px;
+  }
+  .pain-btn {
+    flex: 1;
+    height: 100%;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 13px;
+    color: white;
+    transition: all 0.15s;
+    position: relative;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  }
+  .pain-btn:hover { filter: brightness(1.15); z-index: 1; transform: scaleY(1.05); }
+  .pain-btn.selected { box-shadow: inset 0 0 0 3px rgba(255,255,255,0.9); z-index: 2; transform: scaleY(1.1); }
+  .pain-label {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ── BILAN TABLE ─────────────────────────────────── */
+  .bilan-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .bilan-table th {
+    background: var(--navy);
+    color: white;
+    padding: 7px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    text-align: center;
+  }
+  .bilan-table th:first-child { text-align: left; }
+  .bilan-table td {
+    padding: 4px 6px;
+    border-bottom: 1px solid #e8eef5;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .bilan-table td:first-child { text-align: left; padding-left: 10px; font-weight: 500; }
+  .bilan-table tr:last-child td { border-bottom: none; }
+  .section-row td {
+    background: var(--navy) !important;
+    color: white !important;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 6px 10px !important;
+    text-align: left !important;
+  }
+  .section-row.red td { background: var(--red) !important; }
+  .section-row.blue td { background: var(--blue-mid) !important; }
+  .section-row.orange td { background: var(--orange) !important; }
+  .bilan-table tr:hover:not(.section-row) { background: #f5f8ff; }
+
+  .table-check {
+    width: 28px; height: 28px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    margin: 0 auto;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    font-size: 14px;
+    color: white;
+  }
+  .table-check.checked { background: var(--blue-mid); border-color: var(--blue-mid); }
+  .table-check.checked::after { content: '✓'; }
+
+  .table-input {
+    border: 1.5px solid var(--border);
+    border-radius: 3px;
+    padding: 4px 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    width: 80px;
+    text-align: center;
+  }
+  .table-input:focus { outline: none; border-color: var(--blue-mid); }
+
+  /* ── LAYOUT 2-COL ────────────────────────────────── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 600px) {
+    .two-col { grid-template-columns: 1fr; }
+    .app-header h1 { font-size: 15px; }
+    .btn-header span { display: none; }
+  }
+
+  /* ── URGENCES VITALES ────────────────────────────── */
+  .urgences-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 14px;
+  }
+  .urg-item {
+    display: flex; align-items: center; gap: 7px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: white;
+    user-select: none;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .urg-item:hover { border-color: var(--red); }
+  .urg-item.checked { border-color: var(--red); background: var(--red-light); color: var(--red-dark); }
+  .urg-item .check-box { border-color: var(--border); }
+  .urg-item.checked .check-box { background: var(--red); border-color: var(--red); }
+  .urg-item.checked .check-box::after { display: block; }
+
+  .urgences-times { display: flex; flex-wrap: wrap; gap: 10px; padding: 0 14px 12px; }
+  .time-field { display: flex; align-items: center; gap: 8px; flex: 1 1 180px; }
+  .time-field label { white-space: nowrap; font-size: 11px; font-weight: 700; color: var(--red-dark); text-transform: uppercase; }
+  .time-field input { flex: 1; padding: 7px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
+
+  /* ── ANTECEDENTS ─────────────────────────────────── */
+  .antecedent-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+  .antecedent-key {
+    width: 26px; height: 26px;
+    background: var(--navy);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px;
+    flex-shrink: 0; margin-top: 4px;
+  }
+  .antecedent-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 3px; }
+
+  /* ── GESTES ──────────────────────────────────────── */
+  .gestes-col { flex: 1 1 140px; }
+  .gestes-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--navy); margin-bottom: 8px; border-bottom: 2px solid var(--navy); padding-bottom: 4px; }
+
+  /* ── BODY DIAGRAM ────────────────────────────────── */
+  .body-container {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding: 12px 0;
+    background: #f8fafc;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .body-side { text-align: center; }
+  .body-side-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .body-diagram-img {
+    width: 120px;
+    opacity: 0.85;
+  }
+  .body-note {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  /* ── PQRST ───────────────────────────────────────── */
+  .pqrst-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+  .pqrst-key {
+    width: 28px; height: 28px;
+    background: var(--blue-mid);
+    color: white;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+    flex-shrink: 0; margin-top: 4px;
+  }
+  .pqrst-key.red-k { background: var(--red); }
+  .pqrst-label { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
+
+  /* ── REGULATION / TRANSPORT ──────────────────────── */
+  .regul-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 520px) { .regul-grid { grid-template-columns: 1fr; } }
+
+  /* ── SIGNATURE AREA ──────────────────────────────── */
+  .signature-box {
+    border: 2px dashed var(--border);
+    border-radius: 6px;
+    min-height: 80px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+    font-size: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .signature-box:hover { border-color: var(--blue-mid); }
+
+  /* ── URGENCES BANNER ─────────────────────────────── */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .badge.red { background: var(--red); color: white; }
+  .badge.orange { background: var(--orange); color: white; }
+
+  /* ── PRINT ───────────────────────────────────────── */
+  @media print {
+    body { background: white; font-size: 11px; }
+    .app-header, .tabs, .btn-header { display: none !important; }
+    .tab-content { display: block !important; padding: 0; }
+    .card { box-shadow: none; border: 1px solid #ccc; margin-bottom: 8px; page-break-inside: avoid; }
+    .pain-btn { color: black !important; text-shadow: none !important; -webkit-print-color-adjust: exact; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    #tab2 { margin-top: 20px; }
+  }
+
+  /* ── PROGRESS INDICATOR ──────────────────────────── */
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    margin: 0;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue-mid), var(--yellow));
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  .divider { height: 1px; background: var(--border); margin: 8px 0; }
+  .helper { font-size: 11px; color: var(--text-muted); font-style: italic; margin-top: 4px; }
+
+  /* ── HEURE AUTO ──────────────────────────────────── */
+  .btn-now {
+    background: var(--blue-mid);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 4px 8px;
+    font-size: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .btn-now:hover { background: var(--blue); }
+
+  .input-with-btn { display: flex; gap: 5px; align-items: stretch; }
+  .input-with-btn input { flex: 1; }
+
+  /* ── NBR de CHOCS ────────────────────────────────── */
+  .counter-group { display: flex; align-items: center; gap: 8px; }
+  .counter-btn {
+    width: 32px; height: 32px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    background: white;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    line-height: 1;
+  }
+  .counter-btn:hover { background: var(--section-head); border-color: var(--blue-mid); }
+  .counter-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    width: 36px;
+    text-align: center;
+    color: var(--navy);
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<header class="app-header">
+  <div>
+    <h1>🚑 Fiche Bilan</h1>
+    <div class="subtitle">Secouristes du Pays d'Aix — FFSS</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn-header btn-print" onclick="window.print()">🖨️ <span>Imprimer</span></button>
+    <button class="btn-header btn-mail" onclick="sendByMail()" style="background:#1e7e34;border-color:transparent;">📧 <span>Envoyer</span></button>
+    <button class="btn-header btn-save" onclick="saveForm()" style="background:#7c3aed;border-color:transparent;">💾 <span>HTML</span></button>
+    <button class="btn-header btn-pdf" onclick="savePDF()" style="background:#dc2626;border-color:transparent;">📄 <span>PDF</span></button>
+    <button class="btn-header btn-reset" onclick="resetForm()">↺ <span>Réinitialiser</span></button>
+  </div>
+</header>
+
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="1">📋 Page 1 — Bilan</button>
+  <button class="tab-btn" data-tab="2">📄 Page 2 — Antécédents & Évacuation</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ PAGE 1 -->
+<div class="tab-content active" id="tab1">
+
+  <!-- INFORMATIONS -->
+  <div class="card">
+    <div class="card-header">📋 Informations Victime</div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="field flex2">
+          <label>Heure de prise en charge</label>
+          <div class="input-with-btn">
+            <input type="time" id="heure_pec" />
+            <button class="btn-now" onclick="setNow('heure_pec')">Maintenant</button>
+          </div>
+        </div>
+        <div class="field flex3">
+          <label>Lieu / Localisation</label>
+          <input type="text" id="lieu" placeholder="Ex : Zone A, Stand 12, km 8…" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Sexe</label>
+          <div class="radio-group">
+            <div class="radio-btn" id="sexe_f" onclick="selectSexe('F')">F</div>
+            <div class="radio-btn" id="sexe_m" onclick="selectSexe('M')">M</div>
+          </div>
+        </div>
+        <div class="field flex1">
+          <label>Âge</label>
+          <input type="number" id="age" min="0" max="120" placeholder="—" />
+        </div>
+        <div class="field flex1">
+          <label>N° Dossard</label>
+          <input type="text" id="dossard" placeholder="—" />
+        </div>
+        <div class="field flex1">
+          <label>N° Victime</label>
+          <input type="text" id="num_victime" placeholder="—" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field flex1">
+          <label>Code de Prise en Charge</label>
+          <div class="triage-group">
+            <div class="triage-btn green-t" id="triage_vert" title="Vert – Urgence relative" onclick="selectTriage('vert')"></div>
+            <div class="triage-btn yellow-t" id="triage_jaune" title="Jaune – Urgence différée" onclick="selectTriage('jaune')"></div>
+            <div class="triage-btn red-t" id="triage_rouge" title="Rouge – Urgence absolue" onclick="selectTriage('rouge')"></div>
+            <div class="triage-btn black-t" id="triage_noir" title="Noir – Décédé / DCD" onclick="selectTriage('noir')"></div>
+            <span id="triage_label" style="font-size:11px;color:var(--text-muted);"></span>
+          </div>
+        </div>
+        <div class="field flex1">
+          <label>Circonstance</label>
+          <input type="text" id="circonstance" placeholder="Décrivez brièvement…" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field flex2">
+          <label>Nom</label>
+          <input type="text" id="nom" placeholder="NOM" style="text-transform:uppercase;" />
+        </div>
+        <div class="field flex3">
+          <label>Prénom</label>
+          <input type="text" id="prenom" placeholder="Prénom" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- URGENCES VITALES -->
+  <div class="card">
+    <div class="card-header red">⚠️ Urgences Vitales</div>
+    <div class="urgences-grid">
+      <div class="urg-item" onclick="toggleCheck(this)"><div class="check-box"></div>Hémorragie</div>
+      <div class="urg-item" onclick="toggleCheck(this)"><div class="check-box"></div>OBVA</div>
+      <div class="urg-item" onclick="toggleCheck(this)"><div class="check-box"></div>ACR</div>
+      <div class="urg-item" onclick="toggleCheck(this)"><div class="check-box"></div>Inconscience</div>
+      <div class="urg-item" onclick="toggleCheck(this)"><div class="check-box"></div>AVC</div>
+    </div>
+    <div class="urgences-times">
+      <div class="time-field">
+        <label>H. début MCR</label>
+        <div class="input-with-btn">
+          <input type="time" id="h_mcr" />
+          <button class="btn-now" onclick="setNow('h_mcr')">Maintenant</button>
+        </div>
+      </div>
+      <div class="time-field">
+        <label>H. pose DAE</label>
+        <div class="input-with-btn">
+          <input type="time" id="h_dae" />
+          <button class="btn-now" onclick="setNow('h_dae')">Maintenant</button>
+        </div>
+      </div>
+      <div class="time-field">
+        <label>H. pose garrot</label>
+        <div class="input-with-btn">
+          <input type="time" id="h_garrot" />
+          <button class="btn-now" onclick="setNow('h_garrot')">Maintenant</button>
+        </div>
+      </div>
+      <div class="time-field">
+        <label>Nbr chocs délivrés</label>
+        <div class="counter-group">
+          <button class="counter-btn" onclick="changeCounter(-1)">−</button>
+          <div class="counter-val" id="chocs_val">0</div>
+          <button class="counter-btn" onclick="changeCounter(1)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BILAN CIRCONSTANCIEL -->
+  <div class="card">
+    <div class="card-header blue">🔍 Bilan Circonstanciel</div>
+    <div class="card-body">
+      <div class="check-grid">
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>AVP</div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Noyade</div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Malaise</div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Chute</div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Choc</div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Malaise</div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Plaies</div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Trauma</div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Brûlure</div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Dermabrasure</div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Perforation</div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Maladie</div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Entorse</div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Luxation</div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Fracture ouverte</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BILAN TRAUMATIQUE + DOULEUR en 2 colonnes -->
+  <div class="two-col">
+    <!-- DOULEUR -->
+    <div class="card" style="grid-column: 1 / -1;">
+      <div class="card-header orange">😣 Échelle de la Douleur</div>
+      <div class="card-body">
+        <div class="pain-scale" id="painScale">
+          <button class="pain-btn" style="background:#4caf50" onclick="selectPain(0)">0</button>
+          <button class="pain-btn" style="background:#7bc67e" onclick="selectPain(1)">1</button>
+          <button class="pain-btn" style="background:#a8d58a" onclick="selectPain(2)">2</button>
+          <button class="pain-btn" style="background:#d4e96f" onclick="selectPain(3)">3</button>
+          <button class="pain-btn" style="background:#f5e642" onclick="selectPain(4)">4</button>
+          <button class="pain-btn" style="background:#f5c318" onclick="selectPain(5)">5</button>
+          <button class="pain-btn" style="background:#f59618" onclick="selectPain(6)">6</button>
+          <button class="pain-btn" style="background:#f06b18" onclick="selectPain(7)">7</button>
+          <button class="pain-btn" style="background:#e83a18" onclick="selectPain(8)">8</button>
+          <button class="pain-btn" style="background:#c81020" onclick="selectPain(9)">9</button>
+          <button class="pain-btn" style="background:#8b0000" onclick="selectPain(10)">10</button>
+        </div>
+        <div class="pain-label" id="painLabel">Appuyer sur un chiffre pour noter la douleur</div>
+      </div>
+    </div>
+
+    <!-- BILAN TRAUMATIQUE -->
+    <div class="card">
+      <div class="card-header">🦴 Bilan Traumatique</div>
+      <div class="card-body">
+        <div class="check-grid">
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Choc violent</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Impotence</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Contusions</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Perte de sensibilité</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Gonflement</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Fourmillement / décharge</div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Déformation</div>
+        </div>
+        <div class="divider"></div>
+        <div class="body-container">
+          <div class="body-side">
+            <div class="body-side-label">Droite</div>
+            <svg class="body-diagram-img" viewBox="0 0 80 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#1a3f72" stroke-width="1.5">
+              <!-- Head --><circle cx="40" cy="14" r="10" />
+              <!-- Neck --><rect x="36" y="24" width="8" height="8" rx="2"/>
+              <!-- Torso --><rect x="22" y="32" width="36" height="50" rx="4"/>
+              <!-- L arm --><line x1="22" y1="36" x2="8" y2="70"/><line x1="8" y1="70" x2="6" y2="90"/>
+              <!-- R arm --><line x1="58" y1="36" x2="72" y2="70"/><line x1="72" y1="70" x2="74" y2="90"/>
+              <!-- Pelvis --><rect x="24" y="82" width="32" height="16" rx="3"/>
+              <!-- L leg --><line x1="32" y1="98" x2="28" y2="148"/><line x1="28" y1="148" x2="26" y2="190"/>
+              <!-- R leg --><line x1="48" y1="98" x2="52" y2="148"/><line x1="52" y1="148" x2="54" y2="190"/>
+              <!-- Hands --><ellipse cx="5" cy="95" rx="5" ry="7"/><ellipse cx="75" cy="95" rx="5" ry="7"/>
+              <!-- Feet --><ellipse cx="24" cy="194" rx="8" ry="4"/><ellipse cx="56" cy="194" rx="8" ry="4"/>
+            </svg>
+          </div>
+          <div class="body-side">
+            <div class="body-side-label">Gauche</div>
+            <svg class="body-diagram-img" viewBox="0 0 80 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#1a3f72" stroke-width="1.5">
+              <circle cx="40" cy="14" r="10" />
+              <rect x="36" y="24" width="8" height="8" rx="2"/>
+              <rect x="22" y="32" width="36" height="50" rx="4"/>
+              <!-- Spine line --><line x1="40" y1="32" x2="40" y2="82" stroke-dasharray="3,2" stroke-width="1"/>
+              <line x1="22" y1="36" x2="8" y2="70"/><line x1="8" y1="70" x2="6" y2="90"/>
+              <line x1="58" y1="36" x2="72" y2="70"/><line x1="72" y1="70" x2="74" y2="90"/>
+              <rect x="24" y="82" width="32" height="16" rx="3"/>
+              <line x1="32" y1="98" x2="28" y2="148"/><line x1="28" y1="148" x2="26" y2="190"/>
+              <line x1="48" y1="98" x2="52" y2="148"/><line x1="52" y1="148" x2="54" y2="190"/>
+              <ellipse cx="5" cy="95" rx="5" ry="7"/><ellipse cx="75" cy="95" rx="5" ry="7"/>
+              <ellipse cx="24" cy="194" rx="8" ry="4"/><ellipse cx="56" cy="194" rx="8" ry="4"/>
+            </svg>
+          </div>
+        </div>
+        <div class="helper">Localisation des blessures : noter dans les commentaires</div>
+      </div>
+    </div>
+
+    <!-- ANALYSE DES PLAINTES (PQRST) -->
+    <div class="card">
+      <div class="card-header blue">💬 Analyse des Plaintes (PQRST)</div>
+      <div class="card-body">
+        <div class="pqrst-row">
+          <div class="pqrst-key">P</div>
+          <div style="flex:1">
+            <div class="pqrst-label">Provoqué (facteur déclenchant)</div>
+            <textarea id="pqrst_p" rows="2" placeholder="Qu'est-ce qui provoque ou aggrave la douleur ?"></textarea>
+          </div>
+        </div>
+        <div class="pqrst-row">
+          <div class="pqrst-key">Q</div>
+          <div style="flex:1">
+            <div class="pqrst-label">Qualité (description)</div>
+            <textarea id="pqrst_q" rows="2" placeholder="Brûlure, pression, déchirement, piqûre…"></textarea>
+          </div>
+        </div>
+        <div class="pqrst-row">
+          <div class="pqrst-key red-k">R</div>
+          <div style="flex:1">
+            <div class="pqrst-label">Région du corps</div>
+            <textarea id="pqrst_r" rows="2" placeholder="Localisation précise, irradiation…"></textarea>
+          </div>
+        </div>
+        <div class="pqrst-row">
+          <div class="pqrst-key red-k">S</div>
+          <div style="flex:1">
+            <div class="pqrst-label">Sévérité — voir échelle de douleur ci-dessus</div>
+            <input type="text" id="pqrst_s" placeholder="Score sélectionné + description" readonly style="background:#f5f8ff;color:var(--text-muted);" />
+          </div>
+        </div>
+        <div class="pqrst-row">
+          <div class="pqrst-key">T</div>
+          <div style="flex:1">
+            <div class="pqrst-label">Temporalité (depuis combien de temps / occurrence)</div>
+            <textarea id="pqrst_t" rows="2" placeholder="Depuis quand ? Continu ou épisodique ?"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BILANS CONSCIENCE / VENTILATION / CIRCULATION / DIVERS -->
+  <div class="card">
+    <div class="card-header dark">📊 Bilan 2ème – 4ème Regards (Conscience · Ventilation · Circulation · Divers)</div>
+    <div style="overflow-x:auto;">
+      <table class="bilan-table">
+        <thead>
+          <tr>
+            <th style="min-width:160px">Paramètre</th>
+            <th>H :</th>
+            <th>+ min</th>
+            <th>+ min</th>
+            <th>+ min</th>
+            <th>+ min</th>
+          </tr>
+        </thead>
+        <tbody id="bilanTableBody">
+          <!-- Rows injected by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- END TAB1 -->
+
+<!-- ═══════════════════════════════════════════════════════ PAGE 2 -->
+<div class="tab-content" id="tab2">
+
+  <!-- ANTECEDENTS -->
+  <div class="card">
+    <div class="card-header blue">🏥 Antécédents Médicaux (MHTAF)</div>
+    <div class="card-body">
+      <div class="antecedent-row">
+        <div class="antecedent-key">M</div>
+        <div style="flex:1">
+          <div class="antecedent-label">Maladie ou antécédents</div>
+          <input type="text" id="ant_m" placeholder="Diabète, HTA, épilepsie…" />
+        </div>
+      </div>
+      <div class="antecedent-row">
+        <div class="antecedent-key">H</div>
+        <div style="flex:1">
+          <div class="antecedent-label">Hospitalisations récentes</div>
+          <input type="text" id="ant_h" placeholder="Service, date approximative…" />
+        </div>
+      </div>
+      <div class="antecedent-row">
+        <div class="antecedent-key">T</div>
+        <div style="flex:1">
+          <div class="antecedent-label">Traitement en cours</div>
+          <input type="text" id="ant_t" placeholder="Médicaments, anticoagulants…" />
+        </div>
+      </div>
+      <div class="antecedent-row">
+        <div class="antecedent-key" style="background:var(--orange);">A</div>
+        <div style="flex:1">
+          <div class="antecedent-label">Allergies</div>
+          <input type="text" id="ant_a" placeholder="Médicaments, aliments, latex…" />
+        </div>
+      </div>
+      <div class="antecedent-row">
+        <div class="antecedent-key" style="background:var(--red);">F</div>
+        <div style="flex:1">
+          <div class="antecedent-label">Facteurs de risques</div>
+          <input type="text" id="ant_f" placeholder="Tabac, alcool, obésité, sédentarité…" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GESTES EFFECTUES -->
+  <div class="card">
+    <div class="card-header green">🩺 Gestes Effectués</div>
+    <div class="card-body">
+      <div class="form-row" style="flex-wrap:wrap; gap:16px;">
+        <!-- OVA -->
+        <div class="gestes-col">
+          <h4>OVA</h4>
+          <div class="check-grid" style="flex-direction:column;">
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Claque dans le dos</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Heimlich</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>O₂</div>
+          </div>
+        </div>
+        <!-- HEMORRAGIE -->
+        <div class="gestes-col">
+          <h4>Hémorragie</h4>
+          <div class="check-grid" style="flex-direction:column;">
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Compression manuelle</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Pansement compressif</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Pansement hémostatique</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Garrot — H: <input type="time" style="margin-left:4px;width:90px;padding:2px;" /></div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Ceinture pelvienne</div>
+          </div>
+        </div>
+        <!-- ACR -->
+        <div class="gestes-col">
+          <h4>ACR</h4>
+          <div class="check-grid" style="flex-direction:column;">
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Aspi mucosite</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>DSA / DAE</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>BAVU</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>RCP</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>O₂</div>
+          </div>
+        </div>
+        <!-- TRAUMATISME -->
+        <div class="gestes-col">
+          <h4>Traumatisme</h4>
+          <div class="check-grid" style="flex-direction:column;">
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Maintien tête</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Collier cervical</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Attelles</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>ACT</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Ceinture pelvienne</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>MID</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Poche de froid</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Écharpes</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="form-row" style="gap:16px;">
+        <!-- POSITION ATTENTE -->
+        <div class="gestes-col">
+          <h4>Position d'Attente</h4>
+          <div class="check-grid" style="flex-direction:column;">
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>½ Assis</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Plat dos</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Jambes surélevées</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>PLS</div>
+          </div>
+        </div>
+        <!-- BRULURES -->
+        <div class="gestes-col">
+          <h4>Brûlures</h4>
+          <div class="check-grid" style="flex-direction:column;">
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Désinfectant</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Brûles Stop</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Pansements</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Compresses</div>
+          </div>
+          <div class="field" style="margin-top:8px;">
+            <label>Refroidissement — Durée</label>
+            <input type="text" placeholder="ex : 15 min" style="width:120px;" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGULATION MEDICALE -->
+  <div class="regul-grid">
+    <div class="card">
+      <div class="card-header">📡 Régulation Médicale</div>
+      <div class="card-body">
+        <div class="check-grid" style="flex-direction:column; margin-bottom:12px;">
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>PC Médicalisé</div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box"></div>Centre 15 — Heure :
+            <input type="time" style="margin-left:6px;width:100px;padding:3px;" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Informations données par le médecin</label>
+          <textarea id="regul_infos" rows="3" placeholder="Consignes reçues du médecin régulateur…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">🔒 Encart réservé au Médecin</div>
+      <div class="card-body">
+        <textarea id="encart_medecin" rows="5" placeholder="Réservé au médecin de permanence…" style="font-style:italic;"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSPORT / EVACUATION -->
+  <div class="card">
+    <div class="card-header orange">🚑 Transport / Évacuation</div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="field flex1">
+          <label>Heure d'appel</label>
+          <div class="input-with-btn">
+            <input type="time" id="h_appel" />
+            <button class="btn-now" onclick="setNow('h_appel')">Maintenant</button>
+          </div>
+        </div>
+        <div class="field flex1">
+          <label>Heure de prise en charge</label>
+          <div class="input-with-btn">
+            <input type="time" id="h_pec_evac" />
+            <button class="btn-now" onclick="setNow('h_pec_evac')">Maintenant</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field" style="flex:1;">
+          <label>Type de transport</label>
+          <div class="check-grid">
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>VSAV AR</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>VSAV Médicalisé</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>VPSP</div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div>Refus de transport</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field flex2">
+          <label>Prise en charge SMUR</label>
+          <input type="text" id="pec_smur" placeholder="Nom de l'équipe / heure" />
+        </div>
+        <div class="field flex2">
+          <label>Prise en charge Médecin</label>
+          <input type="text" id="pec_medecin" placeholder="Nom / spécialité" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARENTS / RESPONSABLE LEGAL -->
+  <div class="card">
+    <div class="card-header">👤 Parents ou Responsable Légal</div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="field flex2"><label>Nom</label><input type="text" id="rl_nom" /></div>
+        <div class="field flex2"><label>Prénom</label><input type="text" id="rl_prenom" /></div>
+      </div>
+      <div class="form-row">
+        <div class="field flex3"><label>Adresse</label><input type="text" id="rl_adresse" /></div>
+        <div class="field flex2"><label>Ville</label><input type="text" id="rl_ville" /></div>
+        <div class="field flex1"><label>Code postal</label><input type="text" id="rl_cp" /></div>
+      </div>
+      <div class="form-row">
+        <div class="field flex3"><label>Personne à prévenir</label><input type="text" id="rl_contact" /></div>
+        <div class="field flex2"><label>N° de téléphone</label><input type="text" id="rl_tel" inputmode="tel" /></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETABLIE PAR / SIGNATURE -->
+  <div class="card">
+    <div class="card-header dark">✍️ Fiche établie par</div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="field flex2">
+          <label>Nom du secouriste</label>
+          <input type="text" id="etabli_par" placeholder="NOM Prénom" />
+        </div>
+        <div class="field flex1">
+          <label>Signature</label>
+          <div class="signature-box" onclick="alert('Fonctionnalité signature à venir')">
+            ✍️ Toucher pour signer
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMENTAIRES -->
+  <div class="card">
+    <div class="card-header">💬 Commentaires Libres</div>
+    <div class="card-body">
+      <textarea id="commentaires" rows="5" placeholder="Observations complémentaires, évolution, transmission…"></textarea>
+    </div>
+  </div>
+
+</div><!-- END TAB2 -->
+
+<script>
+// ── TABS ─────────────────────────────────────────────────
+function switchTab(n) {
+  document.querySelectorAll('.tab-content').forEach(t => {
+    t.style.display = 'none';
+    t.classList.remove('active');
+  });
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const target = document.getElementById('tab' + n);
+  if (target) { target.style.display = 'block'; target.classList.add('active'); }
+  const btn = document.querySelector('.tab-btn[data-tab="' + n + '"]');
+  if (btn) btn.classList.add('active');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Tab click listeners
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      switchTab(this.getAttribute('data-tab'));
+    });
+  });
+  // Show tab1 by default
+  switchTab(1);
+});
+
+// ── SEXE ─────────────────────────────────────────────────
+function selectSexe(v) {
+  document.getElementById('sexe_f').classList.toggle('selected', v === 'F');
+  document.getElementById('sexe_m').classList.toggle('selected', v === 'M');
+}
+
+// ── TRIAGE ───────────────────────────────────────────────
+const triageLabels = {
+  vert: '🟢 Urgence relative',
+  jaune: '🟡 Urgence différée',
+  rouge: '🔴 Urgence absolue',
+  noir: '⬛ Décédé / DCD'
+};
+let selectedTriage = null;
+function selectTriage(v) {
+  if (selectedTriage === v) {
+    document.getElementById('triage_' + v).classList.remove('selected');
+    selectedTriage = null;
+    document.getElementById('triage_label').textContent = '';
+  } else {
+    if (selectedTriage) document.getElementById('triage_' + selectedTriage).classList.remove('selected');
+    document.getElementById('triage_' + v).classList.add('selected');
+    selectedTriage = v;
+    document.getElementById('triage_label').textContent = triageLabels[v];
+  }
+}
+
+// ── CHECKBOXES ────────────────────────────────────────────
+function toggleCheck(el, type) {
+  const isRed = type === 'red';
+  if (isRed) {
+    el.classList.toggle('checked-red');
+    el.classList.remove('checked');
+  } else {
+    el.classList.toggle('checked');
+    el.classList.remove('checked-red');
+  }
+  updateProgress();
+}
+
+// ── TABLE CHECKS ──────────────────────────────────────────
+function toggleTableCheck(el) {
+  el.classList.toggle('checked');
+}
+
+// ── PAIN SCALE ────────────────────────────────────────────
+let selectedPain = null;
+const painDesc = ['Pas de douleur','Très légère','Légère','Gêne légère','Gêne modérée','Douleur modérée','Douleur intense','Très intense','Sévère','Insupportable','Douleur maximale'];
+function selectPain(n) {
+  const btns = document.querySelectorAll('.pain-btn');
+  btns.forEach((b,i) => b.classList.toggle('selected', i === n));
+  selectedPain = n;
+  document.getElementById('painLabel').textContent = `Score : ${n}/10 — ${painDesc[n]}`;
+  document.getElementById('pqrst_s').value = `${n}/10 — ${painDesc[n]}`;
+}
+
+// ── NOW TIME ──────────────────────────────────────────────
+function setNow(id) {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById(id).value = hh + ':' + mm;
+}
+
+// ── COUNTER ───────────────────────────────────────────────
+let chocsCount = 0;
+function changeCounter(delta) {
+  chocsCount = Math.max(0, chocsCount + delta);
+  document.getElementById('chocs_val').textContent = chocsCount;
+}
+
+// ── PROGRESS ──────────────────────────────────────────────
+function updateProgress() {
+  const inputs = document.querySelectorAll('input[type="text"], input[type="time"], textarea');
+  let filled = 0;
+  inputs.forEach(i => { if (i.value.trim()) filled++; });
+  const checks = document.querySelectorAll('.check-item.checked, .check-item.checked-red, .urg-item.checked');
+  const pct = Math.min(100, Math.round(((filled + checks.length) / (inputs.length + 5)) * 100));
+  document.getElementById('progress').style.width = pct + '%';
+}
+document.addEventListener('input', updateProgress);
+
+// ── RESET ─────────────────────────────────────────────────
+function resetForm() {
+  if (!confirm('Effacer toute la fiche ? Cette action est irréversible.')) return;
+  document.querySelectorAll('input[type="text"], input[type="time"], input[type="number"], textarea').forEach(i => i.value = '');
+  document.querySelectorAll('.check-item, .urg-item').forEach(i => i.classList.remove('checked','checked-red'));
+  document.querySelectorAll('.table-check').forEach(i => i.classList.remove('checked'));
+  document.querySelectorAll('.table-input').forEach(i => i.value = '');
+  document.querySelectorAll('.radio-btn').forEach(i => i.classList.remove('selected'));
+  document.querySelectorAll('.triage-btn').forEach(i => i.classList.remove('selected'));
+  document.querySelectorAll('.pain-btn').forEach(i => i.classList.remove('selected'));
+  document.getElementById('triage_label').textContent = '';
+  document.getElementById('painLabel').textContent = 'Appuyer sur un chiffre pour noter la douleur';
+  chocsCount = 0;
+  document.getElementById('chocs_val').textContent = '0';
+  selectedTriage = null; selectedPain = null;
+  updateProgress();
+}
+
+// ── BILAN TABLE ───────────────────────────────────────────
+const bilanRows = [
+  { section: 'Conscience', color: '' },
+  { label: 'Somnolence', type: 'check' },
+  { label: 'Notion de PCI', type: 'check' },
+  { label: 'Inconscience', type: 'check' },
+  { label: 'Agité', type: 'check' },
+  { label: 'Désorienté', type: 'check' },
+  { label: 'Troubles', type: 'check' },
+  { label: 'Hémiplégie', type: 'check' },
+  { label: 'Score Glasgow', type: 'input' },
+  { label: 'Pupilles', type: 'input' },
+  { label: 'Convulsions', type: 'check' },
+  { label: 'Durée de la conv.', type: 'input' },
+  { section: 'Ventilation', color: 'blue' },
+  { label: 'Fréquence', type: 'input' },
+  { label: 'Gêne respiratoire', type: 'check' },
+  { label: 'Bruyante', type: 'check' },
+  { label: 'Cyanose', type: 'check' },
+  { label: 'Sueurs', type: 'check' },
+  { label: 'SpO₂ %', type: 'input' },
+  { section: 'Circulation', color: 'red' },
+  { label: 'Fréquence', type: 'input' },
+  { label: 'Tension', type: 'input' },
+  { label: 'Pouls perçu', type: 'check' },
+  { label: 'Régulier / Filant / Frappé', type: 'input' },
+  { label: 'Pâleur', type: 'check' },
+  { section: 'Divers', color: '' },
+  { label: 'Nausée', type: 'ouinon' },
+  { label: 'Glycémie', type: 'input' },
+  { label: 'Température', type: 'input' },
+];
+
+const tbody = document.getElementById('bilanTableBody');
+bilanRows.forEach((row, ri) => {
+  const tr = document.createElement('tr');
+  if (row.section !== undefined) {
+    tr.className = 'section-row' + (row.color ? ' ' + row.color : '');
+    tr.innerHTML = `<td colspan="6">${row.section.toUpperCase()}</td>`;
+  } else {
+    tr.innerHTML = `<td>${row.label}</td>` + [0,1,2,3,4].map(ci => {
+      if (row.type === 'check') {
+        return `<td><div class="table-check" onclick="toggleTableCheck(this)"></div></td>`;
+      } else if (row.type === 'input') {
+        return `<td><input class="table-input" type="text" placeholder="—" /></td>`;
+      } else if (row.type === 'ouinon') {
+        return `<td><select style="font-size:12px;padding:3px 4px;border:1.5px solid var(--border);border-radius:3px;"><option value="">—</option><option>Oui</option><option>Non</option></select></td>`;
+      }
+      return '<td></td>';
+    }).join('');
+  }
+  tbody.appendChild(tr);
+});
+
+// Set initial time
+setNow('heure_pec');
+
+// ── ENVOI PAR MAIL ────────────────────────────────────────
+function sendByMail() {
+  // Helper: lire un champ texte par id
+  const get = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+
+  // Helper: récupérer toutes les cases cochées dans un conteneur CSS selector
+  const getChecked = selector =>
+    [...document.querySelectorAll(selector)]
+      .filter(e => e.classList.contains('checked') || e.classList.contains('checked-red'))
+      .map(e => e.innerText.replace(/✓/g,'').trim())
+      .filter(Boolean).join(', ') || '—';
+
+  // Helper: récupérer les cases cochées dont le parent correspond au selector
+  const getCheckedIn = (parentSel, itemSel) =>
+    [...document.querySelectorAll(parentSel + ' ' + itemSel)]
+      .filter(e => e.classList.contains('checked') || e.classList.contains('checked-red'))
+      .map(e => e.innerText.replace(/✓/g,'').trim())
+      .filter(Boolean).join(', ') || '—';
+
+  // ── PAGE 1 ────────────────────────────────
+  const nom       = get('nom') || '—';
+  const prenom    = get('prenom') || '—';
+  const age       = get('age') || '—';
+  const dossard   = get('dossard') || '—';
+  const numVic    = get('num_victime') || '—';
+  const hpec      = get('heure_pec') || '—';
+  const lieu      = get('lieu') || '—';
+  const circ      = get('circonstance') || '—';
+  const triage    = selectedTriage ? triageLabels[selectedTriage] : '—';
+  const sexe      = document.getElementById('sexe_f') && document.getElementById('sexe_f').classList.contains('selected') ? 'F'
+                  : document.getElementById('sexe_m') && document.getElementById('sexe_m').classList.contains('selected') ? 'M' : '—';
+
+  const urgChecked = getCheckedIn('.urgences-grid', '.urg-item');
+  const hMcr      = get('h_mcr') || '—';
+  const hDae      = get('h_dae') || '—';
+  const hGarrot   = get('h_garrot') || '—';
+
+  const circChecked = getCheckedIn('#tab1 .card:nth-of-type(3)', '.check-item');
+
+  const douleur   = selectedPain !== null ? selectedPain + '/10 — ' + painDesc[selectedPain] : '—';
+  const traumaChecked = getCheckedIn('#tab1', '.check-item');
+
+  const pqrst_p   = get('pqrst_p') || '—';
+  const pqrst_q   = get('pqrst_q') || '—';
+  const pqrst_r   = get('pqrst_r') || '—';
+  const pqrst_t   = get('pqrst_t') || '—';
+
+  // Bilan tableau (conscience / ventilation / circulation / divers)
+  const bilanLines = [];
+  document.querySelectorAll('#bilanTableBody tr').forEach(tr => {
+    if (tr.classList.contains('section-row')) {
+      bilanLines.push('  [' + tr.innerText.trim() + ']');
+    } else {
+      const cells = tr.querySelectorAll('td');
+      if (!cells.length) return;
+      const label = cells[0].innerText.trim();
+      const vals = [];
+      for (let i = 1; i < cells.length; i++) {
+        const chk = cells[i].querySelector('.table-check');
+        const inp = cells[i].querySelector('input, select');
+        if (chk) vals.push(chk.classList.contains('checked') ? 'Oui' : 'Non');
+        else if (inp) vals.push(inp.value.trim() || '—');
+        else vals.push('—');
+      }
+      bilanLines.push('  ' + label.padEnd(28) + vals.join(' | '));
+    }
+  });
+
+  // ── PAGE 2 ────────────────────────────────
+  const antM      = get('ant_m') || '—';
+  const antH      = get('ant_h') || '—';
+  const antT      = get('ant_t') || '—';
+  const antA      = get('ant_a') || '—';
+  const antF      = get('ant_f') || '—';
+
+  // Gestes effectués — toutes les cases cochées dans tab2
+  const gestesOVA      = getCheckedIn('#tab2 .gestes-col:nth-of-type(1)', '.check-item');
+  const gestesHemo     = getCheckedIn('#tab2 .gestes-col:nth-of-type(2)', '.check-item');
+  const gestesACR      = getCheckedIn('#tab2 .gestes-col:nth-of-type(3)', '.check-item');
+  const gestesTrauma   = getCheckedIn('#tab2 .gestes-col:nth-of-type(4)', '.check-item');
+  const gestesPosition = getCheckedIn('#tab2 .gestes-col:nth-of-type(5)', '.check-item');
+  const gestesBrulure  = getCheckedIn('#tab2 .gestes-col:nth-of-type(6)', '.check-item');
+
+  // Fallback global si les nth-of-type ne matchent pas bien
+  const allGestes = [...document.querySelectorAll('#tab2 .card-header.green')]
+    .flatMap(h => {
+      const card = h.closest('.card');
+      return card ? [...card.querySelectorAll('.check-item')].filter(e => e.classList.contains('checked')).map(e => e.innerText.replace(/✓/g,'').trim()) : [];
+    }).join(', ') || '—';
+
+  const regulInfos   = get('regul_infos') || '—';
+  const encartMedecin = get('encart_medecin') || '—';
+
+  const hAppel      = get('h_appel') || '—';
+  const hPecEvac    = get('h_pec_evac') || '—';
+  const pecSmur     = get('pec_smur') || '—';
+  const pecMedecin  = get('pec_medecin') || '—';
+  const transportChecked = getCheckedIn('#tab2', '.check-item');
+
+  const rlNom       = get('rl_nom') || '—';
+  const rlPrenom    = get('rl_prenom') || '—';
+  const rlAdresse   = get('rl_adresse') || '—';
+  const rlVille     = get('rl_ville') || '—';
+  const rlCp        = get('rl_cp') || '—';
+  const rlContact   = get('rl_contact') || '—';
+  const rlTel       = get('rl_tel') || '—';
+
+  const etabli      = get('etabli_par') || '—';
+  const comment     = get('commentaires') || '—';
+
+  // ── COMPOSITION DU MAIL ───────────────────
+  const subject = encodeURIComponent('Fiche Bilan — ' + nom + ' ' + prenom + ' — ' + hpec);
+
+  const lines = [
+    '══════════════════════════════════════════════',
+    '    FICHE BILAN — SECOURISTES DU PAYS D\'AIX',
+    '══════════════════════════════════════════════',
+    '',
+    '── INFORMATIONS VICTIME ──────────────────────',
+    'Nom / Prenom   : ' + nom + ' ' + prenom,
+    'Sexe / Age     : ' + sexe + ' / ' + age + ' ans',
+    'N° Dossard     : ' + dossard,
+    'N° Victime     : ' + numVic,
+    'Heure PEC      : ' + hpec,
+    'Lieu           : ' + lieu,
+    'Circonstance   : ' + circ,
+    'Code triage    : ' + triage,
+    '',
+    '── URGENCES VITALES ──────────────────────────',
+    'Alertes        : ' + urgChecked,
+    'H. debut MCR   : ' + hMcr,
+    'H. pose DAE    : ' + hDae,
+    'H. pose garrot : ' + hGarrot,
+    'Nbr chocs DAE  : ' + chocsCount,
+    '',
+    '── BILAN CIRCONSTANCIEL ──────────────────────',
+    circChecked,
+    '',
+    '── ECHELLE DE DOULEUR ────────────────────────',
+    douleur,
+    '',
+    '── ANALYSE PLAINTES (PQRST) ──────────────────',
+    'P (Provoque)    : ' + pqrst_p,
+    'Q (Qualite)     : ' + pqrst_q,
+    'R (Region)      : ' + pqrst_r,
+    'S (Severite)    : ' + douleur,
+    'T (Temporalite) : ' + pqrst_t,
+    '',
+    '── BILAN CONSCIENCE / VENTILATION / CIRC. ────',
+  ].concat(bilanLines).concat([
+    '',
+    '══════════════════════════════════════════════',
+    '                    PAGE 2',
+    '══════════════════════════════════════════════',
+    '',
+    '── ANTECEDENTS MEDICAUX (MHTAF) ──────────────',
+    'M (Maladie)    : ' + antM,
+    'H (Hospit.)    : ' + antH,
+    'T (Traitement) : ' + antT,
+    'A (Allergies)  : ' + antA,
+    'F (Facteurs)   : ' + antF,
+    '',
+    '── GESTES EFFECTUES ──────────────────────────',
+    'Gestes : ' + allGestes,
+    '',
+    '── REGULATION MEDICALE ───────────────────────',
+    'Infos medecin   : ' + regulInfos,
+    'Encart medecin  : ' + encartMedecin,
+    '',
+    '── TRANSPORT / EVACUATION ────────────────────',
+    'Heure appel    : ' + hAppel,
+    'Heure PEC evac : ' + hPecEvac,
+    'Transport      : ' + transportChecked,
+    'PEC SMUR       : ' + pecSmur,
+    'PEC Medecin    : ' + pecMedecin,
+    '',
+    '── RESPONSABLE LEGAL ─────────────────────────',
+    'Nom / Prenom   : ' + rlNom + ' ' + rlPrenom,
+    'Adresse        : ' + rlAdresse + ' ' + rlCp + ' ' + rlVille,
+    'Personne prev. : ' + rlContact + ' — Tel : ' + rlTel,
+    '',
+    '── COMMENTAIRES ──────────────────────────────',
+    comment,
+    '',
+    '── FICHE ETABLIE PAR ─────────────────────────',
+    etabli,
+    '',
+    '══════════════════════════════════════════════',
+    'Document genere depuis la Fiche Bilan FFSS / SSA13',
+    'Date : ' + new Date().toLocaleString('fr-FR'),
+    '══════════════════════════════════════════════'
+  ]);
+
+  const body = encodeURIComponent(lines.join('\n'));
+  window.location.href = 'mailto:contact@ssa13.org?subject=' + subject + '&body=' + body;
+}
+
+// ── ENREGISTREMENT LOCAL ───────────────────────────────────
+function saveForm() {
+  // 1. Cloner le document entier
+  const clone = document.documentElement.cloneNode(true);
+
+  // 2. Injecter les valeurs de tous les inputs/textarea/select dans le clone
+  const liveInputs  = document.querySelectorAll('input, textarea, select');
+  const cloneInputs = clone.querySelectorAll('input, textarea, select');
+  liveInputs.forEach((el, i) => {
+    const c = cloneInputs[i];
+    if (!c) return;
+    if (el.type === 'checkbox' || el.type === 'radio') {
+      c.checked = el.checked;
+    } else {
+      c.value = el.value;
+      // Pour les selects, forcer l'option sélectionnée
+      if (el.tagName === 'SELECT') {
+        [...c.options].forEach((opt, oi) => {
+          opt.selected = [...el.options][oi] && [...el.options][oi].selected;
+        });
+      }
+    }
+  });
+
+  // 3. Copier les classes dynamiques (checked, selected, etc.) sur tous les éléments
+  const liveEls  = document.querySelectorAll('[class]');
+  const cloneEls = clone.querySelectorAll('[class]');
+  liveEls.forEach((el, i) => {
+    if (cloneEls[i]) cloneEls[i].className = el.className;
+  });
+
+  // 4. Copier les styles inline dynamiques (progress bar, display des tabs)
+  const liveStyled  = document.querySelectorAll('[style]');
+  const cloneStyled = clone.querySelectorAll('[style]');
+  liveStyled.forEach((el, i) => {
+    if (cloneStyled[i]) cloneStyled[i].setAttribute('style', el.getAttribute('style'));
+  });
+
+  // 5. Injecter le contenu du tbody généré dynamiquement (bilan table)
+  const liveTbody  = document.getElementById('bilanTableBody');
+  const cloneTbody = clone.querySelector('#bilanTableBody');
+  if (liveTbody && cloneTbody) {
+    cloneTbody.innerHTML = liveTbody.innerHTML;
+  }
+
+  // 6. Injecter le texte dynamique (pain label, triage label, chocs val)
+  ['painLabel','triage_label','chocs_val'].forEach(id => {
+    const live  = document.getElementById(id);
+    const cl    = clone.querySelector('#' + id);
+    if (live && cl) cl.textContent = live.textContent;
+  });
+
+  // 7. Supprimer les scripts pour que le fichier sauvegardé soit statique (lecture seule)
+  //    Mais on garde le JS pour que la fiche reste interactive si on la rouvre
+  // (aucune suppression — le fichier reste pleinement fonctionnel)
+
+  // 8. Générer le nom de fichier avec nom victime + date
+  const nom    = (document.getElementById('nom')    || {value:''}).value.trim().toUpperCase() || 'VICTIME';
+  const prenom = (document.getElementById('prenom') || {value:''}).value.trim() || '';
+  const hpec   = (document.getElementById('heure_pec') || {value:''}).value.replace(':','h') || '';
+  const now    = new Date();
+  const dateStr = now.getFullYear() + '-'
+                + String(now.getMonth()+1).padStart(2,'0') + '-'
+                + String(now.getDate()).padStart(2,'0');
+  const filename = 'FicheBilan_' + nom + (prenom ? '_' + prenom : '') + '_' + dateStr + (hpec ? '_' + hpec : '') + '.html';
+
+  // 9. Créer le blob et déclencher le téléchargement
+  const html = '<!DOCTYPE html>\n' + clone.outerHTML;
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+
+  // 10. Feedback visuel
+  const btn = document.querySelector('.btn-save');
+  if (btn) {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✅ <span>Enregistré !</span>';
+    btn.style.background = '#059669';
+    setTimeout(() => { btn.innerHTML = orig; btn.style.background = '#7c3aed'; }, 2000);
+  }
+}
+
+// ── ENREGISTREMENT PDF ─────────────────────────────────────
+async function savePDF() {
+  const btn = document.querySelector('.btn-pdf');
+  if (btn) { btn.innerHTML = '⏳ <span>Génération…</span>'; btn.disabled = true; }
+
+  // Nom du fichier
+  const nom    = (document.getElementById('nom')    || {value:''}).value.trim().toUpperCase() || 'VICTIME';
+  const prenom = (document.getElementById('prenom') || {value:''}).value.trim() || '';
+  const hpec   = (document.getElementById('heure_pec') || {value:''}).value.replace(':','h') || '';
+  const now2   = new Date();
+  const dateStr2 = now2.getFullYear() + '-' + String(now2.getMonth()+1).padStart(2,'0') + '-' + String(now2.getDate()).padStart(2,'0');
+  const filename = 'FicheBilan_' + nom + (prenom ? '_'+prenom : '') + '_' + dateStr2 + (hpec ? '_'+hpec : '') + '.pdf';
+
+  // Vérifier que les librairies sont chargées
+  if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
+    alert('Les librairies PDF ne sont pas encore chargées. Vérifiez votre connexion internet et réessayez.');
+    if (btn) { btn.innerHTML = '📄 <span>PDF</span>'; btn.style.background = '#dc2626'; btn.disabled = false; }
+    return;
+  }
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const tab1   = document.getElementById('tab1');
+    const tab2   = document.getElementById('tab2');
+    const header = document.querySelector('.app-header');
+    const tabs   = document.querySelector('.tabs');
+    const prog   = document.querySelector('.progress-bar');
+
+    // Masquer chrome UI
+    [header, tabs, prog].forEach(e => { if(e) e.style.display = 'none'; });
+
+    // Rendre les deux pages visibles pour la capture
+    tab1.style.cssText = 'display:block !important; padding:12px 14px; max-width:900px; margin:0 auto;';
+    tab2.style.cssText = 'display:block !important; padding:12px 14px; max-width:900px; margin:0 auto;';
+
+    await new Promise(r => setTimeout(r, 400));
+
+    const pdf     = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageW   = 210;
+    const pageH   = 297;
+    const margin  = 6;
+    const usableW = pageW - margin * 2;
+    const usableH = pageH - margin * 2 - 6; // 6mm pour le mini en-tête
+
+    // Fonction : capture un tab et le fait tenir sur UNE SEULE page A4
+    async function addTabOnePage(el, isFirst) {
+      const canvas = await html2canvas(el, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#f0f4f9',
+        windowWidth: 860,
+        logging: false
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+
+      // Calculer le ratio pour faire tenir en largeur ET en hauteur
+      const ratioW  = usableW / canvas.width;
+      const ratioH  = usableH / canvas.height;
+      const ratio   = Math.min(ratioW, ratioH); // on prend le plus contraignant
+
+      const drawW   = canvas.width  * ratio;
+      const drawH   = canvas.height * ratio;
+
+      // Centrer horizontalement si plus étroit que la page
+      const xOffset = margin + (usableW - drawW) / 2;
+      // Coller en haut (après mini en-tête)
+      const yOffset = margin + 6;
+
+      if (!isFirst) pdf.addPage();
+
+      // Mini en-tête
+      pdf.setFillColor(15, 35, 64);
+      pdf.rect(0, 0, pageW, margin + 4, 'F');
+      pdf.setFontSize(8);
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('FICHE BILAN — FFSS Secouristes du Pays d\'Aix', margin, margin + 1.5);
+      const pageLabel = isFirst ? 'Page 1 — Bilan' : 'Page 2 — Antécédents & Évacuation';
+      pdf.text(pageLabel, pageW - margin - 50, margin + 1.5);
+      pdf.setTextColor(0, 0, 0);
+      pdf.setFont('helvetica', 'normal');
+
+      // Image scalée pour tenir sur la page
+      pdf.addImage(imgData, 'JPEG', xOffset, yOffset, drawW, drawH);
+    }
+
+    await addTabOnePage(tab1, true);
+    await addTabOnePage(tab2, false);
+
+    // Restaurer l'affichage
+    [header, tabs, prog].forEach(e => { if(e) e.style.display = ''; });
+    const activeTab = document.querySelector('.tab-btn.active');
+    const activeN   = activeTab ? activeTab.getAttribute('data-tab') : '1';
+    tab1.style.cssText = '';
+    tab2.style.cssText = '';
+    switchTab(activeN);
+
+    pdf.save(filename);
+
+    if (btn) {
+      btn.innerHTML = '✅ <span>PDF ok !</span>';
+      btn.style.background = '#059669';
+      setTimeout(() => { btn.innerHTML = '📄 <span>PDF</span>'; btn.style.background = '#dc2626'; btn.disabled = false; }, 2500);
+    }
+
+  } catch(err) {
+    console.error('Erreur PDF:', err);
+    try {
+      [document.querySelector('.app-header'), document.querySelector('.tabs'), document.querySelector('.progress-bar')]
+        .forEach(e => { if(e) e.style.display = ''; });
+      document.getElementById('tab1').style.cssText = '';
+      document.getElementById('tab2').style.cssText = '';
+      const activeTab = document.querySelector('.tab-btn.active');
+      switchTab(activeTab ? activeTab.getAttribute('data-tab') : '1');
+    } catch(e2) {}
+    alert('Erreur lors de la génération PDF.\nUtilisez le bouton Imprimer → "Enregistrer en PDF" comme alternative.');
+    if (btn) { btn.innerHTML = '📄 <span>PDF</span>'; btn.style.background = '#dc2626'; btn.disabled = false; }
+  }
+}
+</script>
+</body>
+</html>

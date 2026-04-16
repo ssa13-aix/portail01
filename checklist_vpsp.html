@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Check-list VPSP — FFSS Commission Locale Opérationnelle</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --navy: #0f2340;
+    --blue: #1a3f72;
+    --blue-mid: #2563a8;
+    --red: #c8102e;
+    --orange: #e85d04;
+    --yellow: #f7b731;
+    --green: #1e7e34;
+    --green-light: #d4f0dc;
+    --border: #b8c7d8;
+    --bg: #f0f4f9;
+    --white: #ffffff;
+    --text: #1a1a2e;
+    --text-muted: #5a6a7e;
+    --radius: 6px;
+    --shadow: 0 2px 8px rgba(15,35,64,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    padding-bottom: 60px;
+  }
+
+  /* ── HEADER ── */
+  .app-header {
+    background: var(--navy);
+    color: white;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .app-header h1 { font-size: 16px; font-weight: 700; letter-spacing: 0.04em; }
+  .app-header .subtitle { font-size: 10px; opacity: 0.6; font-family: 'IBM Plex Mono', monospace; }
+  .header-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .btn-header {
+    background: rgba(255,255,255,0.12);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.22);
+    padding: 7px 12px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex; align-items: center; gap: 4px;
+    white-space: nowrap;
+  }
+  .btn-header:hover { background: rgba(255,255,255,0.22); }
+
+  /* ── PROGRESS ── */
+  .progress-bar { height: 4px; background: var(--border); }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue-mid), var(--green)); transition: width 0.4s; width: 0%; }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 8px 16px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .stat { display: flex; align-items: center; gap: 5px; }
+  .stat-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .stat-ok   { background: var(--green); }
+  .stat-nok  { background: var(--red); }
+  .stat-all  { background: var(--navy); }
+  .stat-val  { font-weight: 700; color: var(--navy); }
+
+  /* ── CONTENT ── */
+  .content { max-width: 900px; margin: 0 auto; padding: 14px 12px; }
+
+  /* ── INFO CARD ── */
+  .info-card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .info-header {
+    background: var(--navy);
+    color: white;
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .info-body { padding: 12px 14px; }
+  .form-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+  .form-row:last-child { margin-bottom: 0; }
+  .field { display: flex; flex-direction: column; gap: 3px; flex: 1 1 150px; }
+  .field.full { flex: 1 1 100%; }
+  .field label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); }
+  .field input, .field textarea {
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    padding: 7px 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    background: white;
+    width: 100%;
+  }
+  .field input:focus, .field textarea:focus {
+    outline: none; border-color: var(--blue-mid);
+    box-shadow: 0 0 0 3px rgba(37,99,168,0.13);
+  }
+
+  /* ── SECTION CARD ── */
+  .section-card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 9px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    gap: 8px;
+  }
+  .section-header:hover { filter: brightness(1.08); }
+  .section-header .s-left { display: flex; align-items: center; gap: 8px; }
+  .section-progress {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    background: rgba(255,255,255,0.2);
+    padding: 2px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+  .section-toggle { font-size: 14px; transition: transform 0.2s; }
+  .section-toggle.open { transform: rotate(180deg); }
+
+  .section-body { padding: 6px 8px 8px; display: block; }
+  .section-body.collapsed { display: none; }
+
+  /* ── CHECK ITEMS ── */
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.12s;
+    border: 1.5px solid transparent;
+    margin-bottom: 3px;
+  }
+  .check-item:hover { background: #f0f4f9; border-color: var(--border); }
+  .check-item.checked { background: var(--green-light); border-color: #86efac; }
+  .check-item.na { background: #f5f5f5; border-color: #ddd; opacity: 0.6; }
+
+  .check-box {
+    width: 22px; height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: white;
+    transition: all 0.12s;
+    background: white;
+  }
+  .check-item.checked .check-box { background: var(--green); border-color: var(--green); }
+  .check-item.checked .check-box::after { content: '✓'; }
+
+  .item-code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    background: #e8eef5;
+    padding: 1px 5px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    min-width: 42px;
+    text-align: center;
+  }
+  .item-label { flex: 1; font-size: 13px; }
+  .item-qty {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy);
+    background: #dbeafe;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .item-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .badge-opt  { background: #e0e7ff; color: #3730a3; }
+  .badge-rec  { background: #fef3c7; color: #92400e; }
+  .badge-obl  { background: #fee2e2; color: #991b1b; }
+
+  /* ── SECTION COLORS ── */
+  .col-navy   { background: var(--navy); }
+  .col-blue   { background: var(--blue-mid); }
+  .col-red    { background: var(--red); }
+  .col-orange { background: var(--orange); }
+  .col-green  { background: var(--green); }
+  .col-teal   { background: #0f766e; }
+  .col-violet { background: #6d28d9; }
+  .col-slate  { background: #475569; }
+
+  /* ── COMMENTAIRES ── */
+  .obs-field {
+    margin: 4px 8px 6px;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12px;
+    width: calc(100% - 16px);
+    resize: vertical;
+    min-height: 40px;
+    color: var(--text-muted);
+  }
+  .obs-field:focus { outline: none; border-color: var(--blue-mid); }
+
+  @media (max-width: 580px) {
+    .app-header h1 { font-size: 13px; }
+    .btn-header span { display: none; }
+    .item-qty, .item-badge { display: none; }
+  }
+
+  @media print {
+    body { background: white; font-size: 11px; }
+    .app-header, .progress-bar, .stats-bar { display: none !important; }
+    .content { padding: 0; max-width: 100%; }
+    .section-card, .info-card { box-shadow: none; border: 1px solid #ccc; margin-bottom: 6px; page-break-inside: avoid; }
+    .section-body.collapsed { display: block !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div>
+    <h1>✅ Check-list VPSP — FFSS G-2010-C-009</h1>
+    <div class="subtitle">Commission Locale Opérationnelle — Secouristes du Pays d'Aix</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn-header" onclick="window.print()" style="background:#1a3f72;border-color:transparent;">🖨️ <span>Imprimer</span></button>
+    <button class="btn-header" onclick="sendByMail()" style="background:#1e7e34;border-color:transparent;">📧 <span>Envoyer</span></button>
+    <button class="btn-header btn-save" onclick="saveForm()" style="background:#7c3aed;border-color:transparent;">💾 <span>HTML</span></button>
+    <button class="btn-header btn-pdf" onclick="savePDF()" style="background:#dc2626;border-color:transparent;">📄 <span>PDF</span></button>
+    <button class="btn-header" onclick="resetForm()" style="background:rgba(200,16,46,0.45);">↺ <span>Reset</span></button>
+  </div>
+</header>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-dot stat-ok"></div><span>Cochés :</span><span class="stat-val" id="statOk">0</span></div>
+  <div class="stat"><div class="stat-dot stat-nok"></div><span>Restants :</span><span class="stat-val" id="statNok">0</span></div>
+  <div class="stat"><div class="stat-dot stat-all"></div><span>Total :</span><span class="stat-val" id="statAll">0</span></div>
+  <div class="stat" style="margin-left:auto;font-weight:700;color:var(--navy);" id="statPct">0%</div>
+</div>
+
+<div class="content" id="mainContent">
+
+  <!-- IDENTIFICATION -->
+  <div class="info-card">
+    <div class="info-header">🚑 Identification du véhicule et du contrôle</div>
+    <div class="info-body">
+      <div class="form-row">
+        <div class="field flex" style="flex:2 1 200px;">
+          <label>Immatriculation VPSP</label>
+          <input type="text" id="immat" placeholder="AA-123-BB" />
+        </div>
+        <div class="field">
+          <label>Date du contrôle</label>
+          <input type="date" id="date_ctrl" />
+        </div>
+        <div class="field">
+          <label>Heure</label>
+          <input type="time" id="heure_ctrl" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field" style="flex:2 1 200px;">
+          <label>Contrôleur / Secouriste</label>
+          <input type="text" id="controleur" placeholder="NOM Prénom" />
+        </div>
+        <div class="field full">
+          <label>Événement / Mission</label>
+          <input type="text" id="mission" placeholder="Nom de l'événement ou de la mission…" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field full">
+          <label>Observations générales</label>
+          <textarea id="obs_gen" rows="2" placeholder="Observations, anomalies, manques à signaler…"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTIONS générées par JS -->
+  <div id="sectionsContainer"></div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// DONNÉES DE LA CHECK-LIST
+// ══════════════════════════════════════════════════════════
+const sections = [
+  {
+    id: 's0', color: 'col-navy', icon: '🚗',
+    title: '1) Contrôle général véhicule / conformité',
+    items: [
+      { code: '', label: 'Carte grise avec mention VASP sanitaire' },
+      { code: '', label: 'Certificat de conformité constructeur' },
+      { code: '', label: 'Contrôle technique valide' },
+      { code: '', label: 'Sérigraphie conforme' },
+      { code: '', label: 'Convention tripartite présente si applicable', badge: 'obl' },
+      { code: '', label: 'Inventaire du VPSP à jour avec emplacement du matériel' },
+      { code: '', label: 'Carnet de bord présent' },
+      { code: '', label: 'Carnet de désinfection présent' },
+    ]
+  },
+  {
+    id: 's1', color: 'col-blue', icon: '🪑',
+    title: '2) A — Cabine',
+    items: [
+      { code: 'A001', label: 'Gilet haute visibilité', qty: '1 par intervenant (carte grise)', badge: 'obl' },
+      { code: 'A002', label: 'Marteau brise-vitre', qty: '1' },
+      { code: 'A003', label: 'Coupe-ceinture', qty: '1' },
+      { code: 'A004', label: 'Carnet de désinfection', qty: '1' },
+      { code: 'A005', label: 'Radio hertzienne (mobile ou fixe)' },
+      { code: 'A006', label: 'Radio LTE', badge: 'opt' },
+      { code: 'A007', label: 'Moyen accès réseau téléphonique public' },
+      { code: 'A008', label: 'Support téléphone', badge: 'opt' },
+      { code: 'A009', label: 'GPS', badge: 'opt' },
+      { code: 'A010', label: 'Câble chargeur multimédia', badge: 'opt' },
+      { code: 'A011', label: 'Prise 12V → USB-A', badge: 'opt' },
+      { code: 'A012', label: 'Projecteur', badge: 'opt' },
+      { code: 'A013', label: 'Carnet de bord véhicule', badge: 'rec' },
+    ]
+  },
+  {
+    id: 's2', color: 'col-blue', icon: '📄',
+    title: '3) A1 — Administratif',
+    items: [
+      { code: 'A101', label: "Certificat d'immatriculation", qty: '1' },
+      { code: 'A102', label: "Certificat d'assurance ou copie", qty: '1' },
+      { code: 'A103', label: 'Contrôle technique', qty: '1' },
+      { code: 'A104', label: 'Constat amiable', qty: '2' },
+      { code: 'A105', label: 'Copie convention applicable / tripartite', badge: 'obl' },
+    ]
+  },
+  {
+    id: 's3', color: 'col-blue', icon: '📦',
+    title: '4) A2 — Lot opérationnel',
+    items: [
+      { code: 'A201', label: 'Inventaire VPSP avec emplacement matériel', qty: '1' },
+      { code: 'A202', label: 'Fiches bilan', qty: '25' },
+      { code: 'A203', label: 'Détecteur de monoxyde de carbone', badge: 'obl', qty: 'mission agrément A' },
+      { code: 'A204', label: 'Lot bureautique', badge: 'opt' },
+    ]
+  },
+  {
+    id: 's4', color: 'col-orange', icon: '🔐',
+    title: '5) B — Lot de bord et de sécurité',
+    items: [
+      { code: 'B001', label: 'Sac à lancer avec corde 10 m mini', qty: '1' },
+      { code: 'B002', label: 'Pelle et balayette', qty: '1' },
+      { code: 'B003', label: 'Projecteur et piles', qty: '1' },
+      { code: 'B004', label: 'Cônes de Lübeck', qty: '6' },
+      { code: 'B006', label: 'Ruban de balisage', qty: '1' },
+      { code: 'B007', label: 'Triangle de pré-signalisation', qty: '2' },
+      { code: 'B008', label: 'Extincteur ABC', qty: '1' },
+      { code: 'B009', label: 'Cric + roue de secours ou anti-crevaison', qty: '1' },
+      { code: 'B010', label: 'Kit dépannage huile / liquide refroidissement', badge: 'rec' },
+      { code: 'B011', label: 'Câble de démarrage', badge: 'rec' },
+      { code: 'B012', label: 'Bouée tube', badge: 'rec' },
+      { code: 'B013', label: 'Balai avec lavette jetable', badge: 'opt' },
+      { code: 'B014', label: 'Couverture anti-feu', badge: 'rec' },
+    ]
+  },
+  {
+    id: 's5', color: 'col-orange', icon: '🔧',
+    title: '6) B1 — Trousse à outils',
+    items: [
+      { code: 'B101', label: 'Petite pince / pied de biche', qty: '1' },
+      { code: 'B102', label: 'Clé universelle', qty: '1' },
+      { code: 'B103', label: 'Jeu tournevis / Allen / coupe-boulon / clé molette / pince multiprise', badge: 'opt' },
+    ]
+  },
+  {
+    id: 's6', color: 'col-teal', icon: '🛏️',
+    title: '7) C — Matériel de brancardage',
+    items: [
+      { code: 'C001', label: 'Brancard + support + sangles', qty: '1' },
+      { code: 'C002', label: 'Matelas à dépression + sangles', qty: '1' },
+      { code: 'C002b', label: 'Pompe à dépression', qty: '1' },
+      { code: 'C003', label: 'Chaise portoir + sangles', qty: '1 + 2 sangles' },
+      { code: 'C004', label: 'Portoir souple', qty: '1' },
+      { code: 'C005', label: 'Plan dur', qty: '1' },
+      { code: 'C005b', label: 'Immobilisateur de tête', qty: '1' },
+      { code: 'C005t', label: 'Sangle araignée', qty: '1' },
+      { code: 'C006', label: 'Brancard cuillère + sangles', qty: '1' },
+      { code: 'C007', label: 'Couverture bactériostatique', qty: '1' },
+      { code: 'C007b', label: 'Oreiller bactériostatique', badge: 'opt' },
+      { code: 'C008', label: 'Brancard normalisé pliable + sangles', badge: 'opt' },
+    ]
+  },
+  {
+    id: 's7', color: 'col-red', icon: '🫁',
+    title: '8) C1 — Réanimation et oxygène',
+    items: [
+      { code: 'C101', label: 'Bouteille O₂ VPSP', qty: '1000 l min.', badge: 'obl' },
+      { code: 'C102', label: 'BAVU adulte', qty: '1' },
+      { code: 'C103', label: 'BAVU enfant', qty: '1' },
+      { code: 'C104', label: 'BAVU nourrisson', qty: '1' },
+      { code: 'C105', label: 'Jeu de canules', qty: '1 jeu / 4 tailles mini' },
+      { code: 'C106', label: 'Aspirateur électrique mucosité portable', qty: '1' },
+      { code: 'C106b', label: 'Kit aspirateur électrique', qty: '2' },
+      { code: 'C106t', label: 'Câble alimentation aspirateur', badge: 'rec' },
+      { code: 'C111', label: 'Cardiopompe', badge: 'obl', qty: 'selon prescriptions' },
+      { code: 'C112', label: 'DAE/DEA + électrodes adulte', qty: '1' },
+      { code: 'C112b', label: 'Kit préparation thorax', qty: '1' },
+      { code: 'C113', label: 'MHC adulte', qty: '2' },
+      { code: 'C114', label: 'MMC adulte', qty: '2' },
+      { code: 'C115', label: 'Lunettes O₂ adulte', qty: '2' },
+      { code: 'C116', label: 'MHC enfant', qty: '2' },
+      { code: 'C117', label: 'MMC enfant', qty: '2' },
+      { code: 'C118', label: 'Lunettes O₂ enfant', qty: '2' },
+      { code: 'C119', label: 'Électrodes adulte de réserve', badge: 'rec' },
+      { code: 'C120', label: 'Électrodes pédiatriques', badge: 'rec' },
+      { code: 'chk1', label: '✔ Pression / autonomie O₂ vérifiée' },
+      { code: 'chk2', label: '✔ Détendeur et débitmètre fonctionnels' },
+      { code: 'chk3', label: '✔ BAVU complets et étanches' },
+      { code: 'chk4', label: '✔ Aspirateur testé' },
+      { code: 'chk5', label: '✔ DAE testé / autotest OK / date électrodes OK / batterie OK' },
+    ]
+  },
+  {
+    id: 's8', color: 'col-red', icon: '🩺',
+    title: '9) C2 — Kit bilan transportable',
+    items: [
+      { code: 'C201', label: 'Tensiomètre manuel + brassards adaptés', qty: '1' },
+      { code: 'C202', label: 'Oxymètre', qty: '1' },
+      { code: 'C203', label: 'Stéthoscope', qty: '1' },
+      { code: 'C204', label: 'Thermomètre', qty: '1' },
+      { code: 'C205', label: 'Lecteur glycémie + bandelettes', qty: '1 + 20' },
+      { code: 'C206', label: 'Autopiqueur', qty: '20' },
+      { code: 'C207', label: 'Tensiomètre automatique + brassards', badge: 'opt' },
+      { code: 'C208', label: 'EVA douleur', badge: 'opt' },
+    ]
+  },
+  {
+    id: 's9', color: 'col-red', icon: '🩸',
+    title: '10) C3 — Hémorragie',
+    items: [
+      { code: 'C301', label: 'Garrot tourniquet', qty: '2' },
+      { code: 'C302', label: 'Pansement compressif / israélien', qty: '2' },
+      { code: 'C303', label: 'Pansement absorbant stérile', qty: '2' },
+      { code: 'C305', label: 'Champ de soin stérile', qty: '2' },
+    ]
+  },
+  {
+    id: 's10', color: 'col-red', icon: '🩹',
+    title: '11) C4 — Plaies',
+    items: [
+      { code: 'C401', label: 'Ciseaux type Jesco', qty: '1' },
+      { code: 'C402', label: 'Ciseaux de soin', qty: '1' },
+      { code: 'C403', label: 'Pince à échardes', qty: '1' },
+      { code: 'C404', label: 'Compresses stériles non tissées', qty: '50' },
+      { code: 'C405', label: 'Sparadrap', qty: '2' },
+      { code: 'C406', label: 'Pansements toutes tailles', qty: '20' },
+      { code: 'C407', label: 'Sérum physiologique', qty: '20' },
+      { code: 'C408', label: 'Bandes extensibles 3 tailles', qty: '10' },
+      { code: 'C409', label: 'Solution désinfectante', badge: 'obl', qty: 'prescriptions locales' },
+      { code: 'C410', label: 'Filet tubulaire', badge: 'opt' },
+      { code: 'C411', label: 'Bande adhésive', badge: 'rec' },
+    ]
+  },
+  {
+    id: 's11', color: 'col-orange', icon: '🔥',
+    title: '12) C5 — Brûlures',
+    items: [
+      { code: 'C501', label: 'Lot de compresses d\'eau', qty: '1' },
+      { code: 'C502', label: 'Gants stériles', qty: '3 paires' },
+      { code: 'C503', label: 'Drap stérile', qty: '1' },
+      { code: 'C504', label: 'Couverture isothermique', qty: '1' },
+    ]
+  },
+  {
+    id: 's12', color: 'col-slate', icon: '✂️',
+    title: '13) C6 — Membre sectionné',
+    items: [
+      { code: 'C601', label: 'Kit membre sectionné', qty: '1' },
+    ]
+  },
+  {
+    id: 's13', color: 'col-teal', icon: '🦴',
+    title: '14) C7 — Immobilisation / prise en charge',
+    items: [
+      { code: 'C701', label: 'Jeu d\'attelles', qty: '1 mini / 3 tailles' },
+      { code: 'C702', label: 'Jeu de colliers cervicaux', qty: '1' },
+      { code: 'C703', label: 'Attelle cervico-thoracique', qty: '1' },
+      { code: 'C704', label: 'Écharpes triangulaires', qty: '10' },
+      { code: 'C705', label: 'Packs de froid', qty: '10' },
+      { code: 'C706', label: 'Couvertures de survie', qty: '20' },
+      { code: 'C707', label: 'Pompe dépression à main', badge: 'opt' },
+      { code: 'C708', label: 'Ceinture pelvienne', badge: 'opt' },
+      { code: 'C709', label: 'Attelle à traction', badge: 'opt' },
+    ]
+  },
+  {
+    id: 's14', color: 'col-slate', icon: '🧼',
+    title: '15) C8 — Hygiène',
+    items: [
+      { code: 'C801', label: 'Haricot ou sac vomitoire', qty: '5' },
+      { code: 'C803', label: 'Bassin', qty: '1' },
+      { code: 'C804', label: 'Urinal', qty: '1' },
+      { code: 'C805', label: 'Conteneur OPTC', qty: '1' },
+      { code: 'C806', label: 'Sacs DASRI', qty: '10' },
+      { code: 'C807', label: 'Sacs DAOM', qty: '10' },
+      { code: 'C808', label: 'Gants non stériles', qty: '1 boîte / 3 tailles' },
+      { code: 'C809', label: 'Drap usage unique pour brancard', qty: '5 minimum' },
+      { code: 'C810', label: 'Solution hydroalcoolique', qty: '500 ml' },
+      { code: 'C811', label: 'Produit de surface', qty: '750 ml' },
+      { code: 'C812', label: 'Papier absorbant', qty: '1 rouleau ou lot 100' },
+      { code: 'C011', label: 'Sucre enveloppé', qty: '30' },
+      { code: 'C012', label: 'Eau bouteille 500 ml', qty: '6' },
+      { code: 'C012b', label: 'Brumisateur d\'eau', qty: '500 ml' },
+      { code: 'C013', label: 'Gobelets', qty: '20' },
+      { code: 'C014', label: 'Kit accouchement', qty: '1' },
+      { code: 'C015', label: 'Peluche CE', badge: 'opt' },
+      { code: 'C813', label: 'Housse mortuaire', badge: 'opt' },
+    ]
+  },
+  {
+    id: 's15', color: 'col-navy', icon: '🦺',
+    title: '16) C9 — Équipements de protection individuelle',
+    items: [
+      { code: 'C901', label: 'Casque avec jugulaire', qty: '1 par intervenant' },
+      { code: 'C902', label: 'Gants de manutention', qty: '2 paires minimum' },
+      { code: 'C903', label: 'Lunettes de protection', qty: '4 paires' },
+      { code: 'C906', label: 'Masques chirurgicaux', qty: '20' },
+      { code: 'C907', label: 'Masques FFP2 / KN95', qty: '8' },
+      { code: 'C908', label: 'Surblouses usage unique', qty: '4' },
+      { code: 'C909', label: 'Surchaussures', qty: '8' },
+      { code: 'C910', label: 'Charlottes', qty: '8' },
+      { code: 'C911', label: 'Kit AES', qty: '1' },
+    ]
+  },
+  {
+    id: 's16', color: 'col-violet', icon: '🎒',
+    title: '17) D1 — Sac portable d\'oxygénation',
+    items: [
+      { code: 'D101', label: 'Bouteille O₂ portable', qty: '1000 l' },
+      { code: 'D102', label: 'BAVU adulte', qty: '1' },
+      { code: 'D103', label: 'BAVU enfant', qty: '1' },
+      { code: 'D105', label: 'Jeu de canules', qty: '1' },
+      { code: 'D106', label: 'Aspirateur manuel à mucosité', qty: '1' },
+      { code: 'D109', label: 'MHC adulte', qty: '1' },
+      { code: 'D110', label: 'MMC adulte', qty: '1' },
+      { code: 'D111', label: 'Lunettes O₂ adulte', qty: '1' },
+      { code: 'D112', label: 'MHC enfant', qty: '1' },
+      { code: 'D113', label: 'MMC enfant', qty: '1' },
+    ]
+  },
+  {
+    id: 's17', color: 'col-violet', icon: '🩺',
+    title: '18) D2 — Sac portable de prompt secours',
+    items: [
+      { code: 'D201', label: 'Fiche bilan', qty: '1' },
+      { code: 'D202', label: 'Fiche intervention', qty: '1' },
+      { code: 'D203', label: 'Refus de prise en charge', qty: '1' },
+      { code: 'D204', label: 'Lot bureautique', qty: '1' },
+      { code: 'D209', label: 'Lunettes de protection', qty: '4' },
+      { code: 'D210', label: 'Masques chirurgicaux', qty: '4' },
+      { code: 'D212', label: 'Conteneur OPTC', qty: '1' },
+      { code: 'D213', label: 'Sac DASRI', qty: '3' },
+      { code: 'D214', label: 'Solution hydroalcoolique', qty: '100 ml' },
+      { code: 'D215', label: 'Ruban de balisage', qty: '1' },
+      { code: 'D216', label: 'Lampe électrique + piles', qty: '1' },
+      { code: 'D217', label: 'Ciseaux Jesco', qty: '1' },
+      { code: 'D218', label: 'Tensiomètre manuel + brassards', qty: '1' },
+      { code: 'D219', label: 'Stéthoscope', qty: '1' },
+      { code: 'D224', label: 'Ciseaux de soin', qty: '1' },
+      { code: 'D225', label: 'Garrot tourniquet', qty: '1' },
+      { code: 'D226', label: 'Pansement compressif / israélien', qty: '1' },
+      { code: 'D228', label: 'Compresses stériles 10×10', qty: '10' },
+      { code: 'D229', label: 'Pansements tailles différentes', qty: '10' },
+      { code: 'D230', label: 'Sparadrap', qty: '1' },
+      { code: 'D231', label: 'Champ de soin stérile', qty: '2' },
+      { code: 'D232', label: 'Sérum physiologique', qty: '10' },
+      { code: 'D233', label: 'Bandes extensibles', qty: '3' },
+      { code: 'D234', label: 'Pince à échardes', qty: '1' },
+      { code: 'D236', label: 'Écharpes triangulaires', qty: '2' },
+      { code: 'D237', label: 'Lot de colliers cervicaux', qty: '1' },
+      { code: 'D238', label: 'Poches de froid', qty: '2' },
+      { code: 'D239', label: 'Couvertures de survie', qty: '2' },
+      { code: 'D240', label: 'Eau 500 ml', qty: '2' },
+      { code: 'D241', label: 'Gobelets usage unique', qty: '2' },
+      { code: 'D242', label: 'Sucres individuels', qty: '5' },
+    ]
+  },
+  {
+    id: 's18', color: 'col-green', icon: '🏁',
+    title: '19) Contrôles finaux avant départ',
+    items: [
+      { code: '', label: 'Tous les matériels obligatoires sont présents' },
+      { code: '', label: 'Les matériels optionnels/recommandés sont identifiés' },
+      { code: '', label: 'Les dates de péremption sont vérifiées' },
+      { code: '', label: 'Les consommables sont réapprovisionnés' },
+      { code: '', label: 'Les batteries sont chargées' },
+      { code: '', label: 'Les équipements O₂ sont sécurisés' },
+      { code: '', label: 'Les dispositifs coupants/piquants sont protégés' },
+      { code: '', label: 'Le matériel est rangé à l\'emplacement prévu' },
+      { code: '', label: 'La cellule sanitaire est propre' },
+      { code: '', label: 'Le véhicule est prêt au départ' },
+    ]
+  },
+];
+
+// ══════════════════════════════════════════════════════════
+// RENDU DES SECTIONS
+// ══════════════════════════════════════════════════════════
+const container = document.getElementById('sectionsContainer');
+
+sections.forEach(sec => {
+  const card = document.createElement('div');
+  card.className = 'section-card';
+  card.id = sec.id;
+
+  // Header
+  const hdr = document.createElement('div');
+  hdr.className = 'section-header ' + sec.color;
+  hdr.innerHTML = `
+    <div class="s-left">
+      <span>${sec.icon}</span>
+      <span>${sec.title}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="section-progress" id="prog_${sec.id}">0 / ${sec.items.length}</span>
+      <span class="section-toggle open" id="tog_${sec.id}">▲</span>
+    </div>
+  `;
+  hdr.addEventListener('click', () => toggleSection(sec.id));
+  card.appendChild(hdr);
+
+  // Body
+  const body = document.createElement('div');
+  body.className = 'section-body';
+  body.id = 'body_' + sec.id;
+
+  sec.items.forEach((item, idx) => {
+    const itemId = sec.id + '_' + idx;
+    const row = document.createElement('div');
+    row.className = 'check-item';
+    row.id = 'item_' + itemId;
+    row.setAttribute('data-section', sec.id);
+
+    const badgeMap = { opt: 'Optionnel', rec: 'Recommandé', obl: 'Obligatoire' };
+    const badgeHtml = item.badge
+      ? `<span class="item-badge badge-${item.badge}">${badgeMap[item.badge]}</span>`
+      : '';
+    const qtyHtml = item.qty
+      ? `<span class="item-qty">${item.qty}</span>`
+      : '';
+    const codeHtml = item.code
+      ? `<span class="item-code">${item.code}</span>`
+      : '<span class="item-code" style="opacity:0;">—</span>';
+
+    row.innerHTML = `
+      <div class="check-box"></div>
+      ${codeHtml}
+      <span class="item-label">${item.label}</span>
+      ${qtyHtml}
+      ${badgeHtml}
+    `;
+    row.addEventListener('click', () => toggleItem(itemId, sec.id, sec.items.length));
+    body.appendChild(row);
+  });
+
+  // Zone observations de section
+  const obsArea = document.createElement('textarea');
+  obsArea.className = 'obs-field';
+  obsArea.placeholder = 'Observations pour cette section…';
+  obsArea.id = 'obs_' + sec.id;
+  obsArea.addEventListener('input', updateProgress);
+  body.appendChild(obsArea);
+
+  card.appendChild(body);
+  container.appendChild(card);
+});
+
+// Init stats
+updateProgress();
+
+// ══════════════════════════════════════════════════════════
+// TOGGLE SECTION
+// ══════════════════════════════════════════════════════════
+function toggleSection(id) {
+  const body = document.getElementById('body_' + id);
+  const tog  = document.getElementById('tog_' + id);
+  body.classList.toggle('collapsed');
+  tog.classList.toggle('open');
+}
+
+// ══════════════════════════════════════════════════════════
+// TOGGLE ITEM
+// ══════════════════════════════════════════════════════════
+function toggleItem(itemId, secId, total) {
+  const el = document.getElementById('item_' + itemId);
+  el.classList.toggle('checked');
+  updateSectionProgress(secId, total);
+  updateProgress();
+}
+
+function updateSectionProgress(secId, total) {
+  const checked = document.querySelectorAll('#body_' + secId + ' .check-item.checked').length;
+  const progEl  = document.getElementById('prog_' + secId);
+  if (progEl) progEl.textContent = checked + ' / ' + total;
+}
+
+// ══════════════════════════════════════════════════════════
+// PROGRESS GLOBAL
+// ══════════════════════════════════════════════════════════
+function updateProgress() {
+  const all     = document.querySelectorAll('.check-item').length;
+  const checked = document.querySelectorAll('.check-item.checked').length;
+  const pct     = all > 0 ? Math.round((checked / all) * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('statOk').textContent  = checked;
+  document.getElementById('statNok').textContent = all - checked;
+  document.getElementById('statAll').textContent = all;
+  document.getElementById('statPct').textContent = pct + '%';
+}
+
+// ══════════════════════════════════════════════════════════
+// RESET
+// ══════════════════════════════════════════════════════════
+function resetForm() {
+  if (!confirm('Réinitialiser toute la check-list ?')) return;
+  document.querySelectorAll('.check-item').forEach(el => el.classList.remove('checked'));
+  document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+  document.getElementById('date_ctrl').value = new Date().toISOString().split('T')[0];
+  sections.forEach(sec => updateSectionProgress(sec.id, sec.items.length));
+  updateProgress();
+}
+
+// Init date
+document.getElementById('date_ctrl').value = new Date().toISOString().split('T')[0];
+
+// ══════════════════════════════════════════════════════════
+// ENVOI MAIL
+// ══════════════════════════════════════════════════════════
+function sendByMail() {
+  const get = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+
+  const immat      = get('immat') || '—';
+  const date_ctrl  = get('date_ctrl') || '—';
+  const heure_ctrl = get('heure_ctrl') || '—';
+  const controleur = get('controleur') || '—';
+  const mission    = get('mission') || '—';
+  const obs_gen    = get('obs_gen') || '—';
+
+  const all     = document.querySelectorAll('.check-item').length;
+  const checked = document.querySelectorAll('.check-item.checked').length;
+  const pct     = all > 0 ? Math.round((checked / all) * 100) : 0;
+
+  const lines = [
+    '══════════════════════════════════════════════',
+    '   CHECK-LIST VPSP — FFSS G-2010-C-009',
+    '   Commission Locale Opérationnelle — SSA13',
+    '══════════════════════════════════════════════',
+    '',
+    '── IDENTIFICATION ────────────────────────────',
+    'Immatriculation : ' + immat,
+    'Date contrôle   : ' + date_ctrl + ' à ' + heure_ctrl,
+    'Contrôleur      : ' + controleur,
+    'Mission         : ' + mission,
+    '',
+    '── RÉSULTAT GLOBAL ───────────────────────────',
+    'Cochés   : ' + checked + ' / ' + all + ' (' + pct + '%)',
+    'Restants : ' + (all - checked),
+    '',
+    '── DÉTAIL PAR SECTION ────────────────────────',
+  ];
+
+  sections.forEach(sec => {
+    const sChecked = document.querySelectorAll('#body_' + sec.id + ' .check-item.checked').length;
+    const sTotal   = sec.items.length;
+    const obs      = get('obs_' + sec.id);
+    lines.push('');
+    lines.push(sec.title + ' — ' + sChecked + '/' + sTotal);
+    // Items manquants
+    sec.items.forEach((item, idx) => {
+      const el = document.getElementById('item_' + sec.id + '_' + idx);
+      if (el && !el.classList.contains('checked')) {
+        lines.push('  ✗ ' + (item.code ? '[' + item.code + '] ' : '') + item.label);
+      }
+    });
+    if (obs) lines.push('  📝 Obs : ' + obs);
+  });
+
+  lines.push('');
+  lines.push('── OBSERVATIONS GÉNÉRALES ────────────────────');
+  lines.push(obs_gen);
+  lines.push('');
+  lines.push('══════════════════════════════════════════════');
+  lines.push('Export FFSS / SSA13 — ' + new Date().toLocaleString('fr-FR'));
+  lines.push('══════════════════════════════════════════════');
+
+  const subject = encodeURIComponent('Check-list VPSP — ' + immat + ' — ' + date_ctrl + ' — ' + pct + '%');
+  const body    = encodeURIComponent(lines.join('\n'));
+  window.location.href = 'mailto:contact@ssa13.org?subject=' + subject + '&body=' + body;
+}
+
+// ══════════════════════════════════════════════════════════
+// SAUVEGARDE HTML
+// ══════════════════════════════════════════════════════════
+function saveForm() {
+  const btn = document.querySelector('.btn-save');
+  const clone = document.documentElement.cloneNode(true);
+
+  // Copier inputs/textareas
+  const liveInps  = document.querySelectorAll('input, textarea');
+  const cloneInps = clone.querySelectorAll('input, textarea');
+  liveInps.forEach((el, i) => { if (cloneInps[i]) cloneInps[i].value = el.value; });
+
+  // Copier classes (checked, collapsed…)
+  const liveEls  = document.querySelectorAll('[class]');
+  const cloneEls = clone.querySelectorAll('[class]');
+  liveEls.forEach((el, i) => { if (cloneEls[i]) cloneEls[i].className = el.className; });
+
+  // Copier styles inline
+  const liveStyled  = document.querySelectorAll('[style]');
+  const cloneStyled = clone.querySelectorAll('[style]');
+  liveStyled.forEach((el, i) => { if (cloneStyled[i]) cloneStyled[i].setAttribute('style', el.getAttribute('style')); });
+
+  const immat     = (document.getElementById('immat')     || {value:''}).value.trim() || 'VPSP';
+  const date_ctrl = (document.getElementById('date_ctrl') || {value:''}).value || '';
+  const filename  = 'ChecklistVPSP_' + immat.replace(/\s/g,'_') + '_' + date_ctrl + '.html';
+
+  const blob = new Blob(['<!DOCTYPE html>\n' + clone.outerHTML], { type: 'text/html;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+
+  if (btn) {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✅ <span>Enregistré !</span>';
+    btn.style.background = '#059669';
+    setTimeout(() => { btn.innerHTML = orig; btn.style.background = '#7c3aed'; }, 2200);
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// SAUVEGARDE PDF (toutes sections dépliées, scroll-capture)
+// ══════════════════════════════════════════════════════════
+async function savePDF() {
+  const btn = document.querySelector('.btn-pdf');
+  if (btn) { btn.innerHTML = '⏳ <span>Génération…</span>'; btn.disabled = true; }
+
+  const immat     = (document.getElementById('immat')     || {value:''}).value.trim() || 'VPSP';
+  const date_ctrl = (document.getElementById('date_ctrl') || {value:''}).value || '';
+  const filename  = 'ChecklistVPSP_' + immat.replace(/\s/g,'_') + '_' + date_ctrl + '.pdf';
+
+  if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
+    alert('Les librairies PDF ne sont pas encore chargées. Vérifiez votre connexion internet.');
+    if (btn) { btn.innerHTML = '📄 <span>PDF</span>'; btn.style.background = '#dc2626'; btn.disabled = false; }
+    return;
+  }
+
+  try {
+    const { jsPDF } = window.jspdf;
+
+    // Déplier toutes les sections pour la capture
+    const collapsed = document.querySelectorAll('.section-body.collapsed');
+    collapsed.forEach(el => el.classList.remove('collapsed'));
+
+    // Masquer chrome
+    const header    = document.querySelector('.app-header');
+    const progBar   = document.querySelector('.progress-bar');
+    const statsBar  = document.querySelector('.stats-bar');
+    [header, progBar, statsBar].forEach(e => { if(e) e.style.display = 'none'; });
+
+    await new Promise(r => setTimeout(r, 400));
+
+    const content  = document.getElementById('mainContent');
+    const pageW    = 210;
+    const pageH    = 297;
+    const margin   = 6;
+    const usableW  = pageW - margin * 2;
+    const usableH  = pageH - margin * 2 - 9;
+
+    const canvas = await html2canvas(content, {
+      scale: 1.8,
+      useCORS: true,
+      backgroundColor: '#f0f4f9',
+      windowWidth: 900,
+      logging: false,
+      scrollY: 0
+    });
+
+    const imgData  = canvas.toDataURL('image/jpeg', 0.88);
+    const ratio    = usableW / canvas.width;
+    const totalH   = canvas.height * ratio;
+    const slicePx  = usableH / ratio;
+
+    const all     = document.querySelectorAll('.check-item').length;
+    const checked = document.querySelectorAll('.check-item.checked').length;
+    const pct     = all > 0 ? Math.round((checked / all) * 100) : 0;
+
+    const pdf  = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    let srcY   = 0;
+    let page   = 1;
+
+    while (srcY < canvas.height) {
+      if (page > 1) pdf.addPage();
+
+      // En-tête
+      pdf.setFillColor(15, 35, 64);
+      pdf.rect(0, 0, pageW, margin + 6, 'F');
+      pdf.setFontSize(8);
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('CHECK-LIST VPSP — FFSS G-2010-C-009 — ' + immat, margin, margin + 1.5);
+      pdf.text(date_ctrl + '  |  ' + checked + '/' + all + ' (' + pct + '%)', pageW - margin - 55, margin + 1.5);
+      pdf.setTextColor(0, 0, 0);
+      pdf.setFont('helvetica', 'normal');
+
+      // Tranche d'image
+      pdf.addImage(imgData, 'JPEG', margin, margin + 8 - (srcY * ratio), usableW, totalH);
+
+      // Masques
+      pdf.setFillColor(255, 255, 255);
+      pdf.rect(0, margin + 8 + usableH, pageW, pageH, 'F'); // bas
+      pdf.rect(0, 0, pageW, margin + 8, 'F');                // haut
+
+      // Re-en-tête
+      pdf.setFillColor(15, 35, 64);
+      pdf.rect(0, 0, pageW, margin + 6, 'F');
+      pdf.setFontSize(8);
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('CHECK-LIST VPSP — FFSS G-2010-C-009 — ' + immat, margin, margin + 1.5);
+      pdf.text(date_ctrl + '  |  ' + checked + '/' + all + ' (' + pct + '%)', pageW - margin - 55, margin + 1.5);
+
+      // Pied
+      pdf.setFontSize(7);
+      pdf.setTextColor(150);
+      pdf.text('Page ' + page + '  —  Commission Locale Opérationnelle SSA13  —  ' + new Date().toLocaleDateString('fr-FR'), pageW / 2, pageH - 2, { align: 'center' });
+      pdf.setTextColor(0);
+
+      srcY += slicePx;
+      page++;
+    }
+
+    // Restaurer
+    [header, progBar, statsBar].forEach(e => { if(e) e.style.display = ''; });
+    collapsed.forEach(el => el.classList.add('collapsed'));
+
+    pdf.save(filename);
+
+    if (btn) {
+      btn.innerHTML = '✅ <span>PDF ok !</span>';
+      btn.style.background = '#059669';
+      setTimeout(() => { btn.innerHTML = '📄 <span>PDF</span>'; btn.style.background = '#dc2626'; btn.disabled = false; }, 2500);
+    }
+
+  } catch(err) {
+    console.error('Erreur PDF:', err);
+    try {
+      [document.querySelector('.app-header'), document.querySelector('.progress-bar'), document.querySelector('.stats-bar')]
+        .forEach(e => { if(e) e.style.display = ''; });
+    } catch(e2) {}
+    alert('Erreur lors de la génération PDF.\nUtilisez Imprimer → "Enregistrer en PDF" comme alternative.');
+    if (btn) { btn.innerHTML = '📄 <span>PDF</span>'; btn.style.background = '#dc2626'; btn.disabled = false; }
+  }
+}
+</script>
+</body>
+</html>
