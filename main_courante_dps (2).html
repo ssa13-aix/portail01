@@ -954,26 +954,39 @@ async function savePDF() {
 </script>
 
 <script>
-/* ── INJECTION DPS SSA13 ── */
+/* ── INJECTION DPS SSA13 v2 ── */
 (function(){
   const params = new URLSearchParams(location.search);
   const dps_id = params.get('dps_id');
   if(!dps_id) return;
+
   let list;
   try{ list = JSON.parse(localStorage.getItem('ssa13_dps')||'[]'); } catch{ return; }
   const dps = list.find(d=>d.id===dps_id);
   if(!dps) return;
 
+  /* ── Bandeau ── */
   const banner = document.createElement('div');
-  banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#c0392b;color:white;font-family:sans-serif;font-size:13px;font-weight:600;text-align:center;padding:6px 12px;letter-spacing:.05em;';
-  banner.textContent = '📁 DPS : '+dps.nom+' · '+dps.id+' — Données pré-remplies depuis le portail';
-  document.body.prepend(banner);
-  document.body.style.paddingTop='32px';
+  banner.style.cssText = 'background:#c0392b;color:white;font-family:sans-serif;font-size:12px;font-weight:600;text-align:center;padding:6px 12px;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;';
+  banner.innerHTML = '<span>📁 DPS : '+dps.nom+' · '+dps.id+'</span>'
+    +'<a href="dossier.html?id='+dps_id+'" style="color:white;background:rgba(255,255,255,0.2);padding:3px 12px;border-radius:6px;text-decoration:none;font-size:12px;">← Retour au dossier DPS</a>';
 
+  const hdr = document.querySelector('.app-header, .header, header, .status-bar');
+  if(hdr) hdr.insertAdjacentElement('beforebegin', banner);
+  else { document.body.prepend(banner); document.body.style.paddingTop='32px'; }
+
+  /* ── Bouton flottant retour (toujours visible) ── */
+  const retour = document.createElement('a');
+  retour.href  = 'dossier.html?id='+dps_id;
+  retour.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9999;background:#0b1a2e;color:#f0a500;border:1px solid rgba(240,165,0,.35);font-family:sans-serif;font-size:13px;font-weight:600;padding:10px 18px;border-radius:8px;text-decoration:none;box-shadow:0 4px 20px rgba(0,0,0,.5);';
+  retour.textContent = '← Retour au dossier DPS';
+  document.body.appendChild(retour);
+
+  /* ── Pré-remplissage ── */
   function fill(id, val){ const el=document.getElementById(id); if(el&&val) el.value=val; }
-  fill('evenement',   dps.nom);
-  fill('adresse',     dps.lieu);
-  fill('date_dps',    dps.date);
+  fill('evenement',     dps.nom);
+  fill('adresse',       dps.lieu);
+  fill('date_dps',      dps.date);
   fill('horaire_debut', dps.heure);
 })();
 </script>
