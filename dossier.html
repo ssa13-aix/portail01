@@ -124,6 +124,15 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
 .bilans-empty{text-align:center;padding:40px;color:var(--grey);}
 .bilans-empty-icon{font-size:40px;opacity:.3;margin-bottom:10px;}
 .bilans-empty-text{font-size:13px;opacity:.6;}
+.bilan-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
+.bilan-issue-select{background:rgba(26,51,88,.6);border:1px solid rgba(255,255,255,.1);color:var(--white);
+  font-family:'Barlow',sans-serif;font-size:11px;padding:5px 8px;border-radius:6px;cursor:pointer;outline:none;}
+.bilan-issue-select option{background:#112240;}
+.btn-open-bilan{display:inline-flex;align-items:center;gap:4px;
+  background:rgba(192,57,43,.2);border:1px solid rgba(192,57,43,.35);color:var(--white);
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.05em;
+  padding:6px 14px;border-radius:7px;text-decoration:none;transition:all .2s;white-space:nowrap;}
+.btn-open-bilan:hover{background:rgba(192,57,43,.4);transform:translateY(-1px);}
 
 /* MODAL BILAN */
 .modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(7,17,31,.85);backdrop-filter:blur(8px);
@@ -383,56 +392,109 @@ function render(){
   `;
 }
 
-function renderBilans(bilans){
-  if(!bilans.length) return `
-    <div class="bilans-empty">
-      <div class="bilans-empty-icon">🩺</div>
-      <div class="bilans-empty-text">Aucune fiche bilan pour ce DPS.<br>Cliquez sur "Nouvelle fiche bilan" pour en créer une.</div>
-    </div>`;
-
-  return bilans.map((b,i)=>`
-    <a class="bilan-item" href="fiche_bilan_interactive%20(3).html?dps_id=${DPS_ID}&bilan_id=${b.id}" target="_blank">
-      <div class="bilan-num">#${String(i+1).padStart(2,'0')}</div>
-      <div class="bilan-body">
-        <div class="bilan-victime">${b.sexe?b.sexe+' — ':''} ${b.motif||'Victime sans détail'}</div>
-        <div class="bilan-meta">
-          ${b.heure?`<span>🕐 ${b.heure}</span>`:''}
-          ${b.lieu?`<span>📍 ${b.lieu}</span>`:''}
-          <span style="color:${issueColor(b.issue)}">${b.issue||'En cours'}</span>
-        </div>
-      </div>
-      <div class="bilan-arrow">→</div>
-    </a>`).join('');
-}
-
 function issueColor(issue){
   if(!issue||issue==='En cours') return 'var(--gold)';
   if(issue==='Laissé sur place') return 'var(--green)';
   if(issue&&issue.includes('Évacué')) return 'var(--red2)';
+  if(issue==='Refus de soins') return 'var(--grey)';
   return 'var(--grey)';
 }
 
-/* ── STATUT ── */
+function hasSavedData(bilanId){
+  return !!localStorage.getItem('ssa13_bilan_form_'+bilanId);
+}
+
+function renderBilans(bilans){
+  var el = document.getElementById('bilans-list');
+  if(!el) return;
+  if(!bilans.length){
+    el.innerHTML = '<div class="bilans-empty">'
+      +'<div class="bilans-empty-icon">🩺</div>'
+      +'<div class="bilans-empty-text">Aucune fiche bilan pour ce DPS.<br>Cliquez sur "Nouvelle fiche bilan" pour en créer une.</div>'
+      +'</div>';
+    return;
+  }
+  var html = '';
+  bilans.forEach(function(b, i){
+    var num     = '#'+String(i+1).padStart(2,'0');
+    var victime = (b.sexe ? b.sexe+' — ' : '') + (b.motif||'Victime sans détail');
+    var col     = issueColor(b.issue);
+    var issue   = b.issue||'En cours';
+    var saved   = hasSavedData(b.id);
+    var saveBadge = saved
+      ? '<span style="font-size:10px;background:rgba(39,174,96,.15);color:#2ecc71;border:1px solid rgba(39,174,96,.3);padding:2px 8px;border-radius:10px;letter-spacing:.06em;">💾 DONNÉES SAISIES</span>'
+      : '<span style="font-size:10px;background:rgba(240,165,0,.1);color:var(--gold);border:1px solid rgba(240,165,0,.2);padding:2px 8px;border-radius:10px;letter-spacing:.06em;">📝 VIERGE</span>';
+    var meta = '';
+    if(b.heure) meta += '<span>🕐 '+b.heure+'</span>';
+    if(b.lieu)  meta += '<span>📍 '+b.lieu+'</span>';
+    meta += '<span style="color:'+col+'">'+issue+'</span>';
+
+    html += '<div class="bilan-item" id="bilan-row-'+b.id+'">'
+      +'<div class="bilan-num">'+num+'</div>'
+      +'<div class="bilan-body">'
+      +'<div class="bilan-victime">'+victime+'</div>'
+      +'<div class="bilan-meta">'+meta+'</div>'
+      +'</div>'
+      +'<div class="bilan-actions">'
+      +saveBadge
+      // Sélecteur issue rapide
+      +'<select class="bilan-issue-select" onchange="updateBilanIssue(''+b.id+'',this.value)" title="Changer l'issue">'
+      +'<option value="En cours"'+(issue==='En cours'?' selected':'')+'>🔄 En cours</option>'
+      +'<option value="Laissé sur place"'+(issue==='Laissé sur place'?' selected':'')+'>✅ Laissé sur place</option>'
+      +'<option value="Évacué SAMU"'+(issue==='Évacué SAMU'?' selected':'')+'>🚑 Évacué SAMU</option>'
+      +'<option value="Évacué pompiers"'+(issue==='Évacué pompiers'?' selected':'')+'>🚒 Évacué pompiers</option>'
+      +'<option value="Refus de soins"'+(issue==='Refus de soins'?' selected':'')+'>❌ Refus de soins</option>'
+      +'</select>'
+      // Bouton ouvrir/reprendre
+      +'<a class="btn-open-bilan" href="fiche_bilan_interactive%20(3).html?dps_id='+DPS_ID+'&bilan_id='+b.id+'" target="_blank">'
+      +(saved ? '✏️ Reprendre' : '📋 Ouvrir')
+      +'</a>'
+      +'</div>'
+      +'</div>';
+  });
+  el.innerHTML = html;
+}
+
+function updateBilanIssue(bilanId, newIssue){
+  var list = getBilans(DPS_ID);
+  var idx  = list.findIndex(function(b){ return b.id===bilanId; });
+  if(idx>=0){ list[idx].issue = newIssue; saveBilans(DPS_ID, list); }
+  refreshStats();
+}
+
+function refreshStats(){
+  var bilans = getBilans(DPS_ID);
+  var stats  = document.querySelectorAll('.dps-stat-num');
+  if(stats[0]) stats[0].textContent = bilans.length;
+  if(stats[1]) stats[1].textContent = bilans.filter(function(b){return b.issue==='Laissé sur place';}).length;
+  if(stats[2]) stats[2].textContent = bilans.filter(function(b){return b.issue&&b.issue.includes('Évacué');}).length;
+  if(stats[3]) stats[3].textContent = bilans.filter(function(b){return !b.issue||b.issue==='En cours';}).length;
+}
+
+/* ── STATUT DPS ── */
 function updateStatut(){
-  const val = document.getElementById('statut-select').value;
+  var val = document.getElementById('statut-select').value;
   document.getElementById('statut-select').className='statut-select '+val;
-  const list=getDPS();
-  const idx=list.findIndex(d=>d.id===DPS_ID);
+  var list=getDPS();
+  var idx=list.findIndex(function(d){return d.id===DPS_ID;});
   if(idx>=0){list[idx].statut=val;saveDPS(list);}
 }
 
 /* ── MODAL BILAN ── */
 function openModalBilan(){
-  const now=new Date();
-  document.getElementById('b-heure').value=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  var now=new Date();
+  document.getElementById('b-heure').value=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
   document.getElementById('b-motif').value='';
+  document.getElementById('b-lieu').value='';
+  document.getElementById('b-sexe').value='';
+  document.getElementById('b-issue').value='En cours';
   document.getElementById('modal-bilan').classList.add('open');
 }
 function closeModalBilan(){document.getElementById('modal-bilan').classList.remove('open');}
 function closeModalOutside(e){if(e.target===document.getElementById('modal-bilan'))closeModalBilan();}
 
 function createBilan(){
-  const bilan={
+  var bilan={
     id:'BIL-'+Date.now(),
     heure:document.getElementById('b-heure').value,
     sexe:document.getElementById('b-sexe').value,
@@ -441,38 +503,25 @@ function createBilan(){
     issue:document.getElementById('b-issue').value,
     createdAt:Date.now()
   };
-  const list=getBilans(DPS_ID);
+  var list=getBilans(DPS_ID);
   list.push(bilan);
   saveBilans(DPS_ID,list);
   closeModalBilan();
-
-  // Ouvrir la fiche bilan avec les IDs
-  window.open(`fiche_bilan_interactive%20(3).html?dps_id=${DPS_ID}&bilan_id=${bilan.id}`,'_blank');
-
-  // Rafraîchir la liste
-  document.getElementById('bilans-list').innerHTML = renderBilans(getBilans(DPS_ID));
-
-  // Mettre à jour les stats
-  const allBilans = getBilans(DPS_ID);
-  document.querySelectorAll('.dps-stat-num')[0].textContent=allBilans.length;
-  document.querySelectorAll('.dps-stat-num')[1].textContent=allBilans.filter(b=>b.issue==='Laissé sur place').length;
-  document.querySelectorAll('.dps-stat-num')[2].textContent=allBilans.filter(b=>b.issue&&b.issue.includes('Évacué')).length;
-  document.querySelectorAll('.dps-stat-num')[3].textContent=allBilans.filter(b=>b.issue==='En cours').length;
+  renderBilans(getBilans(DPS_ID));
+  refreshStats();
+  window.open('fiche_bilan_interactive%20(3).html?dps_id='+DPS_ID+'&bilan_id='+bilan.id,'_blank');
 }
 
 /* ── START ── */
 render();
 
-/* ── RECHARGEMENT quand on revient sur l'onglet ── */
-document.addEventListener('visibilitychange', ()=>{
-  if(document.visibilityState === 'visible' &&
-     sessionStorage.getItem('ssa13_auth') === 'true') renderDPS();
-});
-window.addEventListener('focus', ()=>{
-  if(sessionStorage.getItem('ssa13_auth') === 'true') renderDPS();
-});
-window.addEventListener('pageshow', ()=>{
-  if(sessionStorage.getItem('ssa13_auth') === 'true') renderDPS();
+/* ── RECHARGEMENT quand on revient sur l'onglet (bilans mis à jour) ── */
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState==='visible'){
+    var bilans = getBilans(DPS_ID);
+    renderBilans(bilans);
+    refreshStats();
+  }
 });
 </script>
 </body>
