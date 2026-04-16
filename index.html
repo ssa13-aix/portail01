@@ -406,6 +406,17 @@ const statusLabel={en_cours:'En cours',termine:'Terminé',planifie:'Planifié'};
 const statusColor={en_cours:'#27ae60',termine:'#8a9ab0',planifie:'#f0a500'};
 const typeIcon={Sportif:'🏃',Culturel:'🎭',Festif:'🎉',Scolaire:'🏫',Autre:'📌'};
 
+/* ── RECHARGEMENT quand on revient sur l'onglet ── */
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState==='visible' && sessionStorage.getItem('ssa13_auth')==='true') renderDPS();
+});
+window.addEventListener('focus', ()=>{
+  if(sessionStorage.getItem('ssa13_auth')==='true') renderDPS();
+});
+window.addEventListener('pageshow', ()=>{
+  if(sessionStorage.getItem('ssa13_auth')==='true') renderDPS();
+});
+
 function renderDPS(){
   const list=getDPS();
   document.getElementById('stat-total').textContent=list.length;
