@@ -462,6 +462,18 @@ function createBilan(){
 
 /* ── START ── */
 render();
+
+/* ── RECHARGEMENT quand on revient sur l'onglet ── */
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState === 'visible' &&
+     sessionStorage.getItem('ssa13_auth') === 'true') renderDPS();
+});
+window.addEventListener('focus', ()=>{
+  if(sessionStorage.getItem('ssa13_auth') === 'true') renderDPS();
+});
+window.addEventListener('pageshow', ()=>{
+  if(sessionStorage.getItem('ssa13_auth') === 'true') renderDPS();
+});
 </script>
 </body>
 </html>
