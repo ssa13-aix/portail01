@@ -1672,5 +1672,50 @@ async function savePDF() {
   }
 }
 </script>
+
+<script>
+/* ── INJECTION DPS + BILAN SSA13 ── */
+(function(){
+  const params   = new URLSearchParams(location.search);
+  const dps_id   = params.get('dps_id');
+  const bilan_id = params.get('bilan_id');
+  if(!dps_id) return;
+
+  let dpsList;
+  try{ dpsList = JSON.parse(localStorage.getItem('ssa13_dps')||'[]'); } catch{ return; }
+  const dps = dpsList.find(d=>d.id===dps_id);
+
+  // Bandeau
+  const banner = document.createElement('div');
+  banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#c0392b;color:white;font-family:sans-serif;font-size:13px;font-weight:600;text-align:center;padding:6px 12px;letter-spacing:.05em;';
+  banner.textContent = '📁 DPS : '+(dps?dps.nom:dps_id)+' — Fiche Bilan liée au dossier';
+  document.body.prepend(banner);
+  document.body.style.paddingTop='32px';
+
+  function fill(id, val){ const el=document.getElementById(id); if(el&&val) el.value=val; }
+
+  // Pré-remplir depuis les données bilan si disponibles
+  if(bilan_id){
+    let bilans;
+    try{ bilans = JSON.parse(localStorage.getItem('ssa13_bilans_'+dps_id)||'[]'); } catch{ bilans=[]; }
+    const bilan = bilans.find(b=>b.id===bilan_id);
+    if(bilan){
+      fill('heure_pec', bilan.heure);
+      fill('lieu',      bilan.lieu);
+      fill('circonstance', bilan.motif);
+      // Sexe
+      if(bilan.sexe==='Homme'){ const el=document.getElementById('sexe_m'); if(el) el.click(); }
+      if(bilan.sexe==='Femme'){ const el=document.getElementById('sexe_f'); if(el) el.click(); }
+    }
+  }
+
+  // Lien retour dossier
+  const retour = document.createElement('a');
+  retour.href  = 'dossier.html?id='+dps_id;
+  retour.style.cssText='position:fixed;bottom:20px;right:20px;z-index:9999;background:#0b1a2e;color:#f0a500;border:1px solid rgba(240,165,0,.3);font-family:sans-serif;font-size:13px;font-weight:600;padding:8px 16px;border-radius:8px;text-decoration:none;box-shadow:0 4px 20px rgba(0,0,0,.4);';
+  retour.textContent = '← Retour au dossier DPS';
+  document.body.appendChild(retour);
+})();
+</script>
 </body>
 </html>
