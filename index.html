@@ -8,27 +8,23 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height:100vh;}
-
-/* LOGIN */
 #login{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;background:#07111f;}
-#login.off{display:none;}
-.lbox{width:340px;background:#112240;border:1px solid rgba(240,165,0,.2);border-radius:16px;padding:40px 32px;text-align:center;}
-.llogo{width:68px;height:68px;background:linear-gradient(135deg,#c0392b,#e74c3c);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;}
-.ltitle{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
-.lsub{font-size:12px;color:#8a9ab0;margin-bottom:28px;}
-.plabel{font-size:11px;color:#f0a500;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;}
-.dots{display:flex;justify-content:center;gap:14px;margin-bottom:24px;}
-.dot{width:14px;height:14px;border-radius:50%;border:2px solid #1a3358;background:transparent;transition:.2s;}
+#login.cache{display:none;}
+.lbox{width:320px;background:#112240;border:1px solid rgba(240,165,0,.2);border-radius:16px;padding:40px 28px;text-align:center;}
+.llogo{width:66px;height:66px;background:linear-gradient(135deg,#c0392b,#e74c3c);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 14px;}
+.ltit{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+.lsub{font-size:12px;color:#8a9ab0;margin-bottom:26px;}
+.plbl{font-size:11px;color:#f0a500;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;}
+.dots{display:flex;justify-content:center;gap:14px;margin-bottom:22px;}
+.dot{width:13px;height:13px;border-radius:50%;border:2px solid #1a3358;background:transparent;transition:.2s;}
 .dot.on{background:#f0a500;border-color:#f0a500;}
-.dot.err{background:#e74c3c;border-color:#e74c3c;}
-.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:220px;margin:0 auto 16px;}
-.pbtn{background:#1a3358;border:1px solid rgba(240,165,0,.15);color:#f0f4f8;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:600;height:54px;border-radius:10px;cursor:pointer;}
-.pbtn:hover{background:#234070;}
-.pbtn:active{transform:scale(.95);}
+.dot.ko{background:#e74c3c;border-color:#e74c3c;}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-width:210px;margin:0 auto 14px;}
+.pb{background:#1a3358;border:1px solid rgba(240,165,0,.15);color:#f0f4f8;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:600;height:52px;border-radius:10px;cursor:pointer;}
+.pb:hover{background:#234070;}
+.pb:active{transform:scale(.94);}
 .p0{grid-column:2;}
-.perr{font-size:12px;color:#e74c3c;min-height:18px;}
-
-/* DASHBOARD */
+.perr{font-size:12px;color:#e74c3c;min-height:16px;}
 #dash{display:none;}
 .hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;background:#0c1d30;border-bottom:1px solid rgba(240,165,0,.15);position:sticky;top:0;z-index:10;}
 .hbrand{display:flex;align-items:center;gap:12px;}
@@ -40,55 +36,47 @@ body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height
 .hdate{font-size:11px;color:#8a9ab0;text-align:right;}
 .btnout{background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);color:#8a9ab0;font-size:12px;padding:7px 14px;border-radius:8px;cursor:pointer;}
 .btnout:hover{color:#f0f4f8;background:rgba(192,57,43,.3);}
-
 .hero{padding:36px 32px 20px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;}
 .htag{display:inline-block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#f0a500;border:1px solid rgba(240,165,0,.3);padding:4px 12px;border-radius:20px;margin-bottom:10px;background:rgba(240,165,0,.06);}
 .htitle{font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;margin-bottom:6px;}
 .htitle span{color:#e74c3c;}
 .hdesc{font-size:13px;color:#8a9ab0;}
-.btnnew{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#c0392b,#e74c3c);border:none;color:white;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:13px 26px;border-radius:12px;cursor:pointer;box-shadow:0 4px 20px rgba(192,57,43,.4);}
+.btnnew{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#c0392b,#e74c3c);border:none;color:white;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:13px 26px;border-radius:12px;cursor:pointer;}
 .btnnew:hover{opacity:.9;}
-
-.stats{display:flex;margin:0 32px 28px;border:1px solid rgba(240,165,0,.15);border-radius:12px;overflow:hidden;}
+.stats{display:flex;margin:0 32px 24px;border:1px solid rgba(240,165,0,.15);border-radius:12px;overflow:hidden;}
 .stat{flex:1;padding:16px 8px;background:rgba(17,34,64,.85);text-align:center;border-right:1px solid rgba(240,165,0,.1);}
 .stat:last-child{border-right:none;}
 .snum{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;}
 .slbl{font-size:10px;color:#8a9ab0;text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
-
-.sech{display:flex;align-items:center;gap:10px;padding:0 32px 14px;margin-top:4px;}
+.sech{display:flex;align-items:center;gap:10px;padding:0 32px 12px;}
 .sline{flex:1;height:1px;background:linear-gradient(to right,rgba(240,165,0,.15),transparent);}
 .slabel{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#8a9ab0;}
-
-#dpslist{padding:0 32px;margin-bottom:8px;}
+#listeDPS{padding:0 32px;min-height:40px;margin-bottom:8px;}
 .dcard{background:#112240;border:1px solid rgba(240,165,0,.15);border-left:4px solid #8a9ab0;border-radius:12px;padding:16px 18px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;}
-.dcard:hover{border-color:rgba(240,165,0,.35);background:#162c50;}
+.dcard:hover{border-color:rgba(240,165,0,.4);background:#162c50;}
 .dicon{width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
 .dbody{flex:1;min-width:0;}
-.dname{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dname{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .dmeta{font-size:12px;color:#8a9ab0;margin-top:3px;}
 .dright{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .dbadge{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;}
-.bp{background:rgba(240,165,0,.12);color:#f0a500;border:1px solid rgba(240,165,0,.25);}
-.be{background:rgba(39,174,96,.15);color:#2ecc71;border:1px solid rgba(39,174,96,.3);}
-.bt{background:rgba(138,154,176,.1);color:#8a9ab0;border:1px solid rgba(138,154,176,.2);}
-.darr{width:28px;height:28px;border-radius:7px;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:14px;color:#8a9ab0;}
+.bpl{background:rgba(240,165,0,.12);color:#f0a500;border:1px solid rgba(240,165,0,.25);}
+.bec{background:rgba(39,174,96,.15);color:#2ecc71;border:1px solid rgba(39,174,96,.3);}
+.bte{background:rgba(138,154,176,.1);color:#8a9ab0;border:1px solid rgba(138,154,176,.2);}
+.darr{width:28px;height:28px;border-radius:7px;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:#8a9ab0;}
 .dcard:hover .darr{background:#c0392b;border-color:#c0392b;color:white;}
 .empty{text-align:center;padding:50px 20px;color:#8a9ab0;}
 .eico{font-size:48px;opacity:.3;margin-bottom:12px;}
 .etit{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;text-transform:uppercase;opacity:.5;margin-bottom:6px;}
 .edsc{font-size:13px;opacity:.5;}
-
 .qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;padding:0 32px;}
 .qcard{background:rgba(17,34,64,.5);border:1px solid rgba(240,165,0,.12);border-radius:10px;padding:14px 16px;text-decoration:none;color:#f0f4f8;display:flex;align-items:center;gap:10px;}
 .qcard:hover{background:rgba(17,34,64,.85);border-color:rgba(240,165,0,.3);}
 .qico{font-size:22px;}
-.qname{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;}
+.qname{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;}
 .qdsc{font-size:11px;color:#8a9ab0;margin-top:1px;}
-
 .ftr{text-align:center;padding:36px;font-size:12px;color:#8a9ab0;border-top:1px solid rgba(240,165,0,.1);margin-top:32px;}
 .ftr strong{color:#e74c3c;}
-
-/* MODAL */
 .mov{position:fixed;inset:0;z-index:200;background:rgba(5,12,25,.88);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.3s;}
 .mov.on{opacity:1;pointer-events:all;}
 .mbox{width:min(540px,92vw);background:#0f2040;border:1px solid rgba(240,165,0,.2);border-radius:16px;padding:32px;transform:translateY(16px);transition:.3s;}
@@ -104,18 +92,17 @@ body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height
 .msel option{background:#112240;}
 .mact{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
 .mcanc{background:transparent;border:1px solid rgba(255,255,255,.12);color:#8a9ab0;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;padding:9px 18px;border-radius:8px;cursor:pointer;}
-.mokbtn{background:linear-gradient(135deg,#c0392b,#e74c3c);border:none;color:white;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;padding:9px 22px;border-radius:8px;cursor:pointer;text-transform:uppercase;letter-spacing:.05em;}
+.mokbtn{background:linear-gradient(135deg,#c0392b,#e74c3c);border:none;color:white;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;padding:9px 22px;border-radius:8px;cursor:pointer;text-transform:uppercase;}
 </style>
 </head>
 <body>
 
-<!-- ECRAN LOGIN -->
 <div id="login">
   <div class="lbox">
     <div class="llogo">&#128737;</div>
-    <div class="ltitle">Secouristes du Pays d'Aix</div>
-    <div class="lsub">Portail operationnel SSA13 - Acces securise</div>
-    <div class="plabel">Entrez votre code PIN</div>
+    <div class="ltit">Secouristes du Pays d'Aix</div>
+    <div class="lsub">Portail SSA13 - Acces securise</div>
+    <div class="plbl">Code PIN</div>
     <div class="dots">
       <div class="dot" id="d0"></div>
       <div class="dot" id="d1"></div>
@@ -123,23 +110,22 @@ body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height
       <div class="dot" id="d3"></div>
     </div>
     <div class="pad">
-      <button class="pbtn" onclick="pp(1)">1</button>
-      <button class="pbtn" onclick="pp(2)">2</button>
-      <button class="pbtn" onclick="pp(3)">3</button>
-      <button class="pbtn" onclick="pp(4)">4</button>
-      <button class="pbtn" onclick="pp(5)">5</button>
-      <button class="pbtn" onclick="pp(6)">6</button>
-      <button class="pbtn" onclick="pp(7)">7</button>
-      <button class="pbtn" onclick="pp(8)">8</button>
-      <button class="pbtn" onclick="pp(9)">9</button>
-      <button class="pbtn p0" onclick="pp(0)">0</button>
-      <button class="pbtn" onclick="pd()">&#9003;</button>
+      <button class="pb" onclick="pp(1)">1</button>
+      <button class="pb" onclick="pp(2)">2</button>
+      <button class="pb" onclick="pp(3)">3</button>
+      <button class="pb" onclick="pp(4)">4</button>
+      <button class="pb" onclick="pp(5)">5</button>
+      <button class="pb" onclick="pp(6)">6</button>
+      <button class="pb" onclick="pp(7)">7</button>
+      <button class="pb" onclick="pp(8)">8</button>
+      <button class="pb" onclick="pp(9)">9</button>
+      <button class="pb p0" onclick="pp(0)">0</button>
+      <button class="pb" onclick="pd()">&#9003;</button>
     </div>
     <div class="perr" id="perr"></div>
   </div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dash">
   <div class="hdr">
     <div class="hbrand">
@@ -164,18 +150,18 @@ body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height
       <div class="htitle">Gestion des <span>DPS</span></div>
       <div class="hdesc">Creez et accedez a vos dossiers DPS centralises.</div>
     </div>
-    <button class="btnnew" onclick="ouvModal()">&#65291; Nouveau DPS</button>
+    <button class="btnnew" onclick="ouvModal()">+ Nouveau DPS</button>
   </div>
 
   <div class="stats">
-    <div class="stat"><div class="snum" id="sttot" style="color:#f0a500">0</div><div class="slbl">Total</div></div>
-    <div class="stat"><div class="snum" id="stec"  style="color:#27ae60">0</div><div class="slbl">En cours</div></div>
-    <div class="stat"><div class="snum" id="stpl"  style="color:#f0a500">0</div><div class="slbl">Planifies</div></div>
-    <div class="stat"><div class="snum" id="stte">0</div><div class="slbl">Termines</div></div>
+    <div class="stat"><div class="snum" id="s1" style="color:#f0a500">0</div><div class="slbl">Total</div></div>
+    <div class="stat"><div class="snum" id="s2" style="color:#27ae60">0</div><div class="slbl">En cours</div></div>
+    <div class="stat"><div class="snum" id="s3" style="color:#f0a500">0</div><div class="slbl">Planifies</div></div>
+    <div class="stat"><div class="snum" id="s4">0</div><div class="slbl">Termines</div></div>
   </div>
 
   <div class="sech"><div class="slabel">Mes DPS</div><div class="sline"></div></div>
-  <div id="dpslist"></div>
+  <div id="listeDPS"></div>
 
   <div class="sech" style="margin-top:24px;"><div class="slabel">Outils rapides</div><div class="sline"></div></div>
   <div class="qgrid">
@@ -191,26 +177,25 @@ body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height
   <div class="ftr"><strong>SSA13</strong> &middot; Secouristes du Pays d'Aix &middot; FFSS</div>
 </div>
 
-<!-- MODAL NOUVEAU DPS -->
-<div class="mov" id="modal" onclick="fermModalExt(event)">
+<div class="mov" id="modal" onclick="fermExt(event)">
   <div class="mbox">
     <div class="mtit">Nouveau DPS</div>
     <div class="msub">Informations du dispositif</div>
     <div class="mrow mfull"><div class="mgrp">
-      <label class="mlbl">Nom de l'evenement *</label>
-      <input class="minput" id="fnom" type="text" placeholder="ex: Trail Chateau Gombert">
+      <label class="mlbl">Nom *</label>
+      <input class="minput" id="fn" type="text" placeholder="ex: Trail Chateau Gombert">
     </div></div>
     <div class="mrow">
-      <div class="mgrp"><label class="mlbl">Date *</label><input class="minput" id="fdat" type="date"></div>
-      <div class="mgrp"><label class="mlbl">Heure</label><input class="minput" id="fheu" type="time" value="08:00"></div>
+      <div class="mgrp"><label class="mlbl">Date *</label><input class="minput" id="fd" type="date"></div>
+      <div class="mgrp"><label class="mlbl">Heure</label><input class="minput" id="fh" type="time" value="08:00"></div>
     </div>
     <div class="mrow mfull"><div class="mgrp">
       <label class="mlbl">Lieu</label>
-      <input class="minput" id="flieu" type="text" placeholder="ex: Marseille 13eme">
+      <input class="minput" id="fl" type="text" placeholder="ex: Marseille">
     </div></div>
     <div class="mrow">
       <div class="mgrp"><label class="mlbl">Type</label>
-        <select class="msel" id="ftyp">
+        <select class="msel" id="ft">
           <option value="Sportif">Sportif</option>
           <option value="Culturel">Culturel</option>
           <option value="Festif">Festif</option>
@@ -219,7 +204,7 @@ body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height
         </select>
       </div>
       <div class="mgrp"><label class="mlbl">Statut</label>
-        <select class="msel" id="fsta">
+        <select class="msel" id="fs">
           <option value="planifie">Planifie</option>
           <option value="en_cours">En cours</option>
           <option value="termine">Termine</option>
@@ -228,163 +213,179 @@ body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height
     </div>
     <div class="mact">
       <button class="mcanc" onclick="fermModal()">Annuler</button>
-      <button class="mokbtn" onclick="creerDPS()">Creer le DPS</button>
+      <button class="mokbtn" onclick="creer()">Creer</button>
     </div>
   </div>
 </div>
 
 <script>
-// CONFIG - modifiez le code PIN ici
 var CODE = '1313';
+var buf  = '';
 
-// STORAGE
-function getListe(){ try{ return JSON.parse(localStorage.getItem('ssa13_dps')||'[]'); }catch(e){ return []; } }
-function saveListe(l){ localStorage.setItem('ssa13_dps', JSON.stringify(l)); }
+function getListe(){
+  try{ return JSON.parse(localStorage.getItem('ssa13_dps') || '[]'); }
+  catch(e){ return []; }
+}
+function saveListe(l){
+  localStorage.setItem('ssa13_dps', JSON.stringify(l));
+}
 
-// PIN
-var buf = '';
-if(localStorage.getItem('ssa13_auth')==='true'){ affDash(); }
-
+// ── PIN ──────────────────────────────────────────
 function pp(n){
-  if(buf.length >= CODE.length) return;
-  buf = buf + String(n);
-  majPts();
-  if(buf.length === CODE.length){ setTimeout(verifier, 150); }
+  if(buf.length >= 4) return;
+  buf += String(n);
+  majDots();
+  if(buf.length === 4) setTimeout(verif, 150);
 }
 function pd(){
   buf = buf.slice(0, -1);
-  majPts();
+  majDots();
   document.getElementById('perr').textContent = '';
 }
-function majPts(){
-  for(var i=0; i<CODE.length; i++){
-    var cl = 'dot' + (i < buf.length ? ' on' : '');
-    document.getElementById('d'+i).className = cl;
+function majDots(){
+  for(var i = 0; i < 4; i++){
+    document.getElementById('d' + i).className = 'dot' + (i < buf.length ? ' on' : '');
   }
 }
-function verifier(){
+function verif(){
   if(buf === CODE){
-    localStorage.setItem('ssa13_auth','true');
-    affDash();
+    localStorage.setItem('ssa13_ok', '1');
+    afficher();
   } else {
     document.getElementById('perr').textContent = 'Code incorrect';
-    for(var i=0; i<CODE.length; i++){ document.getElementById('d'+i).className='dot err'; }
-    setTimeout(function(){ buf=''; majPts(); document.getElementById('perr').textContent=''; }, 900);
+    for(var i = 0; i < 4; i++) document.getElementById('d' + i).className = 'dot ko';
+    setTimeout(function(){ buf = ''; majDots(); document.getElementById('perr').textContent = ''; }, 900);
   }
 }
-function affDash(){
-  document.getElementById('login').className = 'off';
-  document.getElementById('dash').style.display = 'block';
-  lancerHorloge();
-  affListe();
-}
-function deco(){ localStorage.removeItem('ssa13_auth'); location.reload(); }
 
-// HORLOGE
-function lancerHorloge(){
-  var J=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
-  var M=['Jan','Fev','Mar','Avr','Mai','Jun','Jul','Aou','Sep','Oct','Nov','Dec'];
+// ── AFFICHAGE ────────────────────────────────────
+function afficher(){
+  document.getElementById('login').className = 'cache';
+  document.getElementById('dash').style.display = 'block';
+  horloge();
+  liste();
+}
+function deco(){
+  localStorage.removeItem('ssa13_ok');
+  location.reload();
+}
+
+// ── HORLOGE ──────────────────────────────────────
+function horloge(){
+  var J = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  var M = ['Jan','Fev','Mar','Avr','Mai','Jun','Jul','Aou','Sep','Oct','Nov','Dec'];
   function tic(){
-    var d=new Date();
-    var h=('0'+d.getHours()).slice(-2), m=('0'+d.getMinutes()).slice(-2), s=('0'+d.getSeconds()).slice(-2);
+    var d = new Date();
+    var h = ('0'+d.getHours()).slice(-2);
+    var m = ('0'+d.getMinutes()).slice(-2);
+    var s = ('0'+d.getSeconds()).slice(-2);
     document.getElementById('hclock').textContent = h+':'+m+':'+s;
     document.getElementById('hdate').textContent  = J[d.getDay()]+' '+d.getDate()+' '+M[d.getMonth()]+' '+d.getFullYear();
   }
-  tic(); setInterval(tic, 1000);
+  tic();
+  setInterval(tic, 1000);
 }
 
-// LISTE DPS
-var ICO = {Sportif:'&#127939;',Culturel:'&#127917;',Festif:'&#127881;',Scolaire:'&#127979;',Autre:'&#128204;'};
+// ── LISTE DPS ────────────────────────────────────
+var ICO = {Sportif:'&#127939;', Culturel:'&#127917;', Festif:'&#127881;', Scolaire:'&#127979;', Autre:'&#128204;'};
 
-function affListe(){
-  var liste = getListe();
-  var ec=0, pl=0, te=0;
-  for(var i=0; i<liste.length; i++){
-    if(liste[i].statut==='en_cours') ec++;
-    else if(liste[i].statut==='planifie') pl++;
-    else te++;
+function liste(){
+  var L  = getListe();
+  var ec = 0, pl = 0, te = 0;
+  for(var i = 0; i < L.length; i++){
+    var s = L[i].statut;
+    if(s === 'en_cours') ec++;
+    else if(s === 'termine') te++;
+    else pl++;
   }
-  document.getElementById('sttot').textContent = liste.length;
-  document.getElementById('stec').textContent  = ec;
-  document.getElementById('stpl').textContent  = pl;
-  document.getElementById('stte').textContent  = te;
+  document.getElementById('s1').textContent = L.length;
+  document.getElementById('s2').textContent = ec;
+  document.getElementById('s3').textContent = pl;
+  document.getElementById('s4').textContent = te;
 
-  var el = document.getElementById('dpslist');
-  if(!el) return;
+  var el = document.getElementById('listeDPS');
+  if(!el){ setTimeout(liste, 100); return; }
 
-  if(liste.length === 0){
-    el.innerHTML = '<div class="empty"><div class="eico">&#128193;</div><div class="etit">Aucun DPS</div><div class="edsc">Cliquez sur Nouveau DPS pour commencer</div></div>';
+  if(L.length === 0){
+    el.innerHTML = '<div class="empty"><div class="eico">&#128193;</div>'
+      +'<div class="etit">Aucun DPS</div>'
+      +'<div class="edsc">Cliquez sur Nouveau DPS pour commencer</div></div>';
     return;
   }
 
   var h = '';
-  for(var i=0; i<liste.length; i++){
-    var d    = liste[i];
-    var nom  = (d.nom||'').replace(/[<>&]/g,'');
-    var ico  = ICO[d.type] || '&#128204;';
-    var col  = (d.statut==='en_cours') ? '#27ae60' : (d.statut==='termine') ? '#8a9ab0' : '#f0a500';
-    var bcls = (d.statut==='en_cours') ? 'be' : (d.statut==='termine') ? 'bt' : 'bp';
-    var blbl = (d.statut==='en_cours') ? 'En cours' : (d.statut==='termine') ? 'Termine' : 'Planifie';
-    var dt   = '';
+  for(var i = 0; i < L.length; i++){
+    var d   = L[i];
+    var nom = (d.nom || '').replace(/[<>&]/g, '');
+    var ico = ICO[d.type] || '&#128204;';
+    var col = d.statut === 'en_cours' ? '#27ae60' : d.statut === 'termine' ? '#8a9ab0' : '#f0a500';
+    var bcl = d.statut === 'en_cours' ? 'bec' : d.statut === 'termine' ? 'bte' : 'bpl';
+    var blb = d.statut === 'en_cours' ? 'En cours' : d.statut === 'termine' ? 'Termine' : 'Planifie';
+    var dt  = '';
     try{ if(d.date) dt = new Date(d.date+'T12:00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}); }catch(e){}
     var meta = dt;
-    if(d.heure) meta += ' | ' + d.heure;
-    if(d.lieu)  meta += ' | ' + d.lieu;
+    if(d.heure) meta += '  |  ' + d.heure;
+    if(d.lieu)  meta += '  |  ' + (d.lieu||'').replace(/[<>&]/g,'');
 
-    h += '<div class="dcard" style="border-left-color:'+col+'" onclick="ouvrirDPS(\''+d.id+'\')">';
-    h += '<div class="dicon">'+ico+'</div>';
-    h += '<div class="dbody"><div class="dname">'+nom+'</div><div class="dmeta">'+meta+'</div></div>';
-    h += '<div class="dright"><span class="dbadge '+bcls+'">'+blbl+'</span><div class="darr">&#8594;</div></div>';
+    h += '<div class="dcard" style="border-left-color:' + col + ';" onclick="ouv(\'' + d.id + '\')">';
+    h += '<div class="dicon">' + ico + '</div>';
+    h += '<div class="dbody"><div class="dname">' + nom + '</div><div class="dmeta">' + meta + '</div></div>';
+    h += '<div class="dright"><span class="dbadge ' + bcl + '">' + blb + '</span><div class="darr">&#8594;</div></div>';
     h += '</div>';
   }
   el.innerHTML = h;
 }
 
-function ouvrirDPS(id){
-  window.open('dossier.html?id='+id, '_blank');
+function ouv(id){
+  window.open('dossier.html?id=' + id, '_blank');
 }
 
 document.addEventListener('visibilitychange', function(){
-  if(document.visibilityState==='visible' && localStorage.getItem('ssa13_auth')==='true') affListe();
+  if(document.visibilityState === 'visible' && localStorage.getItem('ssa13_ok') === '1') liste();
 });
 
-// MODAL
+// ── MODAL ────────────────────────────────────────
 function ouvModal(){
-  document.getElementById('fnom').value = '';
-  document.getElementById('fdat').value = new Date().toISOString().split('T')[0];
-  document.getElementById('flieu').value = '';
+  document.getElementById('fn').value = '';
+  document.getElementById('fd').value = new Date().toISOString().split('T')[0];
+  document.getElementById('fl').value = '';
   document.getElementById('modal').className = 'mov on';
 }
 function fermModal(){ document.getElementById('modal').className = 'mov'; }
-function fermModalExt(e){ if(e.target===document.getElementById('modal')) fermModal(); }
+function fermExt(e){ if(e.target === document.getElementById('modal')) fermModal(); }
 
 function genID(){
-  var n = new Date();
-  var d = n.getFullYear()+('0'+(n.getMonth()+1)).slice(-2)+('0'+n.getDate()).slice(-2);
-  return 'DPS-'+d+'-'+('00'+(getListe().length+1)).slice(-3);
+  var d = new Date();
+  var s = d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2);
+  return 'DPS-' + s + '-' + ('00' + (getListe().length + 1)).slice(-3);
 }
 
-function creerDPS(){
-  var nom = document.getElementById('fnom').value.trim();
-  var dat = document.getElementById('fdat').value;
+function creer(){
+  var nom = document.getElementById('fn').value.trim();
+  var dat = document.getElementById('fd').value;
   if(!nom || !dat){ alert('Remplissez le nom et la date.'); return; }
   var dps = {
-    id: genID(),
-    nom: nom,
-    date: dat,
-    heure: document.getElementById('fheu').value,
-    lieu: document.getElementById('flieu').value.trim(),
-    type: document.getElementById('ftyp').value,
-    statut: document.getElementById('fsta').value,
+    id: genID(), nom: nom, date: dat,
+    heure: document.getElementById('fh').value,
+    lieu:  document.getElementById('fl').value.trim(),
+    type:  document.getElementById('ft').value,
+    statut:document.getElementById('fs').value,
     createdAt: Date.now()
   };
-  var liste = getListe();
-  liste.unshift(dps);
-  saveListe(liste);
+  var L = getListe();
+  L.unshift(dps);
+  saveListe(L);
   fermModal();
-  affListe();
-  window.open('dossier.html?id='+dps.id, '_blank');
+  liste();
+  window.open('dossier.html?id=' + dps.id, '_blank');
 }
+
+// ── DEMARRAGE ────────────────────────────────────
+window.addEventListener('DOMContentLoaded', function(){
+  if(localStorage.getItem('ssa13_ok') === '1'){
+    afficher();
+  }
+});
 </script>
 </body>
 </html>
