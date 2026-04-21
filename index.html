@@ -386,7 +386,7 @@ function show(){
   document.getElementById('dash').style.display='block';
   clock(); liste(); stats();
 }
-function deco(){ localStorage.removeItem('ssa13_ok'); location.reload(); }
+function deco(){ localStorage.removeItem('ssa13_ok'); localStorage.removeItem('ssa13_auth'); location.reload(); }
 
 // ═══ TABS ═══
 function switchTab(name){
@@ -694,7 +694,15 @@ document.addEventListener('visibilitychange',function(){
 
 // ═══ DEMARRAGE ═══
 window.addEventListener('DOMContentLoaded',function(){
-  if(localStorage.getItem('ssa13_ok')==='1') show();
+  // Compatible toutes versions + param URL ?auth=1
+  var ok = localStorage.getItem('ssa13_ok')==='1'
+        || localStorage.getItem('ssa13_auth')==='true';
+  var urlAuth = new URLSearchParams(location.search).get('auth')==='1';
+  if(ok || urlAuth){
+    localStorage.setItem('ssa13_ok','1');
+    show();
+    if(urlAuth) history.replaceState(null,'',location.pathname);
+  }
 });
 </script>
 </body>
