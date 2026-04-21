@@ -487,4 +487,215 @@ function renderCards(list, isArchive){
       vstats+='</div>';
     }
 
-    var onclick = isArch
+    var onclick = isArchive
+      ? 'ouvrirArchive(\''+d.id+'\')'
+      : 'aller(\''+d.id+'\')';
+    var arrowIcon = isArchive ? '&#128065;' : '&#8594;';
+
+    h+='<div class="dc'+(isArchive?' archive':'')+'" style="border-left-color:'+col+';" onclick="'+onclick+'">'
+      +'<div class="dico">'+ico+'</div>'
+      +'<div class="dbody"><div class="dnom">'+nom+'</div><div class="dmeta">'+meta+'</div></div>'
+      +'<div class="dright">'+vstats+'<span class="dbadge '+bcl+'">'+blb+'</span><div class="darr">'+arrowIcon+'</div></div>'
+      +'</div>';
+  }
+  return h;
+}
+
+function aller(id){ window.location.href='dossier.html?id='+id; }
+
+// ═══ ARCHIVE DETAIL ═══
+function ouvrirArchive(id){
+  currentArcID = id;
+  var L=getL();
+  var dps=null; for(var i=0;i<L.length;i++){ if(L[i].id===id){dps=L[i];break;} }
+  if(!dps) return;
+
+  var B=getB(id);
+  var dt='';
+  try{ if(dps.date) dt=new Date(dps.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}); }catch(e){}
+
+  document.getElementById('arc-titre').textContent=dps.nom.toUpperCase();
+  document.getElementById('arc-sous').textContent=dps.id+' — '+dt;
+
+  var nbV=B.length;
+  var nbEvac=B.filter(function(b){ return b.issue&&b.issue.indexOf('vac')>-1; }).length;
+  var nbLsp=B.filter(function(b){ return b.issue&&b.issue.indexOf('place')>-1; }).length;
+  var hasRecap=!!getRecap(id);
+  var hasMC=!!getMC(id);
+
+  var html='';
+
+  // Infos DPS
+  html+='<div class="arc-details">';
+  html+='<h4>&#128197; Informations du dispositif</h4>';
+  html+='<p><strong>Lieu :</strong> '+(dps.lieu||'Non renseigne')+'</p>';
+  html+='<p><strong>Type :</strong> '+(dps.type||'-')+'</p>';
+  html+='<p><strong>Heure debut :</strong> '+(dps.heure||'-')+'</p>';
+  html+='</div>';
+
+  // Fiches bilan
+  html+='<div class="arc-details">';
+  html+='<h4>&#129658; Fiches Bilan ('+nbV+' victimes)</h4>';
+  if(nbV===0){
+    html+='<p>Aucune victime enregistree</p>';
+  } else {
+    html+='<p><strong>'+nbLsp+'</strong> laisses sur place &nbsp;|&nbsp; <strong>'+nbEvac+'</strong> evacues</p>';
+    html+='<div class="arc-bilan-list">';
+    for(var j=0;j<B.length;j++){
+      var b=B[j];
+      var vic=(b.sexe?b.sexe+' - ':'')+(b.motif||'Sans detail');
+      var iss=b.issue||'En cours';
+      var hasBF=!!getBF(b.id);
+      html+='<div class="arc-bilan-row">'
+        +'<span>'+(j+1)+'. '+vic+'</span>'
+        +'<span>'+iss+(hasBF?' &nbsp;&#128190;':' &nbsp;&#128203;')+'</span>'
+        +'</div>';
+    }
+    html+='</div>';
+  }
+  html+='</div>';
+
+  // Documents
+  html+='<div class="arc-details">';
+  html+='<h4>&#128196; Documents</h4>';
+  html+='<p>Fiche Recap : '+(hasRecap?'&#10003; Donnees sauvegardees':'&#10007; Non remplie')+'</p>';
+  html+='<p>Main Courante : '+(hasMC?'&#10003; Donnees sauvegardees':'&#10007; Non remplie')+'</p>';
+  html+='<p style="margin-top:10px;font-size:11px;color:#6a7a90">&#8505;&#65039; Cliquez "Exporter JSON" pour telecharger toutes les donnees du dossier</p>';
+  html+='</div>';
+
+  document.getElementById('arc-contenu').innerHTML=html;
+  document.getElementById('modal-archive').className='mov on';
+}
+
+function fermArc(){ document.getElementById('modal-archive').className='mov'; currentArcID=null; }
+function fermArcExt(e){ if(e.target===document.getElementById('modal-archive')) fermArc(); }
+
+// ═══ EXPORT JSON ═══
+function exporterDPS(){
+  if(!currentArcID) return;
+  var L=getL();
+  var dps=null; for(var i=0;i<L.length;i++){ if(L[i].id===currentArcID){dps=L[i];break;} }
+  if(!dps) return;
+
+  var B=getB(currentArcID);
+  var bilansDetails=[];
+  for(var j=0;j<B.length;j++){
+    bilansDetails.push({ meta: B[j], formulaire: getBF(B[j].id) });
+  }
+
+  var archive={
+    export_date: new Date().toISOString(),
+    dps: dps,
+    bilans: bilansDetails,
+    fiche_recap: getRecap(currentArcID),
+    main_courante: getMC(currentArcID)
+  };
+
+  var json=JSON.stringify(archive, null, 2);
+  var blob=new Blob([json], {type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='archive_'+currentArcID+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ═══ STATS GLOBALES ═══
+function stats(){
+  var L=getL();
+  var total=L.length;
+  var ec=0, pl=0, te=0;
+  var totalV=0, totalEvac=0, totalLsp=0, totalEc=0;
+  var types={};
+
+  for(var i=0;i<L.length;i++){
+    var d=L[i];
+    if(d.statut==='en_cours') ec++;
+    else if(d.statut==='termine') te++;
+    else pl++;
+    types[d.type]=(types[d.type]||0)+1;
+
+    var B=getB(d.id);
+    totalV+=B.length;
+    for(var j=0;j<B.length;j++){
+      var iss=B[j].issue||'En cours';
+      if(iss==='En cours') totalEc++;
+      else if(iss.indexOf('vac')>-1) totalEvac++;
+      else totalLsp++;
+    }
+  }
+
+  // Stats DPS
+  var gd=document.getElementById('gstats-dps');
+  if(gd) gd.innerHTML=''
+    +'<div class="gstat"><div class="gstat-ico">&#128193;</div><div class="gstat-num" style="color:#f0a500">'+total+'</div><div class="gstat-lbl">DPS Total</div></div>'
+    +'<div class="gstat"><div class="gstat-ico">&#128994;</div><div class="gstat-num" style="color:#27ae60">'+ec+'</div><div class="gstat-lbl">En cours</div></div>'
+    +'<div class="gstat"><div class="gstat-ico">&#128197;</div><div class="gstat-num" style="color:#f0a500">'+pl+'</div><div class="gstat-lbl">Planifies</div></div>'
+    +'<div class="gstat"><div class="gstat-ico">&#9989;</div><div class="gstat-num" style="color:#8a9ab0">'+te+'</div><div class="gstat-lbl">Termines</div></div>';
+
+  // Stats victimes
+  var gv=document.getElementById('gstats-victimes');
+  if(gv) gv.innerHTML=''
+    +'<div class="gstat"><div class="gstat-ico">&#129658;</div><div class="gstat-num" style="color:#f0f4f8">'+totalV+'</div><div class="gstat-lbl">Victimes total</div></div>'
+    +'<div class="gstat"><div class="gstat-ico">&#128260;</div><div class="gstat-num" style="color:#f0a500">'+totalEc+'</div><div class="gstat-lbl">En cours</div></div>'
+    +'<div class="gstat"><div class="gstat-ico">&#127987;</div><div class="gstat-num" style="color:#27ae60">'+totalLsp+'</div><div class="gstat-lbl">Liberes</div></div>'
+    +'<div class="gstat"><div class="gstat-ico">&#128657;</div><div class="gstat-num" style="color:#e74c3c">'+totalEvac+'</div><div class="gstat-lbl">Evacues</div></div>';
+
+  // Stats par type
+  var gt=document.getElementById('gstats-types');
+  if(gt){
+    var th='';
+    var typeList=['Sportif','Culturel','Festif','Scolaire','Autre'];
+    for(var k=0;k<typeList.length;k++){
+      var tp=typeList[k];
+      var nb=types[tp]||0;
+      th+='<div class="gstat"><div class="gstat-ico">'+(ICO[tp]||'&#128204;')+'</div>'
+        +'<div class="gstat-num" style="color:'+(nb>0?'#f0f4f8':'#3a4a60')+'">'+nb+'</div>'
+        +'<div class="gstat-lbl">'+tp+'</div></div>';
+    }
+    gt.innerHTML=th;
+  }
+}
+
+// ═══ MODAL NOUVEAU DPS ═══
+function ouvM(){
+  document.getElementById('fn').value='';
+  document.getElementById('fd').value=new Date().toISOString().split('T')[0];
+  document.getElementById('fl').value='';
+  document.getElementById('modal').className='mov on';
+}
+function fermM(){ document.getElementById('modal').className='mov'; }
+function fermExt(e){ if(e.target===document.getElementById('modal')) fermM(); }
+
+function genID(){
+  var d=new Date();
+  return 'DPS-'+d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'-'+('00'+(getL().length+1)).slice(-3);
+}
+function creer(){
+  var nom=document.getElementById('fn').value.trim();
+  var dat=document.getElementById('fd').value;
+  if(!nom||!dat){ alert('Remplissez le nom et la date.'); return; }
+  var dps={id:genID(),nom:nom,date:dat,
+    heure:document.getElementById('fh').value,
+    lieu:document.getElementById('fl').value.trim(),
+    type:document.getElementById('ft').value,
+    statut:document.getElementById('fs').value,
+    createdAt:Date.now()};
+  var L=getL(); L.unshift(dps); setL(L);
+  fermM(); liste();
+  window.location.href='dossier.html?id='+dps.id;
+}
+
+// ═══ RAFRAICHIR ═══
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible' && localStorage.getItem('ssa13_ok')==='1'){ liste(); stats(); }
+});
+
+// ═══ DEMARRAGE ═══
+window.addEventListener('DOMContentLoaded',function(){
+  if(localStorage.getItem('ssa13_ok')==='1') show();
+});
+</script>
+</body>
+</html>
