@@ -954,40 +954,204 @@ async function savePDF() {
 </script>
 
 <script>
-/* ── INJECTION DPS SSA13 v2 ── */
+/* ── FIREBASE + AUTOSAVE CLOUD v1 ── */
 (function(){
-  const params = new URLSearchParams(location.search);
-  const dps_id = params.get('dps_id');
+  var params   = new URLSearchParams(location.search);
+  var dps_id   = params.get('dps_id');
+  var bilan_id = params.get('bilan_id');
   if(!dps_id) return;
 
-  let list;
-  try{ list = JSON.parse(localStorage.getItem('ssa13_dps')||'[]'); } catch{ return; }
-  const dps = list.find(d=>d.id===dps_id);
-  if(!dps) return;
+  var FIREBASE_CONFIG = {
+    apiKey:"AIzaSyBUgtRjARF11rr9KmRsf691cLCYFE5vEns",
+    authDomain:"plateforme-157b5.firebaseapp.com",
+    projectId:"plateforme-157b5",
+    storageBucket:"plateforme-157b5.firebasestorage.app",
+    messagingSenderId:"531261518626",
+    appId:"1:531261518626:web:4f317fa3b21dcbc71fab7b"
+  };
 
-  /* ── Bandeau ── */
-  const banner = document.createElement('div');
-  banner.style.cssText = 'background:#c0392b;color:white;font-family:sans-serif;font-size:12px;font-weight:600;text-align:center;padding:6px 12px;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;';
-  banner.innerHTML = '<span>📁 DPS : '+dps.nom+' · '+dps.id+'</span>'
-    +'<a href="dossier.html?id='+dps_id+'" style="color:white;background:rgba(255,255,255,0.2);padding:3px 12px;border-radius:6px;text-decoration:none;font-size:12px;">← Retour au dossier DPS</a>';
+  // ── Firebase init ──
+  var fbApp, db;
+  try{
+    var scripts=['https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js',
+                 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js'];
+    function loadScripts(i){
+      if(i>=scripts.length){ initDB(); return; }
+      if(document.querySelector('script[src="'+scripts[i]+'"]')){ loadScripts(i+1); return; }
+      var s=document.createElement('script');
+      s.src=scripts[i]; s.onload=function(){ loadScripts(i+1); };
+      document.head.appendChild(s);
+    }
+    loadScripts(0);
+  }catch(e){ console.log('Firebase load error',e); }
 
-  const hdr = document.querySelector('.app-header, .header, header, .status-bar');
-  if(hdr) hdr.insertAdjacentElement('beforebegin', banner);
-  else { document.body.prepend(banner); document.body.style.paddingTop='32px'; }
+  function initDB(){
+    try{ fbApp=firebase.app(); }catch(e){ fbApp=firebase.initializeApp(FIREBASE_CONFIG); }
+    db=firebase.firestore();
+    db.enablePersistence().catch(function(){});
+    initPage();
+  }
 
-  /* ── Bouton flottant retour (toujours visible) ── */
-  const retour = document.createElement('a');
-  retour.href  = 'dossier.html?id='+dps_id;
-  retour.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9999;background:#0b1a2e;color:#f0a500;border:1px solid rgba(240,165,0,.35);font-family:sans-serif;font-size:13px;font-weight:600;padding:10px 18px;border-radius:8px;text-decoration:none;box-shadow:0 4px 20px rgba(0,0,0,.5);';
-  retour.textContent = '← Retour au dossier DPS';
-  document.body.appendChild(retour);
+  var IS_BILAN  = !!bilan_id;
+  var STORE_KEY = IS_BILAN ? 'ssa13_bilan_form_'+bilan_id : (dps_id ? 'ssa13_recap_form_'+dps_id : null);
+  var FB_COLLECTION = IS_BILAN ? 'bilan_forms' : 'recap_forms';
+  var FB_DOC_ID     = IS_BILAN ? bilan_id : dps_id;
 
-  /* ── Pré-remplissage ── */
-  function fill(id, val){ const el=document.getElementById(id); if(el&&val) el.value=val; }
-  fill('evenement',     dps.nom);
-  fill('adresse',       dps.lieu);
-  fill('date_dps',      dps.date);
-  fill('horaire_debut', dps.heure);
+  // ── Bandeau ──
+  function makeBanner(){
+    var banner=document.createElement('div');
+    banner.style.cssText='background:#c0392b;color:white;font-family:sans-serif;font-size:12px;font-weight:600;text-align:center;padding:6px 12px;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;';
+    banner.innerHTML='<span>&#128193; DPS : '+dps_id+(IS_BILAN?' &middot; '+bilan_id:'')+'</span>'
+      +'<span id="save-status" style="font-weight:400;opacity:.85;">&#9729; Connexion cloud...</span>'
+      +'<a href="dossier.html?id='+dps_id+'" style="color:white;background:rgba(255,255,255,.2);padding:3px 12px;border-radius:6px;text-decoration:none;">&larr; Retour dossier</a>';
+    var hdr=document.querySelector('.app-header,.header,header');
+    if(hdr) hdr.insertAdjacentElement('afterend',banner);
+    else{ document.body.prepend(banner); document.body.style.paddingTop='32px'; }
+
+    var retour=document.createElement('a');
+    retour.href='dossier.html?id='+dps_id;
+    retour.style.cssText='position:fixed;bottom:20px;right:20px;z-index:9999;background:#0b1a2e;color:#f0a500;border:1px solid rgba(240,165,0,.35);font-family:sans-serif;font-size:13px;font-weight:600;padding:10px 18px;border-radius:8px;text-decoration:none;box-shadow:0 4px 20px rgba(0,0,0,.5);';
+    retour.textContent='\u2190 Retour au dossier DPS';
+    document.body.appendChild(retour);
+  }
+  makeBanner();
+
+  function setSaveStatus(txt,col){
+    var s=document.getElementById('save-status');
+    if(s){ s.textContent=txt; if(col) s.style.color=col; else s.style.color=''; }
+  }
+
+  // ── Collecte complete du formulaire ──
+  function collectForm(){
+    var data={inputs:{},checkItems:[],urgItems:[],tableChecks:[],tableInputs:[],tableSelects:[],triage:null,pain:null,sexe:null};
+    document.querySelectorAll('input[id],select[id],textarea[id]').forEach(function(el){
+      if(el.type==='checkbox') data.inputs[el.id]=el.checked;
+      else data.inputs[el.id]=el.value;
+    });
+    document.querySelectorAll('.check-item').forEach(function(el,i){
+      data.checkItems[i]={checked:el.classList.contains('checked'),checkedRed:el.classList.contains('checked-red')};
+    });
+    document.querySelectorAll('.urg-item').forEach(function(el,i){
+      data.urgItems[i]=el.classList.contains('checked');
+    });
+    if(document.getElementById('bilanTableBody')){
+      document.querySelectorAll('#bilanTableBody .table-check').forEach(function(el,i){ data.tableChecks[i]=el.classList.contains('checked'); });
+      document.querySelectorAll('#bilanTableBody .table-input,#bilanTableBody input:not([id])').forEach(function(el,i){ data.tableInputs[i]=el.value; });
+      document.querySelectorAll('#bilanTableBody select:not([id])').forEach(function(el,i){ data.tableSelects[i]=el.value; });
+    }
+    if(typeof selectedTriage!=='undefined') data.triage=selectedTriage;
+    if(typeof selectedPain!=='undefined')   data.pain=selectedPain;
+    var sf=document.getElementById('sexe_f'),sm=document.getElementById('sexe_m');
+    if(sf&&sf.classList.contains('selected')) data.sexe='F';
+    else if(sm&&sm.classList.contains('selected')) data.sexe='M';
+    return data;
+  }
+
+  // ── Restauration ──
+  function restoreForm(data){
+    if(data.inputs) Object.keys(data.inputs).forEach(function(id){
+      var el=document.getElementById(id); if(!el) return;
+      if(el.type==='checkbox') el.checked=data.inputs[id]; else el.value=data.inputs[id]||'';
+    });
+    if(data.checkItems){
+      var items=document.querySelectorAll('.check-item');
+      data.checkItems.forEach(function(s,i){ if(items[i]&&s){ items[i].classList.toggle('checked',!!s.checked); items[i].classList.toggle('checked-red',!!s.checkedRed); }});
+    }
+    if(data.urgItems){ var urgs=document.querySelectorAll('.urg-item'); data.urgItems.forEach(function(c,i){ if(urgs[i]) urgs[i].classList.toggle('checked',!!c); }); }
+    if(data.tableChecks){ var tcs=document.querySelectorAll('#bilanTableBody .table-check'); data.tableChecks.forEach(function(c,i){ if(tcs[i]) tcs[i].classList.toggle('checked',!!c); }); }
+    if(data.tableInputs){ var tis=document.querySelectorAll('#bilanTableBody .table-input,#bilanTableBody input:not([id])'); data.tableInputs.forEach(function(v,i){ if(tis[i]) tis[i].value=v||''; }); }
+    if(data.tableSelects){ var tss=document.querySelectorAll('#bilanTableBody select:not([id])'); data.tableSelects.forEach(function(v,i){ if(tss[i]) tss[i].value=v||''; }); }
+    if(data.triage&&typeof selectTriage==='function') selectTriage(data.triage);
+    if(data.pain!==null&&data.pain!==undefined&&typeof selectPain==='function') selectPain(data.pain);
+    if(data.sexe&&typeof selectSexe==='function') selectSexe(data.sexe);
+    if(typeof updateProgress==='function') updateProgress();
+  }
+
+  // ── Autosave : localStorage (immediate) + Firestore (debounce 3s) ──
+  var lsTimer, fbTimer;
+  function schedSave(){
+    // localStorage immediat
+    clearTimeout(lsTimer);
+    lsTimer=setTimeout(function(){
+      try{ if(STORE_KEY) localStorage.setItem(STORE_KEY,JSON.stringify(collectForm())); }catch(e){}
+    },500);
+    // Firestore debounce 3s
+    clearTimeout(fbTimer);
+    fbTimer=setTimeout(function(){
+      if(!db||!FB_COLLECTION) return;
+      try{
+        var formData=collectForm();
+        db.collection(FB_COLLECTION).doc(FB_DOC_ID).set({
+          data:JSON.stringify(formData),
+          dps_id:dps_id,
+          updated:Date.now()
+        }).then(function(){
+          setSaveStatus('\u2705 Sauvegarde cloud '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}));
+        }).catch(function(){ setSaveStatus('\u26a0 Erreur sauvegarde cloud','#e74c3c'); });
+      }catch(e){}
+    },3000);
+  }
+
+  // ── Monkey-patch ──
+  var _tog=window.toggleCheck;      window.toggleCheck=function(el,t){ if(_tog)_tog(el,t); schedSave(); };
+  var _togt=window.toggleTableCheck;window.toggleTableCheck=function(el){ if(_togt)_togt(el); schedSave(); };
+  var _tri=window.selectTriage;     window.selectTriage=function(v){ if(_tri)_tri(v); schedSave(); };
+  var _pain=window.selectPain;      window.selectPain=function(n){ if(_pain)_pain(n); schedSave(); };
+  var _sex=window.selectSexe;       window.selectSexe=function(v){ if(_sex)_sex(v); schedSave(); };
+  document.addEventListener('input',schedSave);
+  document.addEventListener('change',schedSave);
+
+  // ── Chargement : Firestore d'abord, localStorage en fallback ──
+  function initPage(){
+    function waitTable(){
+      var tbody=document.getElementById('bilanTableBody');
+      if(IS_BILAN&&(!tbody||tbody.children.length===0)){ setTimeout(waitTable,80); return; }
+      loadData();
+    }
+    waitTable();
+  }
+
+  function loadData(){
+    if(!db){ loadFromLS(); return; }
+    db.collection(FB_COLLECTION).doc(FB_DOC_ID).get().then(function(doc){
+      if(doc.exists&&doc.data()&&doc.data().data){
+        try{
+          restoreForm(JSON.parse(doc.data().data));
+          setSaveStatus('\u2601\ufe0f Donnees restaurees depuis le cloud');
+        }catch(e){ loadFromLS(); }
+      } else {
+        // Pas de donnees cloud, essayer localStorage
+        loadFromLS();
+        // Si c'est un nouveau bilan, pre-remplir depuis metadonnees
+        if(IS_BILAN&&!localStorage.getItem(STORE_KEY)){
+          preFillBilan();
+        }
+      }
+    }).catch(function(){ loadFromLS(); });
+  }
+
+  function loadFromLS(){
+    if(!STORE_KEY) return;
+    var saved=localStorage.getItem(STORE_KEY);
+    if(saved){ try{ restoreForm(JSON.parse(saved)); setSaveStatus('\uD83D\uDCBE Donnees locales restaurees'); }catch(e){} }
+    else if(IS_BILAN) preFillBilan();
+  }
+
+  function preFillBilan(){
+    // Pre-remplir depuis les metadonnees du bilan dans Firestore
+    if(!db||!bilan_id) return;
+    db.collection('dps').doc(dps_id).collection('bilans').doc(bilan_id).get().then(function(doc){
+      if(!doc.exists) return;
+      var b=doc.data();
+      var elH=document.getElementById('heure_pec'); if(elH&&b.heure) elH.value=b.heure;
+      var elL=document.getElementById('lieu');      if(elL&&b.lieu)  elL.value=b.lieu;
+      var elC=document.getElementById('circonstance'); if(elC&&b.motif) elC.value=b.motif;
+      if(b.sexe==='Homme'&&typeof selectSexe==='function') selectSexe('M');
+      if(b.sexe==='Femme'&&typeof selectSexe==='function') selectSexe('F');
+    });
+  }
+
+  setSaveStatus('Connexion...');
 })();
 </script>
 </body>
