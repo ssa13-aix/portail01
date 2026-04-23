@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portail SSA13</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height:100vh;}
-
-/* LOGIN */
 #login{position:fixed;inset:0;background:#07111f;display:flex;align-items:center;justify-content:center;z-index:99;}
 #login.cache{display:none;}
 .lbox{width:300px;background:#112240;border:1px solid rgba(240,165,0,.25);border-radius:16px;padding:36px 28px;text-align:center;}
@@ -26,8 +26,6 @@ body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height
 .pb:active{transform:scale(.93);}
 .p0{grid-column:2;}
 .perr{font-size:12px;color:#e74c3c;min-height:16px;}
-
-/* DASHBOARD */
 #dash{display:none;}
 .hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:#0c1d30;border-bottom:1px solid rgba(240,165,0,.15);position:sticky;top:0;z-index:10;}
 .hbrand{display:flex;align-items:center;gap:12px;}
@@ -38,49 +36,35 @@ body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height
 .hclk{font-family:'Barlow Condensed',sans-serif;font-size:21px;font-weight:700;color:#f0a500;}
 .hdat{font-size:11px;color:#8a9ab0;text-align:right;}
 .bdeco{background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);color:#8a9ab0;font-size:12px;padding:6px 12px;border-radius:7px;cursor:pointer;}
-.bdeco:hover{color:#f0f4f8;background:rgba(192,57,43,.3);}
-
-/* TABS */
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#8a9ab0;display:inline-block;margin-left:6px;}
+.sync-dot.ok{background:#27ae60;} .sync-dot.err{background:#e74c3c;} .sync-dot.load{background:#f0a500;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .tabs{display:flex;gap:4px;padding:18px 28px 0;border-bottom:1px solid rgba(240,165,0,.12);}
-.tab{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:8px 18px;border-radius:8px 8px 0 0;cursor:pointer;color:#8a9ab0;border:1px solid transparent;border-bottom:none;transition:all .2s;}
+.tab{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:8px 18px;border-radius:8px 8px 0 0;cursor:pointer;color:#8a9ab0;border:1px solid transparent;border-bottom:none;}
 .tab.on{background:#112240;color:#f0f4f8;border-color:rgba(240,165,0,.2);}
-.tab:hover:not(.on){color:#f0f4f8;}
-.tabpanel{display:none;padding-top:4px;}
-.tabpanel.on{display:block;}
-
-/* HERO */
+.tabpanel{display:none;}.tabpanel.on{display:block;}
 .hero{padding:28px 28px 16px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:14px;}
 .htag{font-size:11px;color:#f0a500;border:1px solid rgba(240,165,0,.3);padding:4px 12px;border-radius:20px;margin-bottom:10px;display:inline-block;}
 .htit{font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:800;text-transform:uppercase;margin-bottom:4px;}
 .htit span{color:#e74c3c;}
 .hdesc{font-size:13px;color:#8a9ab0;}
 .bndps{background:linear-gradient(135deg,#c0392b,#e74c3c);border:none;color:white;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:11px 22px;border-radius:10px;cursor:pointer;}
-.bndps:hover{opacity:.9;}
-
-/* STATS GLOBALES */
 .gstats{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;padding:0 28px 20px;}
 .gstat{background:#112240;border:1px solid rgba(240,165,0,.15);border-radius:12px;padding:18px 14px;text-align:center;}
 .gstat-num{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;line-height:1;}
 .gstat-lbl{font-size:10px;color:#8a9ab0;text-transform:uppercase;letter-spacing:.1em;margin-top:4px;}
 .gstat-ico{font-size:22px;margin-bottom:8px;}
-
-/* BARRE STATS DPS */
 .dstats-bar{display:flex;margin:0 28px 20px;background:#0c1d30;border:1px solid rgba(240,165,0,.12);border-radius:10px;overflow:hidden;}
 .dsbar-item{flex:1;padding:14px 8px;text-align:center;border-right:1px solid rgba(240,165,0,.1);}
 .dsbar-item:last-child{border-right:none;}
 .dsbar-num{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;}
 .dsbar-lbl{font-size:10px;color:#8a9ab0;text-transform:uppercase;letter-spacing:.08em;margin-top:1px;}
-
-/* SECTION */
 .sech{display:flex;align-items:center;gap:10px;padding:0 28px 10px;}
 .slin{flex:1;height:1px;background:linear-gradient(to right,rgba(240,165,0,.15),transparent);}
 .slab{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#8a9ab0;}
-
-/* DPS CARDS */
 #liste,#liste-archive{padding:0 28px;margin-bottom:8px;}
 .dc{background:#112240;border:1px solid rgba(240,165,0,.15);border-left:4px solid #8a9ab0;border-radius:11px;padding:14px 16px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:12px;}
 .dc:hover{background:#162c50;border-color:rgba(240,165,0,.35);}
-.dc.archive{border-left-color:#8a9ab0;opacity:.85;}
 .dico{width:42px;height:42px;border-radius:9px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
 .dbody{flex:1;min-width:0;}
 .dnom{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -96,31 +80,19 @@ body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height
 .vs{display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:7px;padding:4px 9px;min-width:40px;}
 .vsn{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;line-height:1;}
 .vsl{font-size:9px;color:#8a9ab0;text-transform:uppercase;letter-spacing:.06em;margin-top:1px;}
-
 .empty{text-align:center;padding:48px 20px;color:#8a9ab0;}
 .eico{font-size:44px;opacity:.3;margin-bottom:10px;}
 .etit{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;opacity:.5;margin-bottom:6px;}
 .edsc{font-size:12px;opacity:.5;}
-
-/* ARCHIVE */
-.arc-info{background:rgba(138,154,176,.08);border:1px solid rgba(138,154,176,.2);border-radius:10px;padding:14px 18px;margin:0 28px 16px;font-size:13px;color:#8a9ab0;display:flex;align-items:center;gap:10px;}
-.arc-btn{background:rgba(138,154,176,.15);border:1px solid rgba(138,154,176,.3);color:#f0f4f8;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:6px;cursor:pointer;white-space:nowrap;}
-.arc-btn:hover{background:rgba(138,154,176,.3);}
-.arc-export{background:rgba(39,174,96,.12);border:1px solid rgba(39,174,96,.3);color:#2ecc71;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:6px;cursor:pointer;}
-.arc-export:hover{background:rgba(39,174,96,.25);}
-
-/* OUTILS */
+.loading{text-align:center;padding:40px;color:#8a9ab0;font-size:13px;}
 .qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:9px;padding:0 28px;}
 .qc{background:rgba(17,34,64,.5);border:1px solid rgba(240,165,0,.12);border-radius:9px;padding:13px 15px;text-decoration:none;color:#f0f4f8;display:flex;align-items:center;gap:9px;}
 .qc:hover{background:rgba(17,34,64,.85);border-color:rgba(240,165,0,.3);}
 .qico{font-size:20px;}
 .qnm{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;}
 .qds{font-size:11px;color:#8a9ab0;margin-top:1px;}
-
 .ftr{text-align:center;padding:32px;font-size:12px;color:#8a9ab0;border-top:1px solid rgba(240,165,0,.1);margin-top:28px;}
 .ftr strong{color:#e74c3c;}
-
-/* MODAL */
 .mov{position:fixed;inset:0;z-index:200;background:rgba(5,12,25,.9);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.3s;}
 .mov.on{opacity:1;pointer-events:all;}
 .mbox{width:min(520px,92vw);background:#0f2040;border:1px solid rgba(240,165,0,.2);border-radius:15px;padding:28px;transform:translateY(14px);transition:.3s;max-height:90vh;overflow-y:auto;}
@@ -137,25 +109,10 @@ body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height
 .mact{display:flex;gap:9px;margin-top:18px;justify-content:flex-end;}
 .mcanc{background:transparent;border:1px solid rgba(255,255,255,.12);color:#8a9ab0;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;padding:8px 16px;border-radius:7px;cursor:pointer;}
 .mok{background:linear-gradient(135deg,#c0392b,#e74c3c);border:none;color:white;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;padding:8px 20px;border-radius:7px;cursor:pointer;text-transform:uppercase;}
-
-/* MODAL ARCHIVE */
-#modal-archive .mbox{max-width:640px;}
-.arc-details{background:rgba(11,26,46,.8);border:1px solid rgba(240,165,0,.12);border-radius:8px;padding:16px;margin-bottom:14px;font-size:13px;}
-.arc-details h4{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;color:#f0a500;}
-.arc-details p{color:#8a9ab0;margin-bottom:4px;}
-.arc-details strong{color:#f0f4f8;}
-.arc-bilan-list{margin-top:8px;}
-.arc-bilan-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px;color:#8a9ab0;}
-.arc-bilan-row:last-child{border-bottom:none;}
-
-@media(max-width:600px){
-  .hdr{padding:12px 16px;}
-  .hero{padding:20px 16px 12px;}
-  .gstats{padding:0 16px 16px;}
-  .dstats-bar{margin:0 16px 16px;}
-  .sech,#liste,#liste-archive,.qgrid,.arc-info{padding-left:16px;padding-right:16px;}
-  .mrow{grid-template-columns:1fr;}
-}
+/* Migration banner */
+.migr-banner{background:rgba(240,165,0,.12);border:1px solid rgba(240,165,0,.3);border-radius:10px;padding:14px 18px;margin:12px 28px;display:flex;align-items:center;gap:12px;}
+.migr-btn{background:var(--gold,#f0a500);border:none;color:#0b1a2e;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;padding:7px 16px;border-radius:7px;cursor:pointer;white-space:nowrap;letter-spacing:.04em;text-transform:uppercase;}
+.migr-text{font-size:13px;color:#f0f4f8;flex:1;}
 </style>
 </head>
 <body>
@@ -165,26 +122,17 @@ body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height
   <div class="lbox">
     <div class="logo">&#128737;</div>
     <div class="ltit">Secouristes du Pays d'Aix</div>
-    <div class="lsub">Portail SSA13 - Acces securise</div>
+    <div class="lsub">Portail SSA13 &mdash; Acces securise</div>
     <div class="plbl">Code PIN</div>
     <div class="dots">
-      <div class="dot" id="d0"></div>
-      <div class="dot" id="d1"></div>
-      <div class="dot" id="d2"></div>
-      <div class="dot" id="d3"></div>
+      <div class="dot" id="d0"></div><div class="dot" id="d1"></div>
+      <div class="dot" id="d2"></div><div class="dot" id="d3"></div>
     </div>
     <div class="pad">
-      <button class="pb" onclick="pp(1)">1</button>
-      <button class="pb" onclick="pp(2)">2</button>
-      <button class="pb" onclick="pp(3)">3</button>
-      <button class="pb" onclick="pp(4)">4</button>
-      <button class="pb" onclick="pp(5)">5</button>
-      <button class="pb" onclick="pp(6)">6</button>
-      <button class="pb" onclick="pp(7)">7</button>
-      <button class="pb" onclick="pp(8)">8</button>
-      <button class="pb" onclick="pp(9)">9</button>
-      <button class="pb p0" onclick="pp(0)">0</button>
-      <button class="pb" onclick="pd()">&#9003;</button>
+      <button class="pb" onclick="pp(1)">1</button><button class="pb" onclick="pp(2)">2</button><button class="pb" onclick="pp(3)">3</button>
+      <button class="pb" onclick="pp(4)">4</button><button class="pb" onclick="pp(5)">5</button><button class="pb" onclick="pp(6)">6</button>
+      <button class="pb" onclick="pp(7)">7</button><button class="pb" onclick="pp(8)">8</button><button class="pb" onclick="pp(9)">9</button>
+      <button class="pb p0" onclick="pp(0)">0</button><button class="pb" onclick="pd()">&#9003;</button>
     </div>
     <div class="perr" id="perr"></div>
   </div>
@@ -195,105 +143,92 @@ body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height
   <div class="hdr">
     <div class="hbrand">
       <div class="hbadge">&#128737;</div>
-      <div>
-        <div class="hname">SSA13 &middot; Portail Operationnel</div>
-        <div class="hsub">Secouristes du Pays d'Aix &mdash; FFSS</div>
-      </div>
+      <div><div class="hname">SSA13 &middot; Portail Operationnel</div><div class="hsub">Secouristes du Pays d'Aix &mdash; FFSS</div></div>
     </div>
     <div class="hright">
-      <div>
-        <div class="hclk" id="hclk">--:--:--</div>
-        <div class="hdat" id="hdat"></div>
-      </div>
+      <div><div class="hclk" id="hclk">--:--:--</div><div class="hdat" id="hdat"></div></div>
+      <span class="sync-dot load" id="sync-dot" title="Connexion Firebase"></span>
       <button class="bdeco" onclick="deco()">Deconnexion</button>
     </div>
   </div>
 
-  <!-- TABS -->
   <div class="tabs">
-    <div class="tab on" id="tab-dps"    onclick="switchTab('dps')">&#128193; Mes DPS</div>
-    <div class="tab"    id="tab-stats"  onclick="switchTab('stats')">&#128202; Statistiques</div>
-    <div class="tab"    id="tab-archive"onclick="switchTab('archive')">&#128230; Archives</div>
-    <div class="tab"    id="tab-outils" onclick="switchTab('outils')">&#128736; Outils</div>
+    <div class="tab on" id="tab-dps"     onclick="switchTab('dps')">&#128193; Mes DPS</div>
+    <div class="tab"    id="tab-stats"   onclick="switchTab('stats')">&#128202; Statistiques</div>
+    <div class="tab"    id="tab-archive" onclick="switchTab('archive')">&#128230; Archives</div>
+    <div class="tab"    id="tab-outils"  onclick="switchTab('outils')">&#128736; Outils</div>
   </div>
 
-  <!-- ═══ ONGLET DPS ═══ -->
+  <!-- DPS -->
   <div class="tabpanel on" id="panel-dps">
+    <div id="migr-zone"></div>
     <div class="hero">
       <div>
         <div class="htag">&#128308; Dispositifs Previsionnels de Secours</div>
         <div class="htit">Gestion des <span>DPS</span></div>
-        <div class="hdesc">Creez et accedez a vos dossiers DPS.</div>
+        <div class="hdesc">Donnees en temps reel sur tous vos appareils.</div>
       </div>
       <button class="bndps" onclick="ouvM()">+ Nouveau DPS</button>
     </div>
-
     <div class="dstats-bar">
-      <div class="dsbar-item"><div class="dsbar-num" id="s1" style="color:#f0a500">0</div><div class="dsbar-lbl">Total</div></div>
-      <div class="dsbar-item"><div class="dsbar-num" id="s2" style="color:#27ae60">0</div><div class="dsbar-lbl">En cours</div></div>
-      <div class="dsbar-item"><div class="dsbar-num" id="s3" style="color:#f0a500">0</div><div class="dsbar-lbl">Planifies</div></div>
-      <div class="dsbar-item"><div class="dsbar-num" id="s4" style="color:#8a9ab0">0</div><div class="dsbar-lbl">Termines</div></div>
+      <div class="dsbar-item"><div class="dsbar-num" id="s1" style="color:#f0a500">-</div><div class="dsbar-lbl">Total</div></div>
+      <div class="dsbar-item"><div class="dsbar-num" id="s2" style="color:#27ae60">-</div><div class="dsbar-lbl">En cours</div></div>
+      <div class="dsbar-item"><div class="dsbar-num" id="s3" style="color:#f0a500">-</div><div class="dsbar-lbl">Planifies</div></div>
+      <div class="dsbar-item"><div class="dsbar-num" id="s4" style="color:#8a9ab0">-</div><div class="dsbar-lbl">Termines</div></div>
     </div>
-
     <div class="sech"><div class="slab">DPS actifs</div><div class="slin"></div></div>
-    <div id="liste"></div>
+    <div id="liste"><div class="loading">&#128260; Connexion au cloud...</div></div>
   </div>
 
-  <!-- ═══ ONGLET STATS ═══ -->
+  <!-- STATS -->
   <div class="tabpanel" id="panel-stats">
-    <div class="hero">
-      <div>
-        <div class="htag">&#128202; Tableau de bord global</div>
-        <div class="htit">Statistiques <span>Globales</span></div>
-        <div class="hdesc">Synthese de tous les dispositifs et prises en charge.</div>
-      </div>
-    </div>
-
+    <div class="hero"><div>
+      <div class="htag">&#128202; Tableau de bord global</div>
+      <div class="htit">Statistiques <span>Globales</span></div>
+      <div class="hdesc">Synthese de tous les dispositifs.</div>
+    </div></div>
     <div class="sech"><div class="slab">Dispositifs</div><div class="slin"></div></div>
     <div class="gstats" id="gstats-dps"></div>
-
     <div class="sech"><div class="slab">Victimes</div><div class="slin"></div></div>
     <div class="gstats" id="gstats-victimes"></div>
-
-    <div class="sech"><div class="slab">Repartition par type</div><div class="slin"></div></div>
+    <div class="sech"><div class="slab">Par type</div><div class="slin"></div></div>
     <div class="gstats" id="gstats-types"></div>
   </div>
 
-  <!-- ═══ ONGLET ARCHIVES ═══ -->
+  <!-- ARCHIVES -->
   <div class="tabpanel" id="panel-archive">
-    <div class="hero">
-      <div>
-        <div class="htag">&#128230; DPS Termines</div>
-        <div class="htit">Archives <span>DPS</span></div>
-        <div class="hdesc">Consultez et exportez les dossiers termines.</div>
-      </div>
-    </div>
-    <div class="arc-info">
-      <span>&#8505;&#65039;</span>
-      <span style="flex:1">Les DPS archives contiennent toutes les donnees : fiche recap, fiches bilan et main courante. Exportez un dossier complet en JSON.</span>
-    </div>
-    <div id="liste-archive"></div>
+    <div class="hero"><div>
+      <div class="htag">&#128230; DPS Termines</div>
+      <div class="htit">Archives <span>DPS</span></div>
+      <div class="hdesc">Dossiers termines avec export complet.</div>
+    </div></div>
+    <div id="liste-archive"><div class="loading">Chargement...</div></div>
   </div>
 
-  <!-- ═══ ONGLET OUTILS ═══ -->
+  <!-- OUTILS -->
   <div class="tabpanel" id="panel-outils">
-    <div class="hero">
-      <div>
-        <div class="htag">&#128736; Outils independants</div>
-        <div class="htit">Outils <span>Rapides</span></div>
-        <div class="hdesc">Outils utilisables sans DPS associe.</div>
-      </div>
-    </div>
+    <div class="hero"><div>
+      <div class="htag">&#128736; Outils</div>
+      <div class="htit">Outils <span>Rapides</span></div>
+    </div></div>
     <div class="sech"><div class="slab">Disponible</div><div class="slin"></div></div>
     <div class="qgrid">
       <a class="qc" href="checklist_vpsp.html" target="_blank">
         <span class="qico">&#9989;</span>
-        <div><div class="qnm">Check-list VPSP</div><div class="qds">Verification vehicule pre-DPS</div></div>
+        <div><div class="qnm">Check-list VPSP</div><div class="qds">Verification vehicule</div></div>
       </a>
+    </div>
+    <div class="sech" style="margin-top:24px;"><div class="slab">Export / Sauvegarde</div><div class="slin"></div></div>
+    <div style="padding:0 28px;">
+      <div style="background:#112240;border:1px solid rgba(240,165,0,.15);border-radius:10px;padding:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        <div style="flex:1;font-size:13px;color:#8a9ab0;">Exportez une sauvegarde complete de vos donnees Firebase au format JSON.</div>
+        <button onclick="exportTout()" style="background:linear-gradient(135deg,#27ae60,#2ecc71);border:none;color:white;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:9px 18px;border-radius:8px;cursor:pointer;">&#11015; Exporter JSON</button>
+      </div>
+      <div id="sync-msg" style="margin-top:10px;font-size:13px;text-align:center;min-height:18px;"></div>
     </div>
   </div>
 
-  <div class="ftr"><strong>SSA13</strong> &middot; Secouristes du Pays d'Aix &middot; FFSS &mdash; Usage interne</div>
+  <div class="ftr"><strong>SSA13</strong> &middot; Secouristes du Pays d'Aix &middot; FFSS &mdash; Donnees synchronisees en temps reel</div>
 </div>
 
 <!-- MODAL NOUVEAU DPS -->
@@ -310,68 +245,55 @@ body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height
       <div class="mgrp"><label class="mlbl">Heure</label><input class="mi" id="fh" type="time" value="08:00"></div>
     </div>
     <div class="mrow mfull"><div class="mgrp">
-      <label class="mlbl">Lieu</label>
-      <input class="mi" id="fl" type="text" placeholder="ex: Marseille">
+      <label class="mlbl">Lieu</label><input class="mi" id="fl" type="text" placeholder="ex: Marseille">
     </div></div>
     <div class="mrow">
       <div class="mgrp"><label class="mlbl">Type</label>
         <select class="ms" id="ft">
-          <option value="Sportif">&#127939; Sportif</option>
-          <option value="Culturel">&#127917; Culturel</option>
-          <option value="Festif">&#127881; Festif</option>
-          <option value="Scolaire">&#127979; Scolaire</option>
-          <option value="Autre">&#128204; Autre</option>
+          <option value="Sportif">Sportif</option><option value="Culturel">Culturel</option>
+          <option value="Festif">Festif</option><option value="Scolaire">Scolaire</option><option value="Autre">Autre</option>
         </select>
       </div>
       <div class="mgrp"><label class="mlbl">Statut</label>
         <select class="ms" id="fs">
-          <option value="planifie">Planifie</option>
-          <option value="en_cours">En cours</option>
-          <option value="termine">Termine</option>
+          <option value="planifie">Planifie</option><option value="en_cours">En cours</option><option value="termine">Termine</option>
         </select>
       </div>
     </div>
     <div class="mact">
       <button class="mcanc" onclick="fermM()">Annuler</button>
-      <button class="mok"   onclick="creer()">Creer le DPS</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL ARCHIVE DETAIL -->
-<div class="mov" id="modal-archive" onclick="fermArcExt(event)">
-  <div class="mbox">
-    <div class="mtit" id="arc-titre">Archive DPS</div>
-    <div class="msub" id="arc-sous">Details du dossier archive</div>
-    <div id="arc-contenu"></div>
-    <div class="mact">
-      <button class="mcanc" onclick="fermArc()">Fermer</button>
-      <button class="mok" id="arc-dl-btn" onclick="exporterDPS()">&#11015; Exporter JSON</button>
+      <button class="mok" onclick="creer()">Creer le DPS</button>
     </div>
   </div>
 </div>
 
 <script>
-// ═══ CONFIG ═══
+// ═══ FIREBASE CONFIG ═══
+var FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBUgtRjARF11rr9KmRsf691cLCYFE5vEns",
+  authDomain: "plateforme-157b5.firebaseapp.com",
+  projectId: "plateforme-157b5",
+  storageBucket: "plateforme-157b5.firebasestorage.app",
+  messagingSenderId: "531261518626",
+  appId: "1:531261518626:web:4f317fa3b21dcbc71fab7b"
+};
+
+var app, db;
+function initFirebase(){
+  try{ app = firebase.app(); } catch(e){ app = firebase.initializeApp(FIREBASE_CONFIG); }
+  db = firebase.firestore();
+  db.enablePersistence().catch(function(e){ console.log('Persistence:', e.code); });
+}
+
+// ═══ PIN ═══
 var PIN = '1313';
-var currentArcID = null;
-
-// ═══ STORAGE ═══
-function getL(){ try{ return JSON.parse(localStorage.getItem('ssa13_dps')||'[]'); }catch(e){ return []; } }
-function setL(l){ localStorage.setItem('ssa13_dps', JSON.stringify(l)); }
-function getB(id){ try{ return JSON.parse(localStorage.getItem('ssa13_bilans_'+id)||'[]'); }catch(e){ return []; } }
-function getBF(bid){ try{ return JSON.parse(localStorage.getItem('ssa13_bilan_form_'+bid)||'null'); }catch(e){ return null; } }
-function getRecap(id){ try{ return JSON.parse(localStorage.getItem('ssa13_recap_form_'+id)||'null'); }catch(e){ return null; } }
-function getMC(id){ try{ return JSON.parse(localStorage.getItem('ssa13_mc_form_'+id)||'null'); }catch(e){ return null; } }
-
-// ═══ AUTH ═══
 var buf = '';
 function pp(n){
-  if(buf.length >= 4) return;
-  buf += String(n); dots();
-  if(buf.length === 4) setTimeout(check, 150);
+  if(buf.length>=4) return;
+  buf+=String(n); dots();
+  if(buf.length===4) setTimeout(check,150);
 }
-function pd(){ buf = buf.slice(0,-1); dots(); document.getElementById('perr').textContent=''; }
+function pd(){ buf=buf.slice(0,-1); dots(); document.getElementById('perr').textContent=''; }
 function dots(){ for(var i=0;i<4;i++) document.getElementById('d'+i).className='dot'+(i<buf.length?' on':''); }
 function check(){
   if(buf===PIN){ localStorage.setItem('ssa13_ok','1'); show(); }
@@ -381,12 +303,173 @@ function check(){
     setTimeout(function(){ buf=''; dots(); document.getElementById('perr').textContent=''; },900);
   }
 }
+function deco(){ localStorage.removeItem('ssa13_ok'); location.reload(); }
+
+function setSyncDot(state){
+  var d=document.getElementById('sync-dot');
+  if(d){ d.className='sync-dot '+(state||''); }
+}
+
+// ═══ SHOW DASHBOARD ═══
 function show(){
   document.getElementById('login').className='cache';
   document.getElementById('dash').style.display='block';
-  clock(); liste(); stats();
+  clock();
+  initFirebase();
+  setSyncDot('load');
+  startListener();
+  setTimeout(checkMigration, 2000);
 }
-function deco(){ localStorage.removeItem('ssa13_ok'); localStorage.removeItem('ssa13_auth'); location.reload(); }
+
+// ═══ LISTENER TEMPS REEL ═══
+var dpsList = [];
+var bilanCache = {};
+
+function startListener(){
+  db.collection('dps').orderBy('createdAt','desc')
+    .onSnapshot(function(snap){
+      setSyncDot('ok');
+      dpsList = [];
+      snap.forEach(function(doc){ dpsList.push(doc.data()); });
+      renderAll();
+      // Charger les bilans pour les stats
+      loadAllBilans();
+    }, function(err){
+      setSyncDot('err');
+      console.error('Firestore error:', err);
+    });
+}
+
+function loadAllBilans(){
+  bilanCache = {};
+  var promises = dpsList.map(function(dps){
+    return db.collection('dps').doc(dps.id).collection('bilans')
+      .get().then(function(snap){
+        var bilans = [];
+        snap.forEach(function(doc){ bilans.push(doc.data()); });
+        bilanCache[dps.id] = bilans;
+      });
+  });
+  Promise.all(promises).then(function(){ renderAll(); });
+}
+
+// ═══ RENDER ═══
+var ICO={Sportif:'&#127939;',Culturel:'&#127917;',Festif:'&#127881;',Scolaire:'&#127979;',Autre:'&#128204;'};
+
+function renderAll(){
+  var actifs  = dpsList.filter(function(d){ return d.statut!=='termine'; });
+  var archives = dpsList.filter(function(d){ return d.statut==='termine'; });
+  var ec = dpsList.filter(function(d){ return d.statut==='en_cours'; }).length;
+  var pl = dpsList.filter(function(d){ return d.statut==='planifie'; }).length;
+  var te = archives.length;
+
+  document.getElementById('s1').textContent = dpsList.length;
+  document.getElementById('s2').textContent = ec;
+  document.getElementById('s3').textContent = pl;
+  document.getElementById('s4').textContent = te;
+
+  // DPS actifs
+  var el=document.getElementById('liste');
+  if(actifs.length===0){
+    el.innerHTML='<div class="empty"><div class="eico">&#128193;</div><div class="etit">Aucun DPS actif</div><div class="edsc">Cliquez sur + Nouveau DPS</div></div>';
+  } else {
+    el.innerHTML=renderCards(actifs);
+  }
+
+  // Archives
+  var ea=document.getElementById('liste-archive');
+  if(ea){
+    if(archives.length===0){
+      ea.innerHTML='<div class="empty"><div class="eico">&#128230;</div><div class="etit">Aucun DPS archive</div><div class="edsc">Les DPS marques Termine apparaitront ici</div></div>';
+    } else {
+      ea.innerHTML=renderCards(archives);
+    }
+  }
+
+  // Stats
+  renderStats();
+}
+
+function renderCards(list){
+  var h='';
+  for(var i=0;i<list.length;i++){
+    var d=list[i];
+    var nom=(d.nom||'').replace(/[<>&]/g,'');
+    var ico=ICO[d.type]||'&#128204;';
+    var col=d.statut==='en_cours'?'#27ae60':d.statut==='termine'?'#8a9ab0':'#f0a500';
+    var bcl=d.statut==='en_cours'?'bec':d.statut==='termine'?'bte':'bpl';
+    var blb=d.statut==='en_cours'?'En cours':d.statut==='termine'?'Termine':'Planifie';
+    var dt='';
+    try{ if(d.date) dt=new Date(d.date+'T12:00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}); }catch(e){}
+    var meta=dt;
+    if(d.heure) meta+=' | '+d.heure;
+    if(d.lieu)  meta+=' | '+(d.lieu||'').replace(/[<>&]/g,'');
+    var B=bilanCache[d.id]||[];
+    var nbT=B.length,nbE=0,nbV=0,nbL=0;
+    for(var j=0;j<B.length;j++){
+      var iss=B[j].issue||'En cours';
+      if(iss==='En cours') nbE++;
+      else if(iss.indexOf('vac')>-1) nbV++;
+      else nbL++;
+    }
+    var vstats='';
+    if(nbT>0){
+      vstats='<div class="vstats"><div class="vs"><div class="vsn" style="color:#f0f4f8">'+nbT+'</div><div class="vsl">Victimes</div></div>';
+      if(nbE>0) vstats+='<div class="vs"><div class="vsn" style="color:#f0a500">'+nbE+'</div><div class="vsl">Cours</div></div>';
+      if(nbL>0) vstats+='<div class="vs"><div class="vsn" style="color:#27ae60">'+nbL+'</div><div class="vsl">Liberes</div></div>';
+      if(nbV>0) vstats+='<div class="vs"><div class="vsn" style="color:#e74c3c">'+nbV+'</div><div class="vsl">Evacues</div></div>';
+      vstats+='</div>';
+    }
+    h+='<div class="dc" style="border-left-color:'+col+';" onclick="aller(\''+d.id+'\')">'
+      +'<div class="dico">'+ico+'</div>'
+      +'<div class="dbody"><div class="dnom">'+nom+'</div><div class="dmeta">'+meta+'</div></div>'
+      +'<div class="dright">'+vstats+'<span class="dbadge '+bcl+'">'+blb+'</span><div class="darr">&#8594;</div></div>'
+      +'</div>';
+  }
+  return h;
+}
+
+function renderStats(){
+  var total=dpsList.length,ec=0,pl=0,te=0;
+  var totalV=0,totalEvac=0,totalLsp=0,totalEc=0;
+  var types={};
+  for(var i=0;i<dpsList.length;i++){
+    var d=dpsList[i];
+    if(d.statut==='en_cours') ec++; else if(d.statut==='termine') te++; else pl++;
+    types[d.type]=(types[d.type]||0)+1;
+    var B=bilanCache[d.id]||[];
+    totalV+=B.length;
+    for(var j=0;j<B.length;j++){
+      var iss=B[j].issue||'En cours';
+      if(iss==='En cours') totalEc++;
+      else if(iss.indexOf('vac')>-1) totalEvac++;
+      else totalLsp++;
+    }
+  }
+  var gd=document.getElementById('gstats-dps');
+  if(gd) gd.innerHTML=''
+    +'<div class="gstat"><div class="gstat-ico">&#128193;</div><div class="gstat-num" style="color:#f0a500">'+total+'</div><div class="gstat-lbl">DPS Total</div></div>'
+    +'<div class="gstat"><div class="gstat-ico">&#128994;</div><div class="gstat-num" style="color:#27ae60">'+ec+'</div><div class="gstat-lbl">En cours</div></div>'
+    +'<div class="gstat"><div class="gstat-ico">&#128197;</div><div class="gstat-num" style="color:#f0a500">'+pl+'</div><div class="gstat-lbl">Planifies</div></div>'
+    +'<div class="gstat"><div class="gstat-ico">&#9989;</div><div class="gstat-num" style="color:#8a9ab0">'+te+'</div><div class="gstat-lbl">Termines</div></div>';
+  var gv=document.getElementById('gstats-victimes');
+  if(gv) gv.innerHTML=''
+    +'<div class="gstat"><div class="gstat-ico">&#129658;</div><div class="gstat-num" style="color:#f0f4f8">'+totalV+'</div><div class="gstat-lbl">Total</div></div>'
+    +'<div class="gstat"><div class="gstat-ico">&#128260;</div><div class="gstat-num" style="color:#f0a500">'+totalEc+'</div><div class="gstat-lbl">En cours</div></div>'
+    +'<div class="gstat"><div class="gstat-ico">&#127987;</div><div class="gstat-num" style="color:#27ae60">'+totalLsp+'</div><div class="gstat-lbl">Liberes</div></div>'
+    +'<div class="gstat"><div class="gstat-ico">&#128657;</div><div class="gstat-num" style="color:#e74c3c">'+totalEvac+'</div><div class="gstat-lbl">Evacues</div></div>';
+  var gt=document.getElementById('gstats-types');
+  if(gt){
+    var th='',tl=['Sportif','Culturel','Festif','Scolaire','Autre'];
+    for(var k=0;k<tl.length;k++){
+      var nb=types[tl[k]]||0;
+      th+='<div class="gstat"><div class="gstat-ico">'+(ICO[tl[k]]||'&#128204;')+'</div><div class="gstat-num" style="color:'+(nb>0?'#f0f4f8':'#3a4a60')+'">'+nb+'</div><div class="gstat-lbl">'+tl[k]+'</div></div>';
+    }
+    gt.innerHTML=th;
+  }
+}
+
+function aller(id){ window.location.href='dossier.html?id='+id; }
 
 // ═══ TABS ═══
 function switchTab(name){
@@ -395,8 +478,6 @@ function switchTab(name){
     document.getElementById('tab-'+names[i]).className='tab'+(names[i]===name?' on':'');
     document.getElementById('panel-'+names[i]).className='tabpanel'+(names[i]===name?' on':'');
   }
-  if(name==='stats')   stats();
-  if(name==='archive') listeArchive();
 }
 
 // ═══ HORLOGE ═══
@@ -411,253 +492,6 @@ function clock(){
   t(); setInterval(t,1000);
 }
 
-// ═══ ICONES ═══
-var ICO={Sportif:'&#127939;',Culturel:'&#127917;',Festif:'&#127881;',Scolaire:'&#127979;',Autre:'&#128204;'};
-
-// ═══ LISTE DPS ACTIFS ═══
-function liste(){
-  var L=getL();
-  var actifs=L.filter(function(d){ return d.statut!=='termine'; });
-  var termines=L.filter(function(d){ return d.statut==='termine'; });
-  var ec=L.filter(function(d){ return d.statut==='en_cours'; }).length;
-  var pl=L.filter(function(d){ return d.statut==='planifie'; }).length;
-
-  document.getElementById('s1').textContent=L.length;
-  document.getElementById('s2').textContent=ec;
-  document.getElementById('s3').textContent=pl;
-  document.getElementById('s4').textContent=termines.length;
-
-  var el=document.getElementById('liste');
-  if(!el) return;
-  if(!actifs.length){
-    el.innerHTML='<div class="empty"><div class="eico">&#128193;</div>'
-      +'<div class="etit">Aucun DPS actif</div>'
-      +'<div class="edsc">Cliquez sur + Nouveau DPS pour commencer</div></div>';
-    return;
-  }
-  el.innerHTML=renderCards(actifs, false);
-}
-
-// ═══ ARCHIVE ═══
-function listeArchive(){
-  var L=getL();
-  var termines=L.filter(function(d){ return d.statut==='termine'; });
-  var el=document.getElementById('liste-archive');
-  if(!el) return;
-  if(!termines.length){
-    el.innerHTML='<div class="empty"><div class="eico">&#128230;</div>'
-      +'<div class="etit">Aucun DPS termine</div>'
-      +'<div class="edsc">Les DPS marques comme "Termine" apparaitront ici</div></div>';
-    return;
-  }
-  el.innerHTML=renderCards(termines, true);
-}
-
-// ═══ RENDU CARTES ═══
-function renderCards(list, isArchive){
-  var h='';
-  for(var i=0;i<list.length;i++){
-    var d=list[i];
-    var nom=(d.nom||'').replace(/[<>&]/g,'');
-    var ico=ICO[d.type]||'&#128204;';
-    var col=d.statut==='en_cours'?'#27ae60':d.statut==='termine'?'#8a9ab0':'#f0a500';
-    var bcl=d.statut==='en_cours'?'bec':d.statut==='termine'?'bte':'bpl';
-    var blb=d.statut==='en_cours'?'En cours':d.statut==='termine'?'Termine':'Planifie';
-    var dt='';
-    try{ if(d.date) dt=new Date(d.date+'T12:00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}); }catch(e){}
-    var meta=dt;
-    if(d.heure) meta+=' | '+d.heure;
-    if(d.lieu)  meta+=' | '+(d.lieu||'').replace(/[<>&]/g,'');
-
-    var B=getB(d.id);
-    var nbT=B.length, nbE=0, nbV=0, nbL=0;
-    for(var j=0;j<B.length;j++){
-      var iss=B[j].issue||'En cours';
-      if(iss==='En cours') nbE++;
-      else if(iss.indexOf('vac')>-1) nbV++;
-      else nbL++;
-    }
-    var vstats='';
-    if(nbT>0){
-      vstats='<div class="vstats">'
-        +'<div class="vs"><div class="vsn" style="color:#f0f4f8">'+nbT+'</div><div class="vsl">Victimes</div></div>';
-      if(nbE>0) vstats+='<div class="vs"><div class="vsn" style="color:#f0a500">'+nbE+'</div><div class="vsl">En cours</div></div>';
-      if(nbL>0) vstats+='<div class="vs"><div class="vsn" style="color:#27ae60">'+nbL+'</div><div class="vsl">Liberes</div></div>';
-      if(nbV>0) vstats+='<div class="vs"><div class="vsn" style="color:#e74c3c">'+nbV+'</div><div class="vsl">Evacues</div></div>';
-      vstats+='</div>';
-    }
-
-    var onclick = isArchive
-      ? 'ouvrirArchive(\''+d.id+'\')'
-      : 'aller(\''+d.id+'\')';
-    var arrowIcon = isArchive ? '&#128065;' : '&#8594;';
-
-    h+='<div class="dc'+(isArchive?' archive':'')+'" style="border-left-color:'+col+';" onclick="'+onclick+'">'
-      +'<div class="dico">'+ico+'</div>'
-      +'<div class="dbody"><div class="dnom">'+nom+'</div><div class="dmeta">'+meta+'</div></div>'
-      +'<div class="dright">'+vstats+'<span class="dbadge '+bcl+'">'+blb+'</span><div class="darr">'+arrowIcon+'</div></div>'
-      +'</div>';
-  }
-  return h;
-}
-
-function aller(id){ window.location.href='dossier.html?id='+id; }
-
-// ═══ ARCHIVE DETAIL ═══
-function ouvrirArchive(id){
-  currentArcID = id;
-  var L=getL();
-  var dps=null; for(var i=0;i<L.length;i++){ if(L[i].id===id){dps=L[i];break;} }
-  if(!dps) return;
-
-  var B=getB(id);
-  var dt='';
-  try{ if(dps.date) dt=new Date(dps.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}); }catch(e){}
-
-  document.getElementById('arc-titre').textContent=dps.nom.toUpperCase();
-  document.getElementById('arc-sous').textContent=dps.id+' — '+dt;
-
-  var nbV=B.length;
-  var nbEvac=B.filter(function(b){ return b.issue&&b.issue.indexOf('vac')>-1; }).length;
-  var nbLsp=B.filter(function(b){ return b.issue&&b.issue.indexOf('place')>-1; }).length;
-  var hasRecap=!!getRecap(id);
-  var hasMC=!!getMC(id);
-
-  var html='';
-
-  // Infos DPS
-  html+='<div class="arc-details">';
-  html+='<h4>&#128197; Informations du dispositif</h4>';
-  html+='<p><strong>Lieu :</strong> '+(dps.lieu||'Non renseigne')+'</p>';
-  html+='<p><strong>Type :</strong> '+(dps.type||'-')+'</p>';
-  html+='<p><strong>Heure debut :</strong> '+(dps.heure||'-')+'</p>';
-  html+='</div>';
-
-  // Fiches bilan
-  html+='<div class="arc-details">';
-  html+='<h4>&#129658; Fiches Bilan ('+nbV+' victimes)</h4>';
-  if(nbV===0){
-    html+='<p>Aucune victime enregistree</p>';
-  } else {
-    html+='<p><strong>'+nbLsp+'</strong> laisses sur place &nbsp;|&nbsp; <strong>'+nbEvac+'</strong> evacues</p>';
-    html+='<div class="arc-bilan-list">';
-    for(var j=0;j<B.length;j++){
-      var b=B[j];
-      var vic=(b.sexe?b.sexe+' - ':'')+(b.motif||'Sans detail');
-      var iss=b.issue||'En cours';
-      var hasBF=!!getBF(b.id);
-      html+='<div class="arc-bilan-row">'
-        +'<span>'+(j+1)+'. '+vic+'</span>'
-        +'<span>'+iss+(hasBF?' &nbsp;&#128190;':' &nbsp;&#128203;')+'</span>'
-        +'</div>';
-    }
-    html+='</div>';
-  }
-  html+='</div>';
-
-  // Documents
-  html+='<div class="arc-details">';
-  html+='<h4>&#128196; Documents</h4>';
-  html+='<p>Fiche Recap : '+(hasRecap?'&#10003; Donnees sauvegardees':'&#10007; Non remplie')+'</p>';
-  html+='<p>Main Courante : '+(hasMC?'&#10003; Donnees sauvegardees':'&#10007; Non remplie')+'</p>';
-  html+='<p style="margin-top:10px;font-size:11px;color:#6a7a90">&#8505;&#65039; Cliquez "Exporter JSON" pour telecharger toutes les donnees du dossier</p>';
-  html+='</div>';
-
-  document.getElementById('arc-contenu').innerHTML=html;
-  document.getElementById('modal-archive').className='mov on';
-}
-
-function fermArc(){ document.getElementById('modal-archive').className='mov'; currentArcID=null; }
-function fermArcExt(e){ if(e.target===document.getElementById('modal-archive')) fermArc(); }
-
-// ═══ EXPORT JSON ═══
-function exporterDPS(){
-  if(!currentArcID) return;
-  var L=getL();
-  var dps=null; for(var i=0;i<L.length;i++){ if(L[i].id===currentArcID){dps=L[i];break;} }
-  if(!dps) return;
-
-  var B=getB(currentArcID);
-  var bilansDetails=[];
-  for(var j=0;j<B.length;j++){
-    bilansDetails.push({ meta: B[j], formulaire: getBF(B[j].id) });
-  }
-
-  var archive={
-    export_date: new Date().toISOString(),
-    dps: dps,
-    bilans: bilansDetails,
-    fiche_recap: getRecap(currentArcID),
-    main_courante: getMC(currentArcID)
-  };
-
-  var json=JSON.stringify(archive, null, 2);
-  var blob=new Blob([json], {type:'application/json'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');
-  a.href=url;
-  a.download='archive_'+currentArcID+'.json';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-// ═══ STATS GLOBALES ═══
-function stats(){
-  var L=getL();
-  var total=L.length;
-  var ec=0, pl=0, te=0;
-  var totalV=0, totalEvac=0, totalLsp=0, totalEc=0;
-  var types={};
-
-  for(var i=0;i<L.length;i++){
-    var d=L[i];
-    if(d.statut==='en_cours') ec++;
-    else if(d.statut==='termine') te++;
-    else pl++;
-    types[d.type]=(types[d.type]||0)+1;
-
-    var B=getB(d.id);
-    totalV+=B.length;
-    for(var j=0;j<B.length;j++){
-      var iss=B[j].issue||'En cours';
-      if(iss==='En cours') totalEc++;
-      else if(iss.indexOf('vac')>-1) totalEvac++;
-      else totalLsp++;
-    }
-  }
-
-  // Stats DPS
-  var gd=document.getElementById('gstats-dps');
-  if(gd) gd.innerHTML=''
-    +'<div class="gstat"><div class="gstat-ico">&#128193;</div><div class="gstat-num" style="color:#f0a500">'+total+'</div><div class="gstat-lbl">DPS Total</div></div>'
-    +'<div class="gstat"><div class="gstat-ico">&#128994;</div><div class="gstat-num" style="color:#27ae60">'+ec+'</div><div class="gstat-lbl">En cours</div></div>'
-    +'<div class="gstat"><div class="gstat-ico">&#128197;</div><div class="gstat-num" style="color:#f0a500">'+pl+'</div><div class="gstat-lbl">Planifies</div></div>'
-    +'<div class="gstat"><div class="gstat-ico">&#9989;</div><div class="gstat-num" style="color:#8a9ab0">'+te+'</div><div class="gstat-lbl">Termines</div></div>';
-
-  // Stats victimes
-  var gv=document.getElementById('gstats-victimes');
-  if(gv) gv.innerHTML=''
-    +'<div class="gstat"><div class="gstat-ico">&#129658;</div><div class="gstat-num" style="color:#f0f4f8">'+totalV+'</div><div class="gstat-lbl">Victimes total</div></div>'
-    +'<div class="gstat"><div class="gstat-ico">&#128260;</div><div class="gstat-num" style="color:#f0a500">'+totalEc+'</div><div class="gstat-lbl">En cours</div></div>'
-    +'<div class="gstat"><div class="gstat-ico">&#127987;</div><div class="gstat-num" style="color:#27ae60">'+totalLsp+'</div><div class="gstat-lbl">Liberes</div></div>'
-    +'<div class="gstat"><div class="gstat-ico">&#128657;</div><div class="gstat-num" style="color:#e74c3c">'+totalEvac+'</div><div class="gstat-lbl">Evacues</div></div>';
-
-  // Stats par type
-  var gt=document.getElementById('gstats-types');
-  if(gt){
-    var th='';
-    var typeList=['Sportif','Culturel','Festif','Scolaire','Autre'];
-    for(var k=0;k<typeList.length;k++){
-      var tp=typeList[k];
-      var nb=types[tp]||0;
-      th+='<div class="gstat"><div class="gstat-ico">'+(ICO[tp]||'&#128204;')+'</div>'
-        +'<div class="gstat-num" style="color:'+(nb>0?'#f0f4f8':'#3a4a60')+'">'+nb+'</div>'
-        +'<div class="gstat-lbl">'+tp+'</div></div>';
-    }
-    gt.innerHTML=th;
-  }
-}
-
 // ═══ MODAL NOUVEAU DPS ═══
 function ouvM(){
   document.getElementById('fn').value='';
@@ -670,8 +504,9 @@ function fermExt(e){ if(e.target===document.getElementById('modal')) fermM(); }
 
 function genID(){
   var d=new Date();
-  return 'DPS-'+d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'-'+('00'+(getL().length+1)).slice(-3);
+  return 'DPS-'+d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'-'+('00'+(dpsList.length+1)).slice(-3);
 }
+
 function creer(){
   var nom=document.getElementById('fn').value.trim();
   var dat=document.getElementById('fd').value;
@@ -682,27 +517,82 @@ function creer(){
     type:document.getElementById('ft').value,
     statut:document.getElementById('fs').value,
     createdAt:Date.now()};
-  var L=getL(); L.unshift(dps); setL(L);
-  fermM(); liste();
-  window.location.href='dossier.html?id='+dps.id;
+  db.collection('dps').doc(dps.id).set(dps).then(function(){
+    fermM();
+    window.location.href='dossier.html?id='+dps.id;
+  }).catch(function(e){ alert('Erreur: '+e.message); });
 }
 
-// ═══ RAFRAICHIR ═══
-document.addEventListener('visibilitychange',function(){
-  if(document.visibilityState==='visible' && localStorage.getItem('ssa13_ok')==='1'){ liste(); stats(); }
-});
+// ═══ MIGRATION localStorage → Firebase ═══
+function checkMigration(){
+  var localDPS=[];
+  try{ localDPS=JSON.parse(localStorage.getItem('ssa13_dps')||'[]'); }catch(e){}
+  if(!localDPS.length) return;
+  if(dpsList.length>0) return; // Firebase a deja des donnees
+  // Proposer la migration
+  var z=document.getElementById('migr-zone');
+  if(!z) return;
+  z.innerHTML='<div class="migr-banner">&#128205;'
+    +'<div class="migr-text">Des donnees locales ont ete trouvees ('+localDPS.length+' DPS). Voulez-vous les migrer vers le cloud pour les retrouver sur tous vos appareils ?</div>'
+    +'<button class="migr-btn" onclick="migrer()">Migrer vers le cloud</button>'
+    +'<button class="migr-btn" style="background:rgba(255,255,255,.1);color:#8a9ab0;" onclick="document.getElementById(\'migr-zone\').innerHTML=\'\'">Ignorer</button>'
+    +'</div>';
+}
+
+function migrer(){
+  var localDPS=[];
+  try{ localDPS=JSON.parse(localStorage.getItem('ssa13_dps')||'[]'); }catch(e){}
+  if(!localDPS.length){ alert('Aucune donnee locale.'); return; }
+  var total=localDPS.length, done=0;
+  localDPS.forEach(function(dps){
+    db.collection('dps').doc(dps.id).set(dps).then(function(){
+      // Migrer bilans (sous-collection)
+      var bilans=[];
+      try{ bilans=JSON.parse(localStorage.getItem('ssa13_bilans_'+dps.id)||'[]'); }catch(e){}
+      bilans.forEach(function(b){
+        b.dps_id=dps.id;
+        db.collection('dps').doc(dps.id).collection('bilans').doc(b.id).set(b);
+        // Migrer formulaire bilan
+        var bf=null;
+        try{ bf=JSON.parse(localStorage.getItem('ssa13_bilan_form_'+b.id)||'null'); }catch(e){}
+        if(bf) db.collection('bilan_forms').doc(b.id).set({data:JSON.stringify(bf),dps_id:dps.id,updated:Date.now()});
+      });
+      // Migrer recap
+      var recap=null;
+      try{ recap=JSON.parse(localStorage.getItem('ssa13_recap_form_'+dps.id)||'null'); }catch(e){}
+      if(recap) db.collection('recap_forms').doc(dps.id).set({data:JSON.stringify(recap),dps_id:dps.id,updated:Date.now()});
+      // Migrer MC
+      var mc=null;
+      try{ mc=JSON.parse(localStorage.getItem('ssa13_mc_form_'+dps.id)||'null'); }catch(e){}
+      if(mc) db.collection('mc_forms').doc(dps.id).set({data:JSON.stringify(mc),dps_id:dps.id,updated:Date.now()});
+      done++;
+      if(done===total){
+        document.getElementById('migr-zone').innerHTML='';
+        alert('Migration reussie ! '+total+' DPS transferes vers le cloud.');
+      }
+    });
+  });
+}
+
+// ═══ EXPORT ═══
+function exportTout(){
+  var data={version:3,export_date:new Date().toISOString(),dps:dpsList,bilans:bilanCache};
+  var json=JSON.stringify(data,null,2);
+  var blob=new Blob([json],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  var dt=new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\//g,'-');
+  a.href=url; a.download='ssa13_'+dt+'.json'; a.click();
+  URL.revokeObjectURL(url);
+  var sm=document.getElementById('sync-msg');
+  if(sm){ sm.style.color='#27ae60'; sm.textContent='Export reussi !'; }
+}
 
 // ═══ DEMARRAGE ═══
 window.addEventListener('DOMContentLoaded',function(){
-  // Compatible toutes versions + param URL ?auth=1
-  var ok = localStorage.getItem('ssa13_ok')==='1'
-        || localStorage.getItem('ssa13_auth')==='true';
-  var urlAuth = new URLSearchParams(location.search).get('auth')==='1';
-  if(ok || urlAuth){
-    localStorage.setItem('ssa13_ok','1');
-    show();
-    if(urlAuth) history.replaceState(null,'',location.pathname);
-  }
+  var ok=localStorage.getItem('ssa13_ok')==='1'||localStorage.getItem('ssa13_auth')==='true';
+  var urlAuth=new URLSearchParams(location.search).get('auth')==='1';
+  if(ok||urlAuth){ localStorage.setItem('ssa13_ok','1'); show(); }
 });
 </script>
 </body>
