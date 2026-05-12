@@ -229,7 +229,7 @@ function pd(){buf=buf.slice(0,-1);dots();document.getElementById('perr').textCon
 function dots(){for(var i=0;i<4;i++)document.getElementById('d'+i).className='dot'+(i<buf.length?' on':'');}
 function check(){
   if(buf===PIN){localStorage.setItem('ssa13_ok','1');show();}
-  else{document.getElementById('perr').textContent='Code incorrect';for(var i=0;i<4;i++)document.getElementById('d'+i).className='dot ko';setTimeout(function(){buf='';dots();document.getElementById('perr').textContent='';}),900);}
+  else{document.getElementById('perr').textContent='Code incorrect';for(var i=0;i<4;i++)document.getElementById('d'+i).className='dot ko';setTimeout(function(){buf='';dots();document.getElementById('perr').textContent='';},900);}
 }
 function setSyncDot(s){var d=document.getElementById('sync-dot');if(d)d.className='sync-dot '+(s||'');}
 function show(){
