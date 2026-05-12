@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portail SSA13</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js" onerror="window._fbErr=true"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js" onerror="window._fbErr=true"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Barlow',sans-serif;background:#0b1a2e;color:#f0f4f8;min-height:100vh;}
@@ -377,6 +377,20 @@ function afficher() {
   document.getElementById('login').className = 'cache';
   document.getElementById('dash').style.display = 'block';
   horloge();
+  attendre();
+}
+
+function attendre() {
+  if (window._fbErr) {
+    setSdot('err');
+    document.getElementById('liste').innerHTML = '<div class="empty"><div class="eico">&#9888;&#65039;</div><div class="etit">Firebase inaccessible</div><div class="edsc">Verifiez votre connexion internet et rechargez la page.</div></div>';
+    return;
+  }
+  if (typeof firebase === 'undefined') {
+    document.getElementById('liste').innerHTML = '<div class="empty"><div class="eico">&#128260;</div><div class="etit">Chargement Firebase...</div></div>';
+    setTimeout(attendre, 300);
+    return;
+  }
   initFirebase();
 }
 
