@@ -975,5 +975,180 @@ async function savePDF() {
   }
 }
 </script>
+<!-- ═══ SAUVEGARDE FIREBASE SSA13 ═══ -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+(function() {
+  'use strict';
+
+  var params  = new URLSearchParams(location.search);
+  var dps_id  = params.get('dps_id');
+  if (!dps_id) return; // pas de DPS_ID = pas de sauvegarde
+
+  var FC = {
+    apiKey:"AIzaSyBUgtRjARF11rr9KmRsf691cLCYFE5vEns",
+    authDomain:"plateforme-157b5.firebaseapp.com",
+    projectId:"plateforme-157b5",
+    storageBucket:"plateforme-157b5.firebasestorage.app",
+    messagingSenderId:"531261518626",
+    appId:"1:531261518626:web:4f317fa3b21dcbc71fab7b"
+  };
+
+  var db = null;
+  var saveTimer = null;
+  var SAVE_DELAY = 2000; // ms entre chaque sauvegarde
+  var LS_KEY = 'ssa13_recap_' + dps_id;
+
+  /* ── BANDEAU ── */
+  var banner = document.createElement('div');
+  banner.id  = 'recap-save-banner';
+  banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#0f2340;color:white;font-family:sans-serif;font-size:12px;padding:6px 16px;display:flex;align-items:center;gap:12px;z-index:9999;border-top:2px solid #c8102e;';
+  banner.innerHTML = '<span>&#128193; DPS : ' + dps_id + '</span>'
+    + '<span id="recap-status" style="flex:1;opacity:.75;">Connexion...</span>'
+    + '<a href="dossier.html?id=' + dps_id + '" style="color:#f7b731;font-size:11px;font-weight:600;text-decoration:none;margin-right:10px;">&#8592; Dossier DPS</a>'
+    + '<a href="index.html?auth=1" style="background:#c8102e;color:white;font-size:11px;font-weight:700;text-decoration:none;padding:4px 12px;border-radius:5px;">&#127968; Menu principal</a>';
+  document.body.appendChild(banner);
+  document.body.style.paddingBottom = '40px';
+
+  function setStatus(msg, col) {
+    var el = document.getElementById('recap-status');
+    if (el) { el.textContent = msg; el.style.color = col || 'rgba(255,255,255,.75)'; }
+  }
+
+  /* ── COLLECTE DE TOUS LES CHAMPS ── */
+  function collectAll() {
+    var data = {};
+    // Tous les inputs, selects, textareas avec un id
+    document.querySelectorAll('input[id], select[id], textarea[id]').forEach(function(el) {
+      if (el.type === 'checkbox') data[el.id] = el.checked;
+      else if (el.type === 'radio') { if (el.checked) data[el.name + '_radio'] = el.value; }
+      else data[el.id] = el.value;
+    });
+    // Inputs et selects sans id (par index dans leur parent)
+    document.querySelectorAll('input:not([id]), select:not([id]), textarea:not([id])').forEach(function(el, i) {
+      if (el.type === 'checkbox') data['_cb_' + i] = el.checked;
+      else if (el.type === 'radio') { /* ignore */ }
+      else data['_el_' + i] = el.value;
+    });
+    return data;
+  }
+
+  /* ── RESTAURATION ── */
+  function restoreAll(data) {
+    if (!data) return;
+    // Champs avec id
+    document.querySelectorAll('input[id], select[id], textarea[id]').forEach(function(el) {
+      if (el.type === 'checkbox') {
+        if (data[el.id] !== undefined) el.checked = !!data[el.id];
+      } else if (el.type === 'radio') {
+        if (data[el.name + '_radio'] !== undefined) el.checked = (el.value === data[el.name + '_radio']);
+      } else {
+        if (data[el.id] !== undefined && data[el.id] !== null) el.value = data[el.id];
+      }
+    });
+    // Champs sans id
+    document.querySelectorAll('input:not([id]), select:not([id]), textarea:not([id])').forEach(function(el, i) {
+      if (el.type === 'checkbox') {
+        if (data['_cb_' + i] !== undefined) el.checked = !!data['_cb_' + i];
+      } else if (el.type === 'radio') {
+        /* ignore */
+      } else {
+        if (data['_el_' + i] !== undefined && data['_el_' + i] !== null) el.value = data['_el_' + i];
+      }
+    });
+    setStatus('Donnees restaurees', '#2ecc71');
+    setTimeout(function() { setStatus('Sauvegarde active'); }, 2000);
+  }
+
+  /* ── SAUVEGARDE (debounce) ── */
+  function scheduleSave() {
+    // localStorage immédiat
+    try { localStorage.setItem(LS_KEY, JSON.stringify(collectAll())); } catch(e) {}
+    // Firestore avec délai
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function() {
+      if (!db) return;
+      var data = collectAll();
+      db.collection('recap_forms').doc(dps_id).set({
+        data: JSON.stringify(data),
+        dps_id: dps_id,
+        updated: Date.now()
+      }).then(function() {
+        var now = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+        setStatus('Sauvegarde automatique ' + now, '#2ecc71');
+        setTimeout(function() { setStatus('Sauvegarde active'); }, 3000);
+      }).catch(function(err) {
+        setStatus('Erreur sauvegarde cloud', '#e74c3c');
+        console.error('Recap save error:', err);
+      });
+    }, SAVE_DELAY);
+  }
+
+  /* ── CHARGEMENT ── */
+  function loadData() {
+    if (!db) { loadFromLS(); return; }
+    setStatus('Chargement...');
+    db.collection('recap_forms').doc(dps_id).get().then(function(doc) {
+      if (doc.exists && doc.data() && doc.data().data) {
+        try {
+          restoreAll(JSON.parse(doc.data().data));
+          setStatus('Donnees chargees depuis le cloud', '#2ecc71');
+        } catch(e) { loadFromLS(); }
+      } else {
+        loadFromLS();
+      }
+    }).catch(function() { loadFromLS(); });
+  }
+
+  function loadFromLS() {
+    try {
+      var saved = localStorage.getItem(LS_KEY);
+      if (saved) {
+        restoreAll(JSON.parse(saved));
+        setStatus('Donnees locales restaurees');
+      } else {
+        setStatus('Nouveau document — sauvegarde automatique active');
+      }
+    } catch(e) {
+      setStatus('Sauvegarde active');
+    }
+  }
+
+  /* ── ECOUTE DES CHANGEMENTS ── */
+  function attachListeners() {
+    document.addEventListener('input',  scheduleSave);
+    document.addEventListener('change', scheduleSave);
+  }
+
+  /* ── INIT FIREBASE ── */
+  function initFB() {
+    if (typeof firebase === 'undefined') { setTimeout(initFB, 300); return; }
+    try {
+      var app;
+      try { app = firebase.app(); } catch(e) { app = firebase.initializeApp(FC); }
+      db = firebase.firestore();
+      db.enablePersistence().catch(function() {});
+      loadData();
+    } catch(e) {
+      loadFromLS();
+      setStatus('Firebase indisponible - sauvegarde locale uniquement', '#f0a500');
+    }
+  }
+
+  /* ── DEMARRAGE ── */
+  window.addEventListener('DOMContentLoaded', function() {
+    attachListeners();
+    initFB();
+  });
+
+  // Si DOMContentLoaded déjà passé
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    attachListeners();
+    initFB();
+  }
+
+})();
+</script>
 </body>
 </html>
